@@ -1,0 +1,6 @@
+{
+  "name": "Creativity Juice",
+  "description": "پرتال و سیستم‌عامل تعاملی استودیو خلاقیت، مهندسی هویت برند، سینما و تولید محتوای معاصر Creativity Juice",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
