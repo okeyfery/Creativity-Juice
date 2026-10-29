@@ -617,15 +617,24 @@ export const ClientPortalWindow: React.FC<ClientPortalWindowProps> = ({
           {/* Tab 3: Dedicated Content Calendar */}
           {activeTab === 'calendar' && (
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
-              <div className="bg-white p-4 rounded-2xl border border-neutral-200 flex items-center justify-between">
+              <div className="bg-white p-4 rounded-2xl border border-neutral-200 flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h3 className="text-sm font-black text-neutral-900">
                     تقویم انتشار اختصاصی {activeClient.brandName}
                   </h3>
                   <p className="text-xs text-neutral-500 mt-0.5">
-                    برنامه‌ریزی، زمان‌بندی و کپشن‌های آماده شده توسط تیم استودیو
+                    برنامه‌ریزی، زمان‌بندی و کپشن‌های آماده شده توسط تیم استودیو (کاملاً مجزا برای این برند)
                   </p>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-calendar-window'))}
+                  className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 text-xs font-black transition-all shadow-xs flex items-center gap-1.5 cursor-pointer active:scale-95"
+                  title="باز کردن تقویم کامل و پیشرفته دسکتاپ برای این کارفرما"
+                >
+                  <span>🗓️</span>
+                  <span>باز کردن تقویم کامل دسکتاپ</span>
+                </button>
               </div>
 
               {activeClient.calendar.length === 0 ? (
@@ -739,13 +748,24 @@ export const ClientPortalWindow: React.FC<ClientPortalWindowProps> = ({
           {activeTab === 'brief' && (
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
               <div className="bg-white p-5 rounded-2xl border border-neutral-200/90 shadow-2xs space-y-4">
-                <div className="border-b border-neutral-100 pb-3">
-                  <span className="text-[10px] font-mono font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md">
-                    PROJECT DOSSIER // CORE BRIEF
-                  </span>
-                  <h3 className="text-base font-black text-neutral-900 mt-1">
-                    خلاصه توافقات و دامنه خدمات پروژه
-                  </h3>
+                <div className="border-b border-neutral-100 pb-3 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <span className="text-[10px] font-mono font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md">
+                      PROJECT DOSSIER // CORE BRIEF
+                    </span>
+                    <h3 className="text-base font-black text-neutral-900 mt-1">
+                      خلاصه توافقات و دامنه خدمات پروژه
+                    </h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => window.dispatchEvent(new CustomEvent('open-notes-window'))}
+                    className="px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer active:scale-95"
+                    title="مشاهده و ویرایش یادداشت‌ها و بریف‌های تفکیک‌شده این کارفرما در دفترچه یادداشت"
+                  >
+                    <span>📝</span>
+                    <span>باز کردن یادداشت‌های این برند در نوت‌پد</span>
+                  </button>
                 </div>
 
                 <div className="space-y-2 text-xs leading-relaxed text-neutral-700">

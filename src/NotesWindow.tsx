@@ -6,6 +6,13 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { addToTrash, NOTE_RESTORE_EVENT } from './trashStore';
+import {
+  getActiveClient,
+  getScopedNotesStorageKey,
+  getClientInitialNotes,
+  setActiveClientId,
+  CLIENT_PORTAL_EVENT,
+} from './clientPortalStore';
 
 export interface ClientNote {
   id: string;
@@ -111,20 +118,31 @@ interface NotesWindowProps {
 }
 
 export const NotesWindow: React.FC<NotesWindowProps> = ({ onClose, onOpenContact }) => {
-  const [notes, setNotes] = useState<ClientNote[]>(() => {
+  const [activeClient, setActiveClient] = useState(getActiveClient);
+
+  const loadNotesForActiveSession = (): ClientNote[] => {
+    const client = getActiveClient();
+    const key = getScopedNotesStorageKey(client?.id);
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(key);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
+          return parsed as ClientNote[];
         }
+      }
+      if (client) {
+        const initial = getClientInitialNotes(client) as ClientNote[];
+        localStorage.setItem(key, JSON.stringify(initial));
+        return initial;
       }
     } catch (e) {
       console.warn('Error reading notes from localStorage:', e);
     }
     return SEED_NOTES;
-  });
+  };
+
+  const [notes, setNotes] = useState<ClientNote[]>(loadNotesForActiveSession);
 
   const [selectedNoteId, setSelectedNoteId] = useState<string>(() => {
     return notes[0]?.id || '';
@@ -154,14 +172,28 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({ onClose, onOpenContact
     return () => window.removeEventListener(NOTE_RESTORE_EVENT, handleRestored);
   }, []);
 
-  // Save notes to localStorage
+  // Listen for active client changes and dynamically switch scoped notes
+  useEffect(() => {
+    const handlePortalChange = () => {
+      const client = getActiveClient();
+      setActiveClient(client);
+      const loaded = loadNotesForActiveSession();
+      setNotes(loaded);
+      setSelectedNoteId(loaded[0]?.id || '');
+    };
+    window.addEventListener(CLIENT_PORTAL_EVENT, handlePortalChange);
+    return () => window.removeEventListener(CLIENT_PORTAL_EVENT, handlePortalChange);
+  }, []);
+
+  // Save notes to localStorage scoped by active client
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+      const key = getScopedNotesStorageKey(activeClient?.id);
+      localStorage.setItem(key, JSON.stringify(notes));
     } catch (e) {
       console.error('Failed to save notes:', e);
     }
-  }, [notes]);
+  }, [notes, activeClient]);
 
   const activeNote = useMemo(() => {
     return notes.find((n) => n.id === selectedNoteId) || notes[0] || null;
@@ -294,6 +326,33 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({ onClose, onOpenContact
           >
             ✕
           </button>
+        </div>
+      )}
+
+      {/* Active Client Workspace Scope Banner */}
+      {activeClient && (
+        <div className="bg-amber-500/15 border-b border-amber-500/30 px-3 sm:px-4 py-2 flex items-center justify-between text-xs text-amber-950 font-medium shrink-0 flex-wrap gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-base">{activeClient.logoBadge}</span>
+            <span className="text-xs sm:text-sm">
+              یادداشت‌ها و سناریوهای اختصاصی: <strong>{activeClient.brandName}</strong> (کارفرما: {activeClient.ownerName})
+            </span>
+            <span className="hidden sm:inline-block px-2 py-0.5 rounded-full bg-amber-500 text-neutral-950 text-[10px] font-mono font-bold">
+              ذخیره‌سازی ایزوله کارفرما
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="hidden md:inline text-[11px] text-neutral-600">
+              مدیر پروژه: <strong>{activeClient.projectLead}</strong>
+            </span>
+            <button
+              onClick={() => setActiveClientId(null)}
+              className="px-2 py-1 rounded-lg bg-white border border-neutral-300 text-[10px] font-bold text-neutral-700 hover:bg-neutral-100 cursor-pointer shadow-2xs"
+              title="خروج از حساب این کارفرما و بازگشت به یادداشت‌های عمومی"
+            >
+              خروج از کارفرما ✕
+            </button>
+          </div>
         </div>
       )}
 

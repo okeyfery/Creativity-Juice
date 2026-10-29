@@ -27,6 +27,11 @@ import {
 import { INITIAL_PROJECTS } from './data/projectsData.ts';
 import { INITIAL_TEAM } from './data/teamData.ts';
 import { addToTrash } from './trashStore.ts';
+import {
+  getActiveClient,
+  setActiveClientId,
+  CLIENT_PORTAL_EVENT,
+} from './clientPortalStore.ts';
 
 const S = React;
 const H = { jsx, jsxs, Fragment };
@@ -1776,6 +1781,7 @@ var Au = [
     onOpenCalendar: peCalendar,
     onOpenAdmin: onAdmin,
     onOpenClientPortal: onClientPortal,
+    activeClient = null,
     isAdminAuth: isAdminSession = !1,
     onPromptAdminLogin: onPromptLogin,
     onOpenManifesto: onManifesto,
@@ -2241,6 +2247,27 @@ var Au = [
         (0, H.jsxs)(`div`, {
           className: `flex items-center space-x-1.5 sm:space-x-3 text-neutral-700`,
           children: [
+            activeClient &&
+              (0, H.jsxs)(`div`, {
+                className: `hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-950 text-xs font-bold font-sans shadow-2xs`,
+                dir: `rtl`,
+                children: [
+                  (0, H.jsx)(`span`, { children: activeClient.logoBadge }),
+                  (0, H.jsxs)(`span`, {
+                    className: `truncate max-w-[180px] text-[11px]`,
+                    children: [
+                      `کارفرما: `,
+                      (0, H.jsx)(`strong`, { children: activeClient.brandName }),
+                    ],
+                  }),
+                  (0, H.jsx)(`button`, {
+                    onClick: () => setActiveClientId(null),
+                    className: `mr-1 text-[9px] text-neutral-600 hover:text-neutral-900 bg-white/70 hover:bg-white px-1.5 py-0.2 rounded cursor-pointer transition shadow-2xs`,
+                    title: `خروج از حساب این کارفرما`,
+                    children: `خروج ✕`,
+                  }),
+                ],
+              }),
             (0, H.jsx)(`button`, {
               onClick: o,
               className: `p-1 rounded hover:bg-black/8 transition-colors cursor-pointer`,
@@ -10686,13 +10713,16 @@ var Au = [
       [h, g] = (0, S.useState)(null),
       [isAdminMode, setIsAdminMode] = (0, S.useState)(!1),
       [isAdminAuth, setIsAdminAuth] = (0, S.useState)(() => isAdminAuthenticated()),
-      [showPinModal, setShowPinModal] = (0, S.useState)(!1);
+      [showPinModal, setShowPinModal] = (0, S.useState)(!1),
+      [activeClient, setActiveClient] = (0, S.useState)(() => getActiveClient());
     (0, S.useEffect)(() => {
       let e = () => {
         m(cf());
       };
+      let handleClientSync = () => setActiveClient(getActiveClient());
       window.addEventListener(`projects-updated`, e);
       window.addEventListener(`CJ_STUDIO_DATA_CHANGED`, e);
+      window.addEventListener(CLIENT_PORTAL_EVENT, handleClientSync);
 
       // Check ?admin=true or hash #admin
       if (typeof window !== `undefined`) {
@@ -10729,6 +10759,7 @@ var Au = [
       return () => {
         window.removeEventListener(`projects-updated`, e);
         window.removeEventListener(`CJ_STUDIO_DATA_CHANGED`, e);
+        window.removeEventListener(CLIENT_PORTAL_EVENT, handleClientSync);
         window.removeEventListener(`keydown`, handleKeyDown);
         window.removeEventListener(CJ_STUDIO_DATA_EVENT, handleAuthEvent);
       };
@@ -10925,8 +10956,23 @@ var Au = [
           let n = y + 1;
           return (b(n), [...t, { id: e, type: `client-portal`, zIndex: n }]);
         });
-      }, [y, T]),
-      le = (e) => {
+      }, [y, T]);
+
+    (0, S.useEffect)(() => {
+      let handleOpenCal = () => pe();
+      let handleOpenNotes = () => O();
+      let handleOpenPortal = () => openClientPortal();
+      window.addEventListener('open-calendar-window', handleOpenCal);
+      window.addEventListener('open-notes-window', handleOpenNotes);
+      window.addEventListener('open-client-portal-window', handleOpenPortal);
+      return () => {
+        window.removeEventListener('open-calendar-window', handleOpenCal);
+        window.removeEventListener('open-notes-window', handleOpenNotes);
+        window.removeEventListener('open-client-portal-window', handleOpenPortal);
+      };
+    }, [pe, O, openClientPortal]);
+
+    let le = (e) => {
         let t = Lu.find((t) => t.id === e);
         t &&
           (t.dialogData
@@ -11064,6 +11110,7 @@ var Au = [
           onOpenWallpaperSelector: ce,
           onOpenCalendar: pe,
           onOpenClientPortal: openClientPortal,
+          activeClient: activeClient,
           currentWallpaperName: zu.find((e) => e.url === t)?.name || `Custom`,
         }),
         (0, H.jsx)(`div`, {
@@ -11211,8 +11258,12 @@ var Au = [
                             Ud,
                             {
                               id: `notes-window`,
-                              title: `دفترچه یادداشت، ایده‌ها و طوفان فکری • Creativity Juice Notes`,
-                              subtitle: `فضای اختصاصی کارفرما و تیم برای ثبت ایده‌ها، سناریوها، چک‌لیست و بریف`,
+                              title: activeClient
+                                ? `دفترچه یادداشت‌ها و سناریوها • ${activeClient.brandName}`
+                                : `دفترچه یادداشت، ایده‌ها و طوفان فکری • Creativity Juice Notes`,
+                              subtitle: activeClient
+                                ? `فضای اختصاصی یادداشت‌ها و سناریوهای ${activeClient.brandName} (کارفرما: ${activeClient.ownerName})`
+                                : `فضای اختصاصی کارفرما و تیم برای ثبت ایده‌ها، سناریوها، چک‌لیست و بریف`,
                               onClose: () => E(r.id),
                               zIndex: r.zIndex,
                               onFocus: () => T(r.id),
@@ -11304,8 +11355,12 @@ var Au = [
                                         Ud,
                                         {
                                           id: `calendar-window`,
-                                          title: `تقویم محتوایی و برنامه‌ریزی سوشال مدیا • Creativity Juice`,
-                                          subtitle: `برنامه‌ریزی، زمان‌بندی و انتشار محتوای اینستاگرام، لینکدین و یوتیوب`,
+                                          title: activeClient
+                                            ? `تقویم محتوای اختصاصی • ${activeClient.brandName}`
+                                            : `تقویم محتوایی و برنامه‌ریزی سوشال مدیا • Creativity Juice`,
+                                          subtitle: activeClient
+                                            ? `برنامه‌ریزی، زمان‌بندی و انتشار محتوای اختصاصی برای برند ${activeClient.brandName}`
+                                            : `برنامه‌ریزی، زمان‌بندی و انتشار محتوای اینستاگرام، لینکدین و یوتیوب`,
                                           onClose: () => E(r.id),
                                           zIndex: r.zIndex,
                                           onFocus: () => T(r.id),

@@ -165,3 +165,91 @@ export function addClientMessage(clientId: string, author: string, message: stri
 export function resetWorkspacesToDefault() {
   saveClientWorkspaces(INITIAL_CLIENT_WORKSPACES);
 }
+
+export function getActiveClient(): ClientWorkspace | null {
+  const id = getActiveClientId();
+  if (!id) return null;
+  return getClientById(id);
+}
+
+export function getScopedCalendarStorageKey(clientId?: string | null): string {
+  const id = clientId !== undefined ? clientId : getActiveClientId();
+  return id ? `cj_content_calendar_events_v2_${id}` : 'cj_content_calendar_events_v2';
+}
+
+export function getScopedNotesStorageKey(clientId?: string | null): string {
+  const id = clientId !== undefined ? clientId : getActiveClientId();
+  return id ? `creativity_juice_notes_v2_${id}` : 'creativity_juice_notes_v2';
+}
+
+export function getClientInitialCalendarItems(client: ClientWorkspace) {
+  if (!client.calendar || client.calendar.length === 0) return [];
+  return client.calendar.map((post) => {
+    let status: 'idea' | 'in_progress' | 'ready' | 'published' = 'ready';
+    if (post.status === 'published') {
+      status = 'published';
+    } else if (post.status === 'in-progress' || post.status === 'review') {
+      status = 'in_progress';
+    } else {
+      status = 'ready';
+    }
+
+    return {
+      id: `cal-${post.id}`,
+      title: post.title,
+      theme: client.category,
+      platform: (post.platform === 'instagram' || post.platform === 'linkedin' || post.platform === 'youtube' || post.platform === 'website')
+        ? post.platform
+        : ('instagram' as const),
+      format: (post.format === 'reels' || post.format === 'carousel' || post.format === 'story' || post.format === 'video' || post.format === 'article')
+        ? post.format
+        : ('reels' as const),
+      date: post.scheduledDate,
+      time: '18:30',
+      status,
+      author: client.projectLead || 'تیم استودیو',
+      captionDraft: post.captionDraft,
+      cta: 'ثبت نظر یا مشاوره در دایرکت',
+      notes: `محتوای اختصاصی برنامه‌ریزی‌شده برای کارفرما (${client.brandName})`,
+    };
+  });
+}
+
+export function getClientInitialNotes(client: ClientWorkspace) {
+  const now = new Date();
+  const nowFa = new Intl.DateTimeFormat('fa-IR', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(now);
+
+  return [
+    {
+      id: `note-${client.slug}-1`,
+      title: `بریف و هویت اختصاصی: ${client.brandName}`,
+      category: 'content' as const,
+      content: `خلاصه اهداف پروژه و استراتژی محتوا:\n\n• حوزه فعالیت: ${client.category}\n• مدیر پروژه در استودیو: ${client.projectLead} (${client.projectLeadRole})\n• تاریخ انعقاد قرارداد: ${client.contractDate}\n• تارگت تحویل نهایی: ${client.deliveryDate}\n\nچشم‌انداز و پیام محوری:\n${client.scopeSummary}`,
+      isPinned: true,
+      color: 'amber' as const,
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
+      persianDate: nowFa,
+      tags: ['هویت برند', 'استراتژی', client.brandName],
+    },
+    {
+      id: `note-${client.slug}-2`,
+      title: `سناریو و چک‌لیست کمپین برای ${client.ownerName}`,
+      category: 'script' as const,
+      content: `نکات کلیدی برای بازبینی و جلسات هفتگی با تیم استودیو:\n\n۱. بررسی خروجی‌های ویدیویی در میز تحویل پورتال کارفرما.\n۲. بازبینی زمان‌بندی ریلزها و پست‌های اینستاگرام در تقویم محتوا.\n۳. ارسال بازخوردها و درخواست اصلاحات با ذکر تایم‌کد دقیق ویدیو.\n۴. جهت هماهنگی فوری می‌توانید در تب گفتگو پیام بگذارید.`,
+      isPinned: false,
+      color: 'rose' as const,
+      createdAt: new Date(now.getTime() - 86400000).toISOString(),
+      updatedAt: now.toISOString(),
+      persianDate: nowFa,
+      tags: ['چک‌لیست', 'جلسات', 'سناریو'],
+    },
+  ];
+}
+
