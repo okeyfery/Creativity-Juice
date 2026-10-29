@@ -561,7 +561,7 @@ export const TeamManifestoTab: React.FC<TeamManifestoTabProps> = ({
                     required
                     value={memberForm.name || ''}
                     onChange={(e) => setMemberForm({ ...memberForm, name: e.target.value })}
-                    placeholder="مثال: کامیار آریا"
+                    placeholder="مثال: فریدون یوسف زاده"
                     className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500"
                   />
                 </div>

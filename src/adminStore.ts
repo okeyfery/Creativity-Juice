@@ -8,6 +8,7 @@
 import { addToTrash } from './trashStore';
 import { PORTFOLIO_CASE_STUDIES, CaseStudy } from './PortfolioGallery';
 import { INITIAL_PROJECTS, MasterProjectItem } from './data/projectsData';
+import { INITIAL_TEAM } from './data/teamData';
 
 export interface ProjectItem {
   id: string;
@@ -142,7 +143,7 @@ const STORAGE_KEYS = {
   MEDIA: 'cj_studio_media_v3',
   SETTINGS: 'cj_studio_settings_v3',
   SERVICES: 'cj_studio_services_v3',
-  TEAM: 'cj_studio_team_v3',
+  TEAM: 'cj_studio_team_v4',
   MANIFESTO: 'cj_studio_manifesto_v3',
 };
 
@@ -776,265 +777,31 @@ export function deleteService(id: string): void {
 // Team Members & Dossier CMS
 // -------------------------------------------------------------
 
-export const SEED_TEAM: TeamMemberItem[] = [
-  {
-    id: "member-01",
-    name: "آرشام کاویانی",
-    nameEn: "Arsham Kavyani",
-    role: "مدیر ارشد خلاقیت و کنسلیری برند",
-    roleEn: "Executive Creative Director & Brand Counselor",
-    department: "مشاوره ارشد و کنسلیری",
-    trackCode: "TRACK 04 // STRATEGIC COUNSEL",
-    initials: "AK",
-    bio: "بنیان‌گذار رویکرد استراتژیک در استودیو؛ متخصص پالایش زوائد برند، بازآفرینی هویت و هدایت کمپین‌های جریان‌ساز برای کسب‌وکارهای پرچمدار.",
-    experience: "بیش از ۱۲ سال هدایت خلاقیت و تدوین کمپین‌های برند برای هلدینگ‌های صنعتی، سرمایه‌گذاری و پزشکی",
-    philosophy: "«خلاقیت اصیل یعنی شجاعت حذف کردن؛ هر چه پیام خلاصه‌تر و قاب بسته‌تر باشد، نفوذ آن در ذهن کارفرما عمیق‌تر است.»",
-    specialties: [
-      "کنسلیری و همراهی هیئت مدیره (Fractional CD)",
-      "عارضه‌یابی و بازآفرینی استراتژی هویت",
-      "فیلتر کردن تصمیمات اشتباه مارکتینگ",
-    ],
-    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop",
-    projectRoles: [
-      {
-        projectId: "yousefzadeh-real-estate",
-        projectTitle: "گروه مشاوره سرمایه‌گذاری ملکی یوسف‌زاده",
-        client: "گروه سرمایه‌گذاری یوسف‌زاده",
-        roleInProject: "مدیر ارشد خلاقیت و استراتژیست کمپین فروش",
-        year: "۱۴۰۳",
-        keyDeliverables: ["تدوین مانیفست بنیادین برند", "معماری کمپین چندمرحله‌ای جذب سرمایه‌گذار"],
-        impact: "+۳۱۰٪ رشد در جذب سرمایه‌گذاران رده‌بالا",
-        coverImage: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85",
-      },
-      {
-        projectId: "gogona-industrial",
-        projectTitle: "تیزر صنعتی شرکت گوگونا",
-        client: "شرکت صنعتی گوگونا",
-        roleInProject: "مدیر هنری و ناظر ارشد تولید فیلم صنعتی",
-        year: "۱۴۰۲",
-        keyDeliverables: ["کانسپت ابهت کارخانه‌ای", "طراحی خط داستانی اکران بین‌المللی"],
-        impact: "انعقاد ۳ قرارداد صادراتی پس از پخش تیزر",
-        coverImage: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=85",
-      },
-      {
-        projectId: "go-sport-music",
-        projectTitle: "فروشگاه Go Sport • موزیک تبلیغاتی",
-        client: "فروشگاه Go Sport",
-        roleInProject: "استراتژیست هویت صوتی و سونیک برندینگ",
-        year: "۱۴۰۳",
-        keyDeliverables: ["تدوین امضای شنیداری برند", "نظارت بر تولید موتیف صوتی"],
-        impact: "پخش در ۲۵ شعبه فروشگاهی و تیزرهای اسپانسرینگ",
-        coverImage: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=85",
-      },
-    ],
-  },
-  {
-    id: "member-02",
-    name: "تارا مهرگان",
-    nameEn: "Tara Mehregan",
-    role: "معمار ارشد هویت و سیستم‌های بصری",
-    roleEn: "Head of Brand Architecture & Design",
-    department: "معماری و هویت برند",
-    trackCode: "TRACK 01 // BRAND IDENTITY",
-    initials: "TM",
-    bio: "طراح سیستم‌های گریدبندی هندسی و تایپوگرافی اصیل. تخصص او در پیوند زدن ظرافت بصری ادیتوریال با معماری مهندسی‌شده است.",
-    experience: "۱۰ سال تجربه طراحی دیزاین سیستم، بسته‌بندی لوکس و کتابچه‌های راهنمای برند",
-    philosophy: "«سیستم بصری موفق شبیه یک معماری بی‌نقص است؛ هیچ جزئی در آن تزئینی و بی‌هدف نیست.»",
-    specialties: [
-      "طراحی سیستم‌های جامع هویت بصری",
-      "معماری تایپوگرافی اختصاصی و فونت‌ها",
-      "دیزاین پکیجینگ و معرفی محصول",
-      "تدوین کتابچه جامع برند (Master Brand Book)",
-    ],
-    photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop",
-    projectRoles: [
-      {
-        projectId: "yousefzadeh-real-estate",
-        projectTitle: "گروه مشاوره سرمایه‌گذاری ملکی یوسف‌زاده",
-        client: "گروه سرمایه‌گذاری یوسف‌زاده",
-        roleInProject: "معمار هویت بصری، لوگوتایپ و گایدلاین رنگ",
-        year: "۱۴۰۳",
-        keyDeliverables: ["طراحی کامل لوگوتایپ و مونوگرام", "کتابچه جامع هویت بصری و متریال لوکس"],
-        impact: "ایجاد پرستیژ ممتاز در بازار املاک سرمایه‌گذاری",
-        coverImage: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85",
-      },
-      {
-        projectId: "ermia-teb-medical",
-        projectTitle: "ارمیا طب • تیزر معرفی محصول تجهیزات پزشکی",
-        client: "شرکت پزشکی ارمیا طب",
-        roleInProject: "آرت‌دایرکتور معرفی محصول و رندرهای اپتیکال",
-        year: "۱۴۰۳",
-        keyDeliverables: ["کانسپت استودیوی کلین‌روم", "گرافیک‌های معرفی قطعات مهندسی پزشکی"],
-        impact: "ثبت سفارش ۳۵ دستگاه در هفته اول رونمایی",
-        coverImage: "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=85",
-      },
-      {
-        projectId: "sepanja-tourism",
-        projectTitle: "برند سپنجا • موشن دیزاین گردشگری",
-        client: "سامانه اقامتگاه سپنجا",
-        roleInProject: "طراح دیزاین سیستم موشن و گرافیک‌های ویدئویی",
-        year: "۱۴۰۳",
-        keyDeliverables: ["پکیج موشن‌گرافیک‌های داینامیک سفر", "تایپوگرافی متحرک سوشال"],
-        impact: "+۳۵۰٪ افزایش شیر و اشتراک‌گذاری ریلزها",
-        coverImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85",
-      },
-    ],
-  },
-  {
-    id: "member-03",
-    name: "مانی راد",
-    nameEn: "Mani Rad",
-    role: "کارگردان تصویر و سینمای تجاری",
-    roleEn: "Director of Cinema & Commercial Motion",
-    department: "سینما، مد و محتوای شاخص",
-    trackCode: "TRACK 02 // CINEMA & VISUALS",
-    initials: "MR",
-    bio: "فیلم‌ساز و راوی سینمایی محصولات و برندها. مانی زبان تصویر را از حد تیزرهای کلیشه‌ای فراتر برده و آثاری اثرگذار خلق می‌کند.",
-    experience: "کارگردانی بیش از ۴۰ تیزر تجاری، فیلم‌های صنعتی و ریلزهای پرمیوم",
-    philosophy: "«دوربین وسیله ثبت نیست؛ قلم‌موی انتقال حس است. هر فریم باید راوی شخصیتی باشد که کلمات نمی‌توانند بیان کنند.»",
-    specialties: [
-      "سناریونویسی و کارگردانی فیلم‌های تبلیغاتی",
-      "اصلاح رنگ سینمایی و طراحی استایل بصری",
-      "تصویربرداری حرفه‌ای با دوربین‌های سینمایی",
-      "هدایت ریتینرهای محتوای ویدیویی شاخص",
-    ],
-    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&auto=format&fit=crop",
-    projectRoles: [
-      {
-        projectId: "dr-sadegh-peiravi",
-        projectTitle: "دکتر صادق پیروی • پزشک زیبایی",
-        client: "کلینیک زیبایی دکتر صادق پیروی",
-        roleInProject: "تصویربردار اختصاصی، کارگردان محتوا و تدوینگر ارشد",
-        year: "۱۴۰۳",
-        keyDeliverables: ["تصویربرداری سینمایی با نورپردازی کلینیکال", "ادیت پریمیوم ریلزهای تخصصی زیبایی"],
-        impact: "+۲۴۰٪ افزایش درخواست وقت مشاوره و وایرال شدن ویدیوها",
-        coverImage: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=85",
-      },
-      {
-        projectId: "ghellak-tala",
-        projectTitle: "قلک طلا • آموزش اقتصادی (خسروی‌فر)",
-        client: "آکادمی قلک طلا",
-        roleInProject: "کارگردان ضبط استودیویی و طراح سبک ادیت پریمیوم",
-        year: "۱۴۰۳",
-        keyDeliverables: ["ستاپ نور و تصویر استودیویی", "تدوین ریتمیک ویدیوهای آموزش مالی"],
-        impact: "بیش از ۵ میلیون ایمپرشن ماهانه",
-        coverImage: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=85",
-      },
-      {
-        projectId: "kian-kavyani-real-estate",
-        projectTitle: "مشاوره املاک کیان کاویانی",
-        client: "مشاوره املاک کیان کاویانی",
-        roleInProject: "تصویربردار معماری، هلی‌شات و تدوینگر ریلز املاک",
-        year: "۱۴۰۳",
-        keyDeliverables: ["تصویربرداری هوایی و گیمبال از پنت‌هاوس‌ها", "تورهای ویدئویی جذاب ملکی"],
-        impact: "فروش ۳ واحد لوکس مستقیماً از طریق ویدیوهای اینستاگرام",
-        coverImage: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=85",
-      },
-    ],
-  },
-  {
-    id: "member-04",
-    name: "سهراب فرزام",
-    nameEn: "Sohrab Farzam",
-    role: "مدیر پرفورمنس مارکتینگ و رشد",
-    roleEn: "Head of Growth & Performance Marketing",
-    department: "مارکتینگ فرهنگی و کمپین‌ها",
-    trackCode: "TRACK 03 // CAMPAIGNS & ACTIVATIONS",
-    initials: "SF",
-    bio: "متخصص داده، نرخ تبدیل و مقیاس‌پذیری تبلیغات. او با رویکرد تحلیلی تضمین می‌کند که محتواهای تولیدی با بالاترین بازدهی سرمایه‌گذاری به فروش منجر شوند.",
-    experience: "مدیریت کمپین‌های تبلیغاتی پرچمدار و بهینه‌سازی فانل‌های فروش",
-    philosophy: "«خلاقیت بدون داده کور است، و داده بدون خلاقیت کرولال. ترکیب این دو، کلید تسخیر بازار است.»",
-    specialties: [
-      "طراحی فانل‌های پرفورمنس و تبلیغات هدفمند",
-      "بهینه‌سازی نرخ تبدیل و هوک‌های ویدیویی",
-      "کمپین‌های فروش ملکی و جذب لید",
-      "استراتژی بازگشت مشتری و LTV",
-    ],
-    photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=800&auto=format&fit=crop",
-    projectRoles: [
-      {
-        projectId: "yousefzadeh-real-estate",
-        projectTitle: "گروه مشاوره سرمایه‌گذاری ملکی یوسف‌زاده",
-        client: "گروه سرمایه‌گذاری یوسف‌زاده",
-        roleInProject: "مدیر پرفورمنس و فانل کمپین جذب سرمایه‌گذار",
-        year: "۱۴۰۳",
-        keyDeliverables: ["مدیریت تارگتینگ کمپین فروش ملکی", "بهینه‌سازی لندینگ و نرخ تبدیل"],
-        impact: "ثبت رکورد فروش در فاز نخست کمپین",
-        coverImage: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85",
-      },
-      {
-        projectId: "ghellak-tala",
-        projectTitle: "قلک طلا • آموزش اقتصادی",
-        client: "آکادمی قلک طلا",
-        roleInProject: "استراتژیست رشد و بهینه‌سازی تعامل ریلزها",
-        year: "۱۴۰۳",
-        keyDeliverables: ["آنالیز هوک‌های آغازین ویدیو", "افزایش واچ‌تایم و اشتراک‌گذاری"],
-        impact: "رشد ۲۰۰ هزار فالوور ارگانیک",
-        coverImage: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=85",
-      },
-    ],
-  },
-  {
-    id: "member-05",
-    name: "دلنواز کیان",
-    nameEn: "Delnavaz Kian",
-    role: "مدیر رویدادها و پیوندهای فرهنگی",
-    roleEn: "Director of Cultural Collabs & Events",
-    department: "مارکتینگ فرهنگی و کمپین‌ها",
-    trackCode: "TRACK 03 // CAMPAIGNS & ACTIVATIONS",
-    initials: "DK",
-    bio: "معمار پل‌های ارتباطی میان برندها و مخاطبان. دلنواز محتواها و رویدادهای تجربی را به نحوی کیوریت می‌کند که به ترند اول رسانه‌ها تبدیل شوند.",
-    experience: "کیوریتور رویدادهای لانچ، کمپین‌های وایرال و هدایت پروژه‌های مشترک برندها",
-    philosophy: "«برندهای ماندگار فقط خدمت ارائه نمی‌دهند؛ آن‌ها خاطرات جمعی و هویت خلق می‌کنند.»",
-    specialties: [
-      "پیوند برندها با اینفلوئنسرها و چهره‌های معتبر",
-      "طراحی کمپین‌های چریکی و وایرال سوشال",
-      "مدیریت تقویم انتشار و ارتباط با مخاطبان",
-      "سناریونویسی محتوای تعاملی استوری",
-    ],
-    photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop",
-    projectRoles: [
-      {
-        projectId: "sepanja-tourism",
-        projectTitle: "برند سپنجا • موشن دیزاین گردشگری",
-        client: "سامانه اقامتگاه سپنجا",
-        roleInProject: "مدیر کمپین تعاملی سفر و سناریونویسی استوری‌ها",
-        year: "۱۴۰۳",
-        keyDeliverables: ["طراحی چالش‌های تعاملی سفر", "سناریوی معرفی اقامتگاه‌های بکر"],
-        impact: "رشد چشمگیر رزرواسیون آنلاین",
-        coverImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85",
-      },
-      {
-        projectId: "dentino-clinic",
-        projectTitle: "کلینیک دنتینو • تولید محتوا و ادیت",
-        client: "مجموعه دندانپزشکی دنتینو",
-        roleInProject: "ناظر سناریوهای درمانی و تعامل با بیماران",
-        year: "۱۴۰۳",
-        keyDeliverables: ["سناریونویسی پاسخ به سوالات رایج دندانپزشکی", "روایت‌های آرامش‌بخش درمان"],
-        impact: "+۱۶۰٪ رشد نوبت‌دهی آنلاین",
-        coverImage: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=1200&q=85",
-      },
-    ],
-  },
-];
+export const SEED_TEAM: TeamMemberItem[] = INITIAL_TEAM as unknown as TeamMemberItem[];
 
 export function getTeamMembers(): TeamMemberItem[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.TEAM);
     if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        // Automatically populate seed projectRoles if missing from older store version
-        const enriched = parsed.map((m: TeamMemberItem) => {
-          if (!m.projectRoles || m.projectRoles.length === 0) {
-            const seedMatch = SEED_TEAM.find((s) => s.id === m.id);
-            if (seedMatch && seedMatch.projectRoles) {
-              return { ...m, projectRoles: seedMatch.projectRoles };
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        // Automatically upgrade if cache still has previous dummy members
+        const hasDummy = parsed.some((m: any) => m && (m.name === 'کامیار آریا' || m.name === 'آرشام کاویانی' || m.id === 'member-01' || m.id === 'member-02'));
+        if (!hasDummy) {
+          // Automatically populate seed projectRoles if missing from older store version
+          const enriched = parsed.map((m: TeamMemberItem) => {
+            if (!m.projectRoles || m.projectRoles.length === 0) {
+              const seedMatch = SEED_TEAM.find((s) => s.id === m.id);
+              if (seedMatch && seedMatch.projectRoles) {
+                return { ...m, projectRoles: seedMatch.projectRoles };
+              }
             }
-          }
-          return m;
-        });
-        return enriched;
+            return m;
+          });
+          return enriched;
+        }
+      } else if (Array.isArray(parsed) && parsed.length === 0) {
+        return [];
       }
     }
   } catch (e) {
@@ -1098,7 +865,7 @@ export const SEED_MANIFESTO: ManifestoItem[] = [
     titleEn: 'Distillation Over Accumulation',
     description: 'ما معتقدیم اضافه کردن المان‌های شلوغ، راهکار هویت نیست. هنر واقعی در حذف تمام اضافات و دستیابی به خالص‌ترین بیان هویتی است که هر مخاطبی با یک نگاه آن را به خاطر بسپارد.',
     quote: '«برندی که تلاش کند همه مخاطبان را راضی نگه دارد، در نهایت هیچ‌کس را عمیقاً تحت تأثیر قرار نمی‌دهد. تمایز واقعی نیازمند شهامتِ حذف زوائد است.»',
-    author: 'کامیار آریا — بنیان‌گذار استودیو',
+    author: 'فریدون یوسف زاده — مدیر هنری و ایده پرداز',
   },
   {
     code: '02',
@@ -1106,7 +873,7 @@ export const SEED_MANIFESTO: ManifestoItem[] = [
     titleEn: 'Artistic Mastery Meets Commercial Efficiency',
     description: 'زیبایی‌شناسی بدون هدف تجاری، هنر محض است و بازاریابی بدون سلیقه، آلودگی بصری. استودیوی ما نقطه تلاقی وقار زیبایی‌شناختی و اثربخشی مالی در بازار است.',
     quote: '«سیستم بصری موفق شبیه یک معماری بی‌نقص است؛ هیچ جزئی در آن تزئینی و بی‌هدف نیست و هر خط، وزنی در تعادل کل دارد.»',
-    author: 'تارا مهرگان — معمار ارشد هویت',
+    author: 'علیرضا شیعه زاده — طراح UI/UX و مشاور هنری',
   },
   {
     code: '03',
@@ -1114,7 +881,7 @@ export const SEED_MANIFESTO: ManifestoItem[] = [
     titleEn: 'Singular Authorship & Senior Ownership',
     description: 'پروژه‌ها هرگز به دست کارآموزان یا زنجیره‌های پیمانکاری ناشناس سپرده نمی‌شوند. تک‌تک خروجی‌ها تحت هدایت مستقیم اعضای ارشد استودیو مهندسی و نظارت می‌شوند.',
     quote: '«دوربین وسیله ثبت نیست؛ قلم‌موی انتقال حس است. هر فریم باید راوی شخصیتی باشد که کلمات نمی‌توانند بیان کنند.»',
-    author: 'مانی راد — کارگردان تصویر و سینما',
+    author: 'اسماعیل سامانی پور — کارگردان و تصویربردار',
   },
 ];
 
