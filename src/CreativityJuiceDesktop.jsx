@@ -1143,9 +1143,6 @@ var Au = [
                               ? (0, H.jsxs)(`div`, {
                                   className: `w-full h-full rounded-lg sm:rounded-xl bg-white border border-neutral-300/90 shadow-2xs flex flex-col items-center justify-center select-none relative overflow-hidden group-hover:border-neutral-900 group-hover:shadow-xs transition-all`,
                                   children: [
-                                    (0, H.jsx)(`div`, {
-                                      className: `absolute top-0 inset-x-0 h-0.5 bg-neutral-900`,
-                                    }),
                                     (0, H.jsxs)(`svg`, {
                                       className: `w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-800 transition-transform group-hover:scale-105`,
                                       viewBox: `0 0 24 24`,
