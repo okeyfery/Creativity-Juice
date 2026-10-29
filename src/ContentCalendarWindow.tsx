@@ -97,98 +97,19 @@ const STATUS_CONFIG = {
   published: { label: 'منتشر شده', color: 'bg-emerald-50 text-emerald-800 border-emerald-300', dot: 'bg-emerald-500' },
 };
 
-// Initial realistic editorial calendar entries
-const SEED_ITEMS: ContentItem[] = [
-  {
-    id: 'post-1',
-    title: 'ریلز: ۳ خطای مهلک در معماری هویت برند',
-    theme: 'معماری و استراتژی برند',
-    platform: 'instagram',
-    format: 'reels',
-    date: '2026-10-24',
-    time: '19:30',
-    status: 'published',
-    author: 'آرت دایرکتور استودیو',
-    captionDraft: 'چرا لوگو اولین گام برندینگ نیست؟ در این ویدئو به تفاوت هویت پایدار و تزیینات موقت می‌پردازیم...',
-    cta: 'مطالعه پرونده کامل در وب‌سایت',
-    notes: 'تدوین همراه با ساند دیزاین آنالوگ و تمپلیت فونت یکان',
-  },
-  {
-    id: 'post-2',
-    title: 'مقاله تحلیلی: چرا برندهای لوکس از رنگ آبی سازمانی فرار می‌کنند؟',
-    theme: 'روانشناسی رنگ و پرستیژ',
-    platform: 'linkedin',
-    format: 'article',
-    date: '2026-10-25',
-    time: '11:00',
-    status: 'ready',
-    author: 'استراتژیست محتوا',
-    captionDraft: 'کالبدشکافی هویت بصری ۲۵ برند مدرن و چرایی حرکت به سمت پالت‌های مونوکروم و خاکی گرم...',
-    cta: 'کامنت بگذارید: پالت برند شما چه پیامی به مخاطب می‌دهد؟',
-  },
-  {
-    id: 'post-3',
-    title: 'استوری تعاملی: انتخاب آرت‌ورک بسته‌بندی عطر Velvet & Rust',
-    theme: 'پشت‌صحنه و پرونده مشتریان',
-    platform: 'instagram',
-    format: 'story',
-    date: '2026-10-26',
-    time: '14:00',
-    status: 'in_progress',
-    author: 'تیم دیزاین پکیجینگ',
-    captionDraft: 'نظرسنجی اسلایدر میان ۲ بافت متالیک و کاغذ دست‌ساز سوئیسی',
-    cta: 'رأی دهید: بافت مات یا متالیک؟',
-  },
-  {
-    id: 'post-4',
-    title: 'ویدئوی مستند یوتیوب: پشت‌صحنه ساخت تیزر مد اپکس (Apex Noir)',
-    theme: 'سینما و پروداکشن تصویری',
-    platform: 'youtube',
-    format: 'video',
-    date: '2026-10-28',
-    time: '20:00',
-    status: 'in_progress',
-    author: 'کارگردان و آرت دایرکتور',
-    captionDraft: 'از استوری‌بورد تا فیلم‌برداری با لنزهای آنامورفیک در لوکیشن کویر...',
-    cta: 'سابسکرایب برای تماشای قسمت بعد',
-  },
-  {
-    id: 'post-5',
-    title: 'ترد: ۱۰ قانون طلایی برای نگارش بریف شفاف پیش از شروع پروژه',
-    theme: 'تعامل با کلاینت و شفافیت کار',
-    platform: 'x',
-    format: 'thread',
-    date: '2026-10-29',
-    time: '16:00',
-    status: 'idea',
-    author: 'مدیر ارتباطات استودیو',
-    captionDraft: '۱/ یک بریف مبهم ۱۰ برابر پرهزینه‌تر از یک استراتژی دقیق است...',
-  },
-  {
-    id: 'post-6',
-    title: 'پست اسلایدی: دیزاین سیستم ادیتوریال — راز چیدمان سوئیسی',
-    theme: 'آموزش تخصصی دیزاین',
-    platform: 'instagram',
-    format: 'carousel',
-    date: '2026-10-31',
-    time: '18:45',
-    status: 'idea',
-    author: 'تیم تایپوگرافی',
-    captionDraft: 'چگونه فضاهای سفید (Negative Space) باعث آرامش چشم مخاطب در میان هیاهوی اینستاگرام می‌شوند؟',
-  },
-  {
-    id: 'post-7',
-    title: 'پادکست کست‌باکس: گفتگو با مدیر مارکتینگ برند نکتار درباره ری‌برندینگ',
-    theme: 'پادکست تخصصی بیزنس',
-    platform: 'podcast',
-    format: 'article',
-    date: '2026-11-03',
-    time: '10:00',
-    status: 'idea',
-    author: 'میزبان پادکست استودیو',
-    captionDraft: 'اپیزود چهارم: چطور پس از ۵ سال فعالیت هویت برندمان را بدون از دست دادن مشتریان تغییر دهیم؟',
-  },
-];
+// Clean empty calendar ready for user customization
+export const SEED_ITEMS: ContentItem[] = [];
+
+/**
+ * Helper to get current today date formatted as YYYY-MM-DD
+ */
+export function getTodayIsoDate(): string {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
 
 /**
  * High-precision Persian (Solar Hijri / Shamsi) helper based on native Intl
@@ -256,25 +177,32 @@ interface ContentCalendarWindowProps {
 export const ContentCalendarWindow: React.FC<ContentCalendarWindowProps> = () => {
   const [items, setItems] = useState<ContentItem[]>(() => {
     try {
-      const saved = localStorage.getItem('cj_content_calendar_events');
-      if (saved) return JSON.parse(saved);
+      const saved = localStorage.getItem('cj_content_calendar_events_v2');
+      if (saved !== null) {
+        return JSON.parse(saved);
+      }
+      // Clean up any legacy items
+      localStorage.removeItem('cj_content_calendar_events');
     } catch {}
     return SEED_ITEMS;
   });
+
+  const todayNow = new Date();
+  const todayDateStr = getTodayIsoDate();
 
   const [activeTab, setActiveTab] = useState<'calendar' | 'list'>('calendar');
   const [calendarMode, setCalendarMode] = useState<'dual' | 'persian' | 'gregorian'>('dual');
   const [selectedPlatform, setSelectedPlatform] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
-  const [selectedDate, setSelectedDate] = useState<string>('2026-10-25');
+  const [selectedDate, setSelectedDate] = useState<string>(todayDateStr);
   const [searchTerm, setSearchTerm] = useState('');
 
   // Mobile drawer states
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
-  // Year & Month navigation (default to Oct 2026)
-  const [currentYear, setCurrentYear] = useState(2026);
-  const [currentMonth, setCurrentMonth] = useState(9); // 0-indexed: 9 = October
+  // Year & Month navigation dynamically defaulted to CURRENT date
+  const [currentYear, setCurrentYear] = useState<number>(() => todayNow.getFullYear());
+  const [currentMonth, setCurrentMonth] = useState<number>(() => todayNow.getMonth());
 
   // Modals
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -299,12 +227,12 @@ export const ContentCalendarWindow: React.FC<ContentCalendarWindowProps> = () =>
     return () => window.removeEventListener(CALENDAR_RESTORE_EVENT, handleRestored);
   }, []);
 
-  // New post form state
+  // New post form state (defaults to today's date)
   const [newTitle, setNewTitle] = useState('');
   const [newTheme, setNewTheme] = useState('معماری و هویت برند');
   const [newPlatform, setNewPlatform] = useState<ContentItem['platform']>('instagram');
   const [newFormat, setNewFormat] = useState<ContentItem['format']>('reels');
-  const [newDate, setNewDate] = useState('2026-10-26');
+  const [newDate, setNewDate] = useState(todayDateStr);
   const [newTime, setNewTime] = useState('18:00');
   const [newStatus, setNewStatus] = useState<ContentItem['status']>('idea');
   const [newAuthor, setNewAuthor] = useState('کارفرما / تیم محتوا');
@@ -315,7 +243,7 @@ export const ContentCalendarWindow: React.FC<ContentCalendarWindowProps> = () =>
   // Persist to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem('cj_content_calendar_events', JSON.stringify(items));
+      localStorage.setItem('cj_content_calendar_events_v2', JSON.stringify(items));
     } catch (e) {
       console.error('Failed to save content items:', e);
     }
@@ -370,9 +298,18 @@ export const ContentCalendarWindow: React.FC<ContentCalendarWindowProps> = () =>
   };
 
   const goToToday = () => {
-    setCurrentYear(2026);
-    setCurrentMonth(9);
-    setSelectedDate('2026-10-25');
+    const currentNow = new Date();
+    setCurrentYear(currentNow.getFullYear());
+    setCurrentMonth(currentNow.getMonth());
+    setSelectedDate(getTodayIsoDate());
+  };
+
+  const handleClearAll = () => {
+    setItems([]);
+    localStorage.removeItem('cj_content_calendar_events_v2');
+    localStorage.removeItem('cj_content_calendar_events');
+    setTrashNotification('تمام برنامه‌ها و تسک‌های تقویم پاکسازی شدند.');
+    setTimeout(() => setTrashNotification(null), 3500);
   };
 
   // Month names
@@ -477,6 +414,17 @@ export const ContentCalendarWindow: React.FC<ContentCalendarWindowProps> = () =>
   const publishedCount = items.filter((i) => i.status === 'published').length;
 
   const activeFiltersCount = (selectedPlatform !== 'all' ? 1 : 0) + (selectedStatus !== 'all' ? 1 : 0);
+
+  const todayPersianDisplay = useMemo(() => {
+    const n = new Date();
+    const info = getPersianDateInfo(n.getFullYear(), n.getMonth(), n.getDate());
+    const enMonth = new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    }).format(n);
+    return `امروز: ${info.fullWithDay} • ${enMonth}`;
+  }, []);
 
   return (
     <div className="flex flex-col h-full max-h-[85vh] sm:max-h-[82vh] bg-[#FAF8F5] text-neutral-900 font-sans select-none overflow-hidden text-right" dir="rtl">
@@ -687,6 +635,16 @@ export const ContentCalendarWindow: React.FC<ContentCalendarWindowProps> = () =>
             >
               <span>{copySuccess ? '✓ کپی شد!' : '📋 خروجی'}</span>
             </button>
+
+            {items.length > 0 && (
+              <button
+                onClick={handleClearAll}
+                className="px-2.5 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold flex items-center gap-1 cursor-pointer transition-all"
+                title="پاکسازی تمام برنامه‌ها"
+              >
+                <span>🗑️ پاکسازی همه</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -760,7 +718,7 @@ export const ContentCalendarWindow: React.FC<ContentCalendarWindowProps> = () =>
                       </span>
                     </div>
                     <span className="text-[11px] text-neutral-500 font-medium block mt-0.5">
-                      امروز: یکشنبه، ۳ آبان ۱۴۰۵ • Oct 25, 2026
+                      {todayPersianDisplay}
                     </span>
                   </div>
                 </div>
@@ -813,7 +771,7 @@ export const ContentCalendarWindow: React.FC<ContentCalendarWindowProps> = () =>
                   const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
                   const dayPosts = filteredItems.filter((item) => item.date === dateStr);
                   const isSelected = selectedDate === dateStr;
-                  const isToday = dateStr === '2026-10-25';
+                  const isToday = dateStr === getTodayIsoDate();
 
                   const shamsiInfo = getPersianDateInfo(currentYear, currentMonth, dayNum);
 
@@ -1086,46 +1044,70 @@ export const ContentCalendarWindow: React.FC<ContentCalendarWindowProps> = () =>
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {filteredItems.map((post) => {
-                const pCfg = PLATFORM_CONFIG[post.platform];
-                const sCfg = STATUS_CONFIG[post.status];
-                const shamsi = formatSyncedDate(post.date);
+            {filteredItems.length === 0 ? (
+              <div className="p-8 sm:p-12 text-center rounded-2xl bg-white border border-neutral-200/90 shadow-2xs space-y-3">
+                <div className="w-16 h-16 mx-auto rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-3xl">
+                  🗓️
+                </div>
+                <h4 className="text-base font-black text-neutral-900">
+                  تقویم محتوایی خالی و آماده شخصی‌سازی است
+                </h4>
+                <p className="text-xs text-neutral-500 max-w-md mx-auto leading-relaxed">
+                  هیچ تسک یا برنامه‌ای در این لیست وجود ندارد. می‌توانید برای هر روز و هر پلتفرم (اینستاگرام، لینکدین، یوتیوب، وبلاگ و ...) برنامه‌ریزی اختصاصی خود را ثبت کنید.
+                </p>
+                <button
+                  onClick={() => {
+                    setNewDate(selectedDate);
+                    setIsAddModalOpen(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-neutral-950 font-bold text-xs shadow-sm cursor-pointer transition-all active:scale-95"
+                >
+                  <span>+</span>
+                  <span>افزودن اولین برنامه محتوایی</span>
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {filteredItems.map((post) => {
+                  const pCfg = PLATFORM_CONFIG[post.platform];
+                  const sCfg = STATUS_CONFIG[post.status];
+                  const shamsi = formatSyncedDate(post.date);
 
-                return (
-                  <div
-                    key={post.id}
-                    onClick={() => setInspectItem(post)}
-                    className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-neutral-200 bg-white hover:border-amber-400 hover:shadow-sm transition-all cursor-pointer flex flex-col justify-between space-y-2.5"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-2 mb-1.5">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${pCfg.lightBg}`}>
-                          {pCfg.icon} {pCfg.name}
-                        </span>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border flex items-center gap-1 ${sCfg.color}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${sCfg.dot}`} />
-                          {sCfg.label}
-                        </span>
+                  return (
+                    <div
+                      key={post.id}
+                      onClick={() => setInspectItem(post)}
+                      className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-neutral-200 bg-white hover:border-amber-400 hover:shadow-sm transition-all cursor-pointer flex flex-col justify-between space-y-2.5"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between gap-2 mb-1.5">
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${pCfg.lightBg}`}>
+                            {pCfg.icon} {pCfg.name}
+                          </span>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border flex items-center gap-1 ${sCfg.color}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${sCfg.dot}`} />
+                            {sCfg.label}
+                          </span>
+                        </div>
+
+                        <h4 className="text-xs sm:text-sm font-extrabold text-neutral-900 line-clamp-2 leading-snug">
+                          {post.title}
+                        </h4>
+
+                        <div className="mt-1.5 text-[11px] text-neutral-600 line-clamp-2 font-medium">
+                          {post.captionDraft || 'سناریو و کپشن در دست نگارش است...'}
+                        </div>
                       </div>
 
-                      <h4 className="text-xs sm:text-sm font-extrabold text-neutral-900 line-clamp-2 leading-snug">
-                        {post.title}
-                      </h4>
-
-                      <div className="mt-1.5 text-[11px] text-neutral-600 line-clamp-2 font-medium">
-                        {post.captionDraft || 'سناریو و کپشن در دست نگارش است...'}
+                      <div className="pt-2 border-t border-neutral-100 flex items-center justify-between text-[10px] text-neutral-500">
+                        <span className="font-bold text-neutral-800">☀️ {shamsi.persian}</span>
+                        <span className="font-mono text-neutral-400" dir="ltr">{post.date}</span>
                       </div>
                     </div>
-
-                    <div className="pt-2 border-t border-neutral-100 flex items-center justify-between text-[10px] text-neutral-500">
-                      <span className="font-bold text-neutral-800">☀️ {shamsi.persian}</span>
-                      <span className="font-mono text-neutral-400" dir="ltr">{post.date}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
       </div>

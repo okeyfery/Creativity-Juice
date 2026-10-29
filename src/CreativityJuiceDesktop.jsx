@@ -1045,19 +1045,40 @@ var Au = [
                         title: e.name,
                         children: [
                           e.isCalendar
-                            ? (0, H.jsxs)(`div`, {
-                                className: `w-full h-full rounded-lg sm:rounded-xl bg-white border border-neutral-300 shadow-sm flex flex-col overflow-hidden select-none`,
-                                children: [
-                                  (0, H.jsx)(`div`, {
-                                    className: `bg-rose-500 text-white text-[7px] sm:text-[8px] font-black text-center leading-tight py-0.5 font-sans`,
-                                    children: `آبان`,
-                                  }),
-                                  (0, H.jsx)(`div`, {
-                                    className: `flex-1 flex items-center justify-center font-black text-neutral-900 text-xs sm:text-sm font-sans`,
-                                    children: `۳`,
-                                  }),
-                                ],
-                              })
+                            ? (() => {
+                                try {
+                                  let parts = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { month: 'short', day: 'numeric' }).formatToParts(new Date());
+                                  let monthName = parts.find((p) => p.type === 'month')?.value || 'تقویم';
+                                  let dayVal = parts.find((p) => p.type === 'day')?.value || '۱';
+                                  return (0, H.jsxs)(`div`, {
+                                    className: `w-full h-full rounded-lg sm:rounded-xl bg-white border border-neutral-300 shadow-sm flex flex-col overflow-hidden select-none`,
+                                    children: [
+                                      (0, H.jsx)(`div`, {
+                                        className: `bg-rose-500 text-white text-[7px] sm:text-[8px] font-black text-center leading-tight py-0.5 font-sans`,
+                                        children: monthName,
+                                      }),
+                                      (0, H.jsx)(`div`, {
+                                        className: `flex-1 flex items-center justify-center font-black text-neutral-900 text-xs sm:text-sm font-sans`,
+                                        children: dayVal,
+                                      }),
+                                    ],
+                                  });
+                                } catch {
+                                  return (0, H.jsxs)(`div`, {
+                                    className: `w-full h-full rounded-lg sm:rounded-xl bg-white border border-neutral-300 shadow-sm flex flex-col overflow-hidden select-none`,
+                                    children: [
+                                      (0, H.jsx)(`div`, {
+                                        className: `bg-rose-500 text-white text-[7px] sm:text-[8px] font-black text-center leading-tight py-0.5 font-sans`,
+                                        children: `تقویم`,
+                                      }),
+                                      (0, H.jsx)(`div`, {
+                                        className: `flex-1 flex items-center justify-center font-black text-neutral-900 text-xs sm:text-sm font-sans`,
+                                        children: `📅`,
+                                      }),
+                                    ],
+                                  });
+                                }
+                              })()
                             : e.isNotes
                               ? (0, H.jsxs)(`div`, {
                                   className: `w-full h-full rounded-lg sm:rounded-xl bg-gradient-to-b from-[#FFFDF0] to-[#FEF08A] border border-amber-300/90 shadow-xs flex flex-col overflow-hidden select-none p-0.5 sm:p-1 justify-between relative group`,
@@ -1706,7 +1727,17 @@ var Au = [
     ((0, S.useEffect)(() => {
       let e = () => {
         let e = new Date(),
-          t = e.toLocaleDateString(`en-US`, {
+          fa = '';
+        try {
+          fa = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short',
+          }).format(e);
+        } catch {
+          fa = '';
+        }
+        let t = e.toLocaleDateString(`en-US`, {
             weekday: `short`,
             month: `short`,
             day: `numeric`,
@@ -1716,7 +1747,7 @@ var Au = [
             minute: `2-digit`,
             hour12: !1,
           });
-        h(`${t}  ${n}`);
+        h(fa ? `${fa} • ${n}` : `${t}  ${n}`);
       };
       e();
       let t = setInterval(e, 1e3);
