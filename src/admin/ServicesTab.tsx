@@ -99,11 +99,9 @@ export const ServicesTab: React.FC<ServicesTabProps> = ({ showToast }) => {
   };
 
   const handleDelete = (id: string, title: string) => {
-    if (window.confirm(`آیا از انتقال خدمت «${title}» به سطل زباله اطمینان دارید؟`)) {
-      deleteService(id);
-      refreshServices();
-      showToast(`خدمت «${title}» به سطل زباله منتقل شد.`);
-    }
+    deleteService(id);
+    refreshServices();
+    showToast(`خدمت «${title}» به سطل زباله منتقل شد.`);
   };
 
   const handleDuplicate = (srv: ServiceItem) => {

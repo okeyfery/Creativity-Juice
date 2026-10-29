@@ -224,11 +224,9 @@ export const TeamManifestoTab: React.FC<TeamManifestoTabProps> = ({
   };
 
   const handleDeleteMember = (id: string, name: string) => {
-    if (window.confirm(`آیا از انتقال پروفایل «${name}» به سطل زباله اطمینان دارید؟`)) {
-      deleteTeamMember(id);
-      refreshTeam();
-      showToast(`عضو تیم «${name}» به سطل زباله منتقل شد.`);
-    }
+    deleteTeamMember(id);
+    refreshTeam();
+    showToast(`عضو تیم «${name}» به سطل زباله منتقل شد.`);
   };
 
   const handlePhotoUploadFromLaptop = (e: React.ChangeEvent<HTMLInputElement>) => {

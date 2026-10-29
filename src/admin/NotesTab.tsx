@@ -116,21 +116,19 @@ export const NotesTab: React.FC<NotesTabProps> = ({ showToast }) => {
   };
 
   const handleDelete = (note: ClientNoteItem) => {
-    if (window.confirm(`آیا از انتقال یادداشت «${note.title}» به سطل زباله اطمینان دارید؟`)) {
-      addToTrash({
-        originalId: note.id,
-        title: note.title,
-        type: 'note',
-        source: 'دفترچه یادداشت و ایده‌ها',
-        summary: note.content.slice(0, 100),
-        size: `${note.content.length} نویسه`,
-        data: note,
-      });
+    addToTrash({
+      originalId: note.id,
+      title: note.title,
+      type: 'note',
+      source: 'دفترچه یادداشت و ایده‌ها',
+      summary: note.content.slice(0, 100),
+      size: `${note.content.length} نویسه`,
+      data: note,
+    });
 
-      const nextNotes = notes.filter((item) => item.id !== note.id);
-      saveNotesToStorage(nextNotes);
-      showToast(`یادداشت «${note.title}» به سطل زباله منتقل شد.`);
-    }
+    const nextNotes = notes.filter((item) => item.id !== note.id);
+    saveNotesToStorage(nextNotes);
+    showToast(`یادداشت «${note.title}» به سطل زباله منتقل شد.`);
   };
 
   const handleTogglePin = (note: ClientNoteItem) => {

@@ -246,10 +246,8 @@ export default function AdminDashboard({ onExit, onLockAndExit, onSetWallpaper }
   };
 
   const handleDeleteProject = (id: string, title: string) => {
-    if (window.confirm(`آیا از انتقال پروژه «${title}» به سطل زباله اطمینان دارید؟`)) {
-      deleteProject(id);
-      showToast(`پروژه «${title}» به سطل زباله منتقل شد.`);
-    }
+    deleteProject(id);
+    showToast(`پروژه «${title}» به سطل زباله منتقل شد.`);
   };
 
   // -------------------------------------------------------------
@@ -330,10 +328,8 @@ export default function AdminDashboard({ onExit, onLockAndExit, onSetWallpaper }
   };
 
   const handleDeleteMedia = (id: string, title: string) => {
-    if (window.confirm(`آیا از انتقال تصویر «${title}» به سطل زباله اطمینان دارید؟`)) {
-      deleteMediaItem(id);
-      showToast(`تصویر «${title}» به سطل زباله منتقل شد.`);
-    }
+    deleteMediaItem(id);
+    showToast(`تصویر «${title}» به سطل زباله منتقل شد.`);
   };
 
   // -------------------------------------------------------------
