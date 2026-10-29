@@ -6,6 +6,7 @@ import * as React from 'react';
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
 import { motion as ku, AnimatePresence as kc, useDragControls as Du } from 'motion/react';
 import ContentCalendarWindow from './ContentCalendarWindow.tsx';
+import ClientPortalWindow from './ClientPortalWindow.tsx';
 import PortfolioGallery from './PortfolioGallery.tsx';
 import NotesWindow from './NotesWindow.tsx';
 import TrashBinWindow from './TrashBinWindow.tsx';
@@ -78,6 +79,18 @@ var Au = [
       badge: `آرشیو پروژه‌ها`,
       desktopPos: { top: 38, left: 21, mobileTop: 24, mobileLeft: 56 },
       description: `مطالعه و کالبدشکافی کامل پروژه‌ها، هویت برند و تولیدات سینمایی استودیو`,
+    },
+    {
+      id: `folder-client-portal`,
+      name: `پورتال کارفرما`,
+      nameEn: `Client Portal & Workspace`,
+      trackCode: `CLIENT // SECURE WORKSPACE`,
+      deptId: 5,
+      itemCount: 10,
+      iconType: `client`,
+      badge: `ورود و فضای کارفرما`,
+      desktopPos: { top: 61, left: 8.5, mobileTop: 36, mobileLeft: 20 },
+      description: `ورود کارفرمایان به فضای اختصاصی، تاییدیه فایل‌ها، پیشرفت پروژه و تقویم اختصاصی`,
     },
   ],
   ju = [
@@ -428,6 +441,12 @@ var Au = [
       name: `تقویم محتوا`,
       tooltip: `تقویم محتوایی و برنامه‌ریزی سوشال مدیا`,
       isCalendar: true,
+    },
+    {
+      id: `client-portal`,
+      name: `پورتال کارفرما`,
+      tooltip: `ورود به فضای کار اختصاصی کارفرمایان و شرکای تجاری`,
+      isClientPortal: true,
     },
     {
       id: `diagnostic`,
@@ -1115,6 +1134,46 @@ var Au = [
                                     }),
                                   ],
                                 })
+                            : e.isClientPortal
+                              ? (0, H.jsxs)(`div`, {
+                                  className: `w-full h-full rounded-lg sm:rounded-xl bg-white border border-neutral-300/90 shadow-2xs flex flex-col items-center justify-center select-none relative overflow-hidden group-hover:border-neutral-900 group-hover:shadow-xs transition-all`,
+                                  children: [
+                                    (0, H.jsx)(`div`, {
+                                      className: `absolute top-0 inset-x-0 h-0.5 bg-neutral-900`,
+                                    }),
+                                    (0, H.jsxs)(`svg`, {
+                                      className: `w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-800 transition-transform group-hover:scale-105`,
+                                      viewBox: `0 0 24 24`,
+                                      fill: `none`,
+                                      stroke: `currentColor`,
+                                      strokeWidth: `1.75`,
+                                      strokeLinecap: `round`,
+                                      strokeLinejoin: `round`,
+                                      children: [
+                                        (0, H.jsx)(`rect`, {
+                                          width: `20`,
+                                          height: `14`,
+                                          x: `2`,
+                                          y: `7`,
+                                          rx: `2.5`,
+                                        }),
+                                        (0, H.jsx)(`path`, {
+                                          d: `M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2`,
+                                        }),
+                                        (0, H.jsx)(`circle`, {
+                                          cx: `12`,
+                                          cy: `13`,
+                                          r: `1`,
+                                          fill: `currentColor`,
+                                        }),
+                                      ],
+                                    }),
+                                    (0, H.jsx)(`span`, {
+                                      className: `text-[6px] sm:text-[7px] font-bold text-neutral-600 font-sans tracking-tight mt-0.5 leading-none`,
+                                      children: `کارفرما`,
+                                    }),
+                                  ],
+                                })
                             : e.isAdmin
                               ? (0, H.jsxs)(`div`, {
                                   className: `w-full h-full rounded-lg sm:rounded-xl bg-gradient-to-tr from-[#18181B] to-[#27272A] border border-amber-500/60 shadow-md flex flex-col items-center justify-center select-none text-amber-400 group-hover:border-amber-400 transition`,
@@ -1716,6 +1775,7 @@ var Au = [
     onOpenGallery: d,
     onOpenCalendar: peCalendar,
     onOpenAdmin: onAdmin,
+    onOpenClientPortal: onClientPortal,
     isAdminAuth: isAdminSession = !1,
     onPromptAdminLogin: onPromptLogin,
     onOpenManifesto: onManifesto,
@@ -1887,6 +1947,28 @@ var Au = [
                       (0, H.jsx)(`span`, {
                         className: `text-[9px] bg-amber-500/20 text-amber-900 border border-amber-500/30 px-1 py-0.2 rounded font-mono font-bold`,
                         children: isAdminSession ? `CMS` : `قفل 🔒`,
+                      }),
+                    ],
+                  }),
+                  (0, H.jsxs)(`button`, {
+                    onClick: () => {
+                      onClientPortal && onClientPortal();
+                      _(null);
+                    },
+                    className: `w-full text-left px-3 py-1.5 hover:bg-sky-50 transition-colors flex items-center justify-between font-bold text-neutral-800 cursor-pointer`,
+                    children: [
+                      (0, H.jsxs)(`span`, {
+                        className: `flex items-center gap-1.5`,
+                        children: [
+                          (0, H.jsx)(`span`, { children: `💼` }),
+                          (0, H.jsx)(`span`, {
+                            children: `ورود کارفرما (Client Portal)`,
+                          }),
+                        ],
+                      }),
+                      (0, H.jsx)(`span`, {
+                        className: `text-[9px] bg-sky-100 text-sky-800 border border-sky-200 px-1 py-0.2 rounded font-mono font-bold`,
+                        children: `فضای کار`,
                       }),
                     ],
                   }),
@@ -10708,6 +10790,16 @@ var Au = [
                 [...t, { id: e, type: `calendar`, zIndex: n }]
               );
             });
+          } else if (e === `folder-client-portal` || e === `client-portal`) {
+            let e = `client-portal-window`;
+            v((t) => {
+              if (t.find((t) => t.id === e)) return (T(e), t);
+              let n = y + 1;
+              return (
+                b(n),
+                [...t, { id: e, type: `client-portal`, zIndex: n }]
+              );
+            });
           } else
             v((n) => {
               if (n.find((e) => e.id === t)) return (T(t), n);
@@ -10825,6 +10917,15 @@ var Au = [
           return (b(n), [...t, { id: e, type: `calendar`, zIndex: n }]);
         });
       }, [y, T]),
+      openClientPortal = (0, S.useCallback)(() => {
+        W.playWindowOpen();
+        let e = `client-portal-window`;
+        v((t) => {
+          if (t.find((t) => t.id === e)) return (T(e), t);
+          let n = y + 1;
+          return (b(n), [...t, { id: e, type: `client-portal`, zIndex: n }]);
+        });
+      }, [y, T]),
       le = (e) => {
         let t = Lu.find((t) => t.id === e);
         t &&
@@ -10838,6 +10939,8 @@ var Au = [
                 ? D(`folder-track-1`)
                 : t.id === `calendar`
                   ? pe()
+                  : t.id === `client-portal`
+                    ? openClientPortal()
                   : t.id === `calculator`
                     ? re()
                     : t.id === `manifesto`
@@ -10889,6 +10992,8 @@ var Au = [
                     ? `gallery`
                     : e.type === `calendar`
                       ? `calendar`
+                      : e.type === `client-portal`
+                        ? `client-portal`
                       : e.type === `bin`
                         ? `bin`
                         : ``,
@@ -10958,6 +11063,7 @@ var Au = [
           onToggleSound: te,
           onOpenWallpaperSelector: ce,
           onOpenCalendar: pe,
+          onOpenClientPortal: openClientPortal,
           currentWallpaperName: zu.find((e) => e.url === t)?.name || `Custom`,
         }),
         (0, H.jsx)(`div`, {
@@ -11208,6 +11314,26 @@ var Au = [
                                           maxWidth: `max-w-6xl`,
                                           children: (0, H.jsx)(ContentCalendarWindow, {
                                             onClose: () => E(r.id),
+                                          }),
+                                        },
+                                        r.id,
+                                      )
+                                  : r.type === `client-portal`
+                                    ? (0, H.jsx)(
+                                        Ud,
+                                        {
+                                          id: `client-portal-window`,
+                                          title: `پورتال کارفرما و فضای کار اختصاصی • Creativity Juice Client Workspace`,
+                                          subtitle: `درگاه امن رصد پیشرفت، پیش‌نمایش خروجی‌های سینمایی، بازبینی و تأییدیه فایل‌ها`,
+                                          onClose: () => E(r.id),
+                                          zIndex: r.zIndex,
+                                          onFocus: () => T(r.id),
+                                          containerRef: e,
+                                          width: `w-[96vw] sm:w-[92vw] md:w-[86vw] lg:w-[82vw]`,
+                                          maxWidth: `max-w-6xl`,
+                                          children: (0, H.jsx)(ClientPortalWindow, {
+                                            onClose: () => E(r.id),
+                                            isAdminAuth: isAdminAuth,
                                           }),
                                         },
                                         r.id,
