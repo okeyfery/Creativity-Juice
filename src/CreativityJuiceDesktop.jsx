@@ -10761,7 +10761,7 @@ var Au = [
         window.removeEventListener(CJ_STUDIO_DATA_EVENT, handleAuthEvent);
       };
     }, []);
-    let [_, v] = (0, S.useState)([{ id: `notes-window`, type: `notes`, zIndex: 31 }]),
+    let [_, v] = (0, S.useState)([]),
       [y, b] = (0, S.useState)(32),
       [x, C] = (0, S.useState)(null),
       [ee, w] = (0, S.useState)(null),

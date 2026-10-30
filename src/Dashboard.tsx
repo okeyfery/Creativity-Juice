@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { getProjects, ProjectItem, CJ_STUDIO_DATA_EVENT } from './adminStore';
+import {
+  getProjects,
+  getTeamMembers,
+  ProjectItem,
+  TeamMemberItem,
+  CJ_STUDIO_DATA_EVENT,
+} from './adminStore';
 import {
   getClientWorkspaces,
   CLIENT_PORTAL_EVENT,
@@ -17,8 +23,32 @@ export interface ProjectTimelinePhase {
   stepNumber: number;
   title: string;
   titleEn: string;
+  description: string;
   status: 'completed' | 'in-progress' | 'pending';
   dateLabel: string;
+}
+
+export interface ProjectRepositoryFile {
+  id: string;
+  name: string;
+  fileNameCode: string;
+  category: 'video' | 'document' | 'design' | 'audio';
+  format: string;
+  size: string;
+  version: string;
+  uploadedAt: string;
+  uploadedBy: string;
+  status: 'approved' | 'pending-review' | 'revision-requested' | 'master-archive';
+  notes?: string;
+  deliverableRef?: ClientDeliverable;
+  previewUrl?: string;
+}
+
+export interface AssignedTeamMember {
+  member: TeamMemberItem;
+  projectSpecificRole: string;
+  responsibility: string;
+  isLead?: boolean;
 }
 
 export interface OSProjectRecord {
@@ -42,9 +72,11 @@ interface StatusOverride {
   status?: ProjectOSStatus;
   progressPercent?: number;
   completedSteps?: number;
+  extraMemberIds?: string[];
+  customFiles?: ProjectRepositoryFile[];
 }
 
-const STORAGE_KEY_OS_OVERRIDES = 'cj_os_project_status_overrides_v1';
+const STORAGE_KEY_OS_OVERRIDES = 'cj_os_project_status_overrides_v2';
 
 const STATUS_META: Record<
   ProjectOSStatus,
@@ -112,6 +144,7 @@ function buildStandardPhases(
       stepNumber: idx + 1,
       title: m.title,
       titleEn: `PHASE 0${idx + 1}`,
+      description: m.description,
       status: m.status,
       dateLabel: m.date,
     }));
@@ -126,24 +159,28 @@ function buildStandardPhases(
     {
       title: 'کشف، عارضه‌یابی و استراتژی',
       titleEn: '01 / DISCOVERY',
+      description: 'تحلیل بازار هدف، تدوین بریف استراتژیک، تعیین لحن برند و معماری پیام‌های کلیدی.',
       date: startDate,
       done: step1Done,
     },
     {
       title: 'معماری هویت و سناریونویسی',
       titleEn: '02 / PRE-PRODUCTION',
+      description: 'نگارش سناریوهای قلاب‌دار، طراحی استوری‌بورد، دکوپاژ بصری و انتخاب لوکیشن و تجهیزات.',
       date: 'فاز دوم',
       done: step2Done,
     },
     {
       title: 'پروداکشن و کارگردانی هنری',
       titleEn: '03 / PRODUCTION',
+      description: 'فیلم‌برداری سینمایی 4K، نورپردازی اختصاصی صحنه، ضبط نریشن و اجرای طراحی‌های گرافیکی.',
       date: 'فاز سوم',
       done: step3Done,
     },
     {
       title: 'پست‌پروداکشن، تدوین و لانچ',
       titleEn: '04 / LAUNCH',
+      description: 'تدوین ریتمیک، اصلاح رنگ سینمایی (Color Grading)، مسترینگ صدا و تحویل نهایی در پورتال.',
       date: deliveryDate,
       done: step4Done,
     },
@@ -163,10 +200,239 @@ function buildStandardPhases(
       stepNumber: idx + 1,
       title: item.title,
       titleEn: item.titleEn,
+      description: item.description,
       status,
       dateLabel: item.date,
     };
   });
+}
+
+function resolveAssignedTeam(
+  rec: OSProjectRecord,
+  allMembers: TeamMemberItem[],
+  extraMemberIds: string[] = []
+): AssignedTeamMember[] {
+  const assigned: AssignedTeamMember[] = [];
+  const usedIds = new Set<string>();
+
+  const addMember = (
+    member: TeamMemberItem | undefined,
+    role: string,
+    responsibility: string,
+    isLead = false
+  ) => {
+    if (!member || usedIds.has(member.id)) return;
+    usedIds.add(member.id);
+    assigned.push({
+      member,
+      projectSpecificRole: role,
+      responsibility,
+      isLead,
+    });
+  };
+
+  const fereydoun = allMembers.find((m) => m.id === 'fereydoun-yousefzadeh');
+  const mehdi = allMembers.find((m) => m.id === 'mehdi-loghmani');
+  const esmaeil = allMembers.find((m) => m.id === 'esmaeil-samanipour');
+  const mohammad = allMembers.find((m) => m.id === 'mohammad-mehdipour');
+  const harry = allMembers.find((m) => m.id === 'harry');
+  const alireza = allMembers.find((m) => m.id === 'alireza-shiehzadeh');
+
+  // Check if any member has an explicit projectRole matching this project
+  allMembers.forEach((m) => {
+    const matchedRole = m.projectRoles?.find(
+      (pr) =>
+        pr.projectId === rec.project.id ||
+        rec.project.title.includes(pr.client || '')
+    );
+    if (matchedRole) {
+      addMember(
+        m,
+        matchedRole.roleInProject,
+        matchedRole.keyDeliverables?.join(' • ') || m.role,
+        assigned.length === 0
+      );
+    }
+  });
+
+  // Ensure core team members based on lead / category
+  if (rec.projectLead.includes('فریدون')) {
+    addMember(
+      fereydoun,
+      'کارگردان هنری ارشد و تدوینگر ادیتوریال',
+      'هدایت بصری پروژه، تدوین مستر، اصلاح رنگ سینمایی و نظارت کیفی خروجی‌ها',
+      assigned.length === 0
+    );
+  }
+  if (rec.projectLead.includes('مهدی')) {
+    addMember(
+      mehdi,
+      'مدیر پروژه، استراتژیست برند و مهندس صدا',
+      'مدیریت تایم‌لاین اجرایی، تدوین استراتژی محتوا، هماهنگی جلسات و سونیک برندینگ',
+      assigned.length === 0
+    );
+  }
+  if (rec.projectLead.includes('اسماعیل')) {
+    addMember(
+      esmaeil,
+      'کارگردان و مدیر تصویربرداری سینمایی',
+      'دکوپاژ صحنه، نورپردازی تخصصی و تصویربرداری با تجهیزات سینمایی 4K',
+      assigned.length === 0
+    );
+  }
+
+  // Guarantee at least 3 key specialists for every project card
+  addMember(
+    fereydoun,
+    'مدیر هنری و سرپرست تدوین (Art Director)',
+    'نظارت بر یکپارچگی هویت بصری، ریتم تدوین و استانداردهای سینمایی استودیو',
+    assigned.length === 0
+  );
+  addMember(
+    mehdi,
+    'مدیر پروژه و استراتژیست کسب‌وکار',
+    'برنامه‌ریزی فازهای اجرایی، کنترل ددلاین‌ها و هم‌راستاسازی خروجی با اهداف تجاری کارفرما'
+  );
+
+  if (rec.project.category === 'cinema' || rec.deliverable?.type === 'video' || rec.deliverable?.type === 'reels') {
+    addMember(
+      esmaeil,
+      'مدیر تصویربرداری و کارگردان صحنه',
+      'ضبط نماهای حرکتی، نورپردازی لوکیشن و صدابرداری سر صحنه'
+    );
+    addMember(
+      mohammad,
+      'کارگردان تیزر و طراح هوک‌های بصری',
+      'اجرای قاب‌های ریتمیک و کارگردانی ویدیوهای کوتاه با نرخ تعامل بالا'
+    );
+  } else {
+    addMember(
+      alireza,
+      'طراح ارشد گرافیک، UI/UX و هویت بصری',
+      'طراحی کتابچه هویت بصری، سیستم تایپوگرافی، کاورها و قالب‌های سوشال مدیا'
+    );
+    addMember(
+      harry,
+      'مهندس پورتال دیجیتال و زیرساخت وب',
+      'پیاده‌سازی پورتال تعاملی، لندینگ‌پیج اختصاصی و بهینه‌سازی دارایی‌های دیجیتال'
+    );
+  }
+
+  // Add any extra members manually assigned by user in the modal
+  extraMemberIds.forEach((id) => {
+    const found = allMembers.find((m) => m.id === id);
+    if (found) {
+      addMember(found, found.role, found.specialties.slice(0, 2).join(' • '));
+    }
+  });
+
+  return assigned;
+}
+
+function buildRepositoryFiles(
+  rec: OSProjectRecord,
+  customFiles: ProjectRepositoryFile[] = []
+): ProjectRepositoryFile[] {
+  const files: ProjectRepositoryFile[] = [...customFiles];
+
+  // If this card represents a specific Deliverable, put that deliverable first as the primary file
+  if (rec.deliverable) {
+    const d = rec.deliverable;
+    files.push({
+      id: `repo-del-${d.id}`,
+      name: d.title,
+      fileNameCode: `/deliverables/${d.id}_${d.version.replace(/\s+/g, '_')}.${d.format.split(' ')[0].toLowerCase()}`,
+      category:
+        d.type === 'video' || d.type === 'reels'
+          ? 'video'
+          : d.type === 'audio'
+          ? 'audio'
+          : d.type === 'branding'
+          ? 'design'
+          : 'document',
+      format: d.format,
+      size: d.fileSize,
+      version: d.version,
+      uploadedAt: d.dateUploaded,
+      uploadedBy: rec.projectLead.split('/')[0].trim(),
+      status: d.status,
+      notes: d.clientFeedback,
+      deliverableRef: d,
+      previewUrl: d.thumbnail,
+    });
+  } else if (rec.workspace && rec.workspace.deliverables.length > 0) {
+    // Master project card: include all client deliverables in the repository
+    rec.workspace.deliverables.forEach((d) => {
+      files.push({
+        id: `repo-ws-del-${d.id}`,
+        name: d.title,
+        fileNameCode: `/deliverables/${d.id}_${d.version.replace(/\s+/g, '_')}.${d.format.split(' ')[0].toLowerCase()}`,
+        category:
+          d.type === 'video' || d.type === 'reels'
+            ? 'video'
+            : d.type === 'audio'
+            ? 'audio'
+            : d.type === 'branding'
+            ? 'design'
+            : 'document',
+        format: d.format,
+        size: d.fileSize,
+        version: d.version,
+        uploadedAt: d.dateUploaded,
+        uploadedBy: rec.projectLead.split('/')[0].trim(),
+        status: d.status,
+        notes: d.clientFeedback,
+        deliverableRef: d,
+        previewUrl: d.thumbnail,
+      });
+    });
+  }
+
+  // Add granular studio production & source repository files for this project
+  const slug = rec.workspace?.slug || rec.project.id.slice(0, 14);
+  files.push(
+    {
+      id: `repo-brief-${rec.id}`,
+      name: `سند استراتژی، دکوپاژ و بریف جامع «${rec.project.title}»`,
+      fileNameCode: `/strategy/${slug}_Master_Strategy_Dossier_v2.pdf`,
+      category: 'document',
+      format: 'PDF Document',
+      size: '18.4 MB',
+      version: 'v2.0 Final',
+      uploadedAt: rec.startDate,
+      uploadedBy: 'مهدی لقمانی',
+      status: 'approved',
+      notes: 'نسخه مصوب جلسه استراتژی و نقشه راه تولید محتوا.',
+    },
+    {
+      id: `repo-lut-${rec.id}`,
+      name: `پروفایل اصلاح رنگ سینمایی و هویت بصری (Color LUTs & Styleguide)`,
+      fileNameCode: `/assets/${slug}_Cinema_Grade_Package.zip`,
+      category: 'design',
+      format: 'ZIP / CUBE / AI',
+      size: '142.0 MB',
+      version: 'v1.4 Master',
+      uploadedAt: rec.startDate,
+      uploadedBy: 'فریدون یوسف‌زاده',
+      status: 'master-archive',
+      notes: 'شامل پالت رنگی اختصاصی برند، فونت‌ها و جدول رنگ ویدئوها.',
+    },
+    {
+      id: `repo-audio-${rec.id}`,
+      name: `پکیج مسترینگ صدا، نریشن و هویت شنیداری (Sonic Branding)`,
+      fileNameCode: `/audio/${slug}_Sonic_Master_24bit.wav`,
+      category: 'audio',
+      format: 'WAV 48kHz',
+      size: '64.5 MB',
+      version: 'v1.2 Studio',
+      uploadedAt: rec.deliveryDate,
+      uploadedBy: 'مهدی لقمانی',
+      status: 'approved',
+      notes: 'مسترینگ استاندارد برای پلتفرم‌های اینستاگرام، یوتیوب و تیزر.',
+    }
+  );
+
+  return files;
 }
 
 export interface DashboardProps {
@@ -189,6 +455,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onSwitchTab,
 }) => {
   const [projects, setProjects] = useState<ProjectItem[]>(() => getProjects());
+  const [teamMembers, setTeamMembers] = useState<TeamMemberItem[]>(() => getTeamMembers());
   const [workspaces, setWorkspaces] = useState<ClientWorkspace[]>(() => getClientWorkspaces());
   const [overrides, setOverrides] = useState<Record<string, StatusOverride>>(() => {
     if (typeof window === 'undefined') return {};
@@ -207,9 +474,24 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [expandedProjectId, setExpandedProjectId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Expandable Project Detail Modal State
+  const [selectedModalRecordId, setSelectedModalRecordId] = useState<string | null>(null);
+  const [isModalMaximized, setIsModalMaximized] = useState<boolean>(false);
+  const [modalActiveTab, setModalActiveTab] = useState<'overview' | 'team' | 'files'>('overview');
+  const [fileCategoryFilter, setFileCategoryFilter] = useState<'all' | 'video' | 'document' | 'design' | 'audio'>('all');
+  const [fileSearchQuery, setFileSearchQuery] = useState('');
+
+  // New File Upload / Registration inside Modal Repository
+  const [isAddFileOpen, setIsAddFileOpen] = useState(false);
+  const [newFileName, setNewFileName] = useState('');
+  const [newFileFormat, setNewFileFormat] = useState('MP4 4K');
+  const [newFileVersion, setNewFileVersion] = useState('v1.0 Final');
+  const [newFileCategory, setNewFileCategory] = useState<'video' | 'document' | 'design' | 'audio'>('video');
+
   useEffect(() => {
     const syncData = () => {
       setProjects(getProjects());
+      setTeamMembers(getTeamMembers());
       setWorkspaces(getClientWorkspaces());
     };
     window.addEventListener(CJ_STUDIO_DATA_EVENT, syncData);
@@ -496,6 +778,37 @@ export const Dashboard: React.FC<DashboardProps> = ({
     });
   }, [activeClient, projects, workspaces, overrides]);
 
+  // Currently selected record for the Expandable Modal View
+  const selectedModalRecord = useMemo(() => {
+    if (!selectedModalRecordId) return null;
+    return osRecords.find((r) => r.id === selectedModalRecordId) || null;
+  }, [selectedModalRecordId, osRecords]);
+
+  // Assigned Team Members for the Modal
+  const modalAssignedTeam = useMemo(() => {
+    if (!selectedModalRecord) return [];
+    const extraIds = overrides[selectedModalRecord.id]?.extraMemberIds || [];
+    return resolveAssignedTeam(selectedModalRecord, teamMembers, extraIds);
+  }, [selectedModalRecord, teamMembers, overrides]);
+
+  // File Repository List for the Modal
+  const modalRepositoryFiles = useMemo(() => {
+    if (!selectedModalRecord) return [];
+    const customFiles = overrides[selectedModalRecord.id]?.customFiles || [];
+    const allFiles = buildRepositoryFiles(selectedModalRecord, customFiles);
+    return allFiles.filter((f) => {
+      if (fileCategoryFilter !== 'all' && f.category !== fileCategoryFilter) return false;
+      if (!fileSearchQuery.trim()) return true;
+      const q = fileSearchQuery.toLowerCase();
+      return (
+        f.name.toLowerCase().includes(q) ||
+        f.fileNameCode.toLowerCase().includes(q) ||
+        f.format.toLowerCase().includes(q) ||
+        f.uploadedBy.toLowerCase().includes(q)
+      );
+    });
+  }, [selectedModalRecord, overrides, fileCategoryFilter, fileSearchQuery]);
+
   // Filtered records
   const filteredRecords = useMemo(() => {
     return osRecords.filter((rec) => {
@@ -562,6 +875,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     saveOverrides({
       ...overrides,
       [rec.id]: {
+        ...overrides[rec.id],
         status: target.status,
         progressPercent: target.progress,
         completedSteps: stepNumber,
@@ -572,9 +886,74 @@ export const Dashboard: React.FC<DashboardProps> = ({
     );
   };
 
+  const handleToggleExtraTeamMember = (recordId: string, memberId: string, memberName: string) => {
+    const currentExtra = overrides[recordId]?.extraMemberIds || [];
+    const exists = currentExtra.includes(memberId);
+    const nextExtra = exists
+      ? currentExtra.filter((id) => id !== memberId)
+      : [...currentExtra, memberId];
+
+    saveOverrides({
+      ...overrides,
+      [recordId]: {
+        ...overrides[recordId],
+        extraMemberIds: nextExtra,
+      },
+    });
+    showToast(
+      exists
+        ? `عضویت «${memberName}» از تیم این پروژه برداشته شد.`
+        : `«${memberName}» به تیم اجرایی این پروژه اضافه شد.`
+    );
+  };
+
+  const handleAddRepositoryFile = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedModalRecord || !newFileName.trim()) return;
+
+    const ext = newFileFormat.split(' ')[0].toLowerCase();
+    const newFile: ProjectRepositoryFile = {
+      id: `custom-file-${Date.now()}`,
+      name: newFileName.trim(),
+      fileNameCode: `/uploads/${newFileName.trim().replace(/\s+/g, '_')}_${newFileVersion.replace(/\s+/g, '')}.${ext}`,
+      category: newFileCategory,
+      format: newFileFormat,
+      size: '42.8 MB',
+      version: newFileVersion || 'v1.0',
+      uploadedAt: new Intl.DateTimeFormat('fa-IR').format(new Date()),
+      uploadedBy: activeClient?.ownerName || 'مدیریت پروژه',
+      status: 'pending-review',
+      notes: 'بارگذاری شده در مخزن اختصاصی پروژه جهت بررسی.',
+    };
+
+    const currentFiles = overrides[selectedModalRecord.id]?.customFiles || [];
+    saveOverrides({
+      ...overrides,
+      [selectedModalRecord.id]: {
+        ...overrides[selectedModalRecord.id],
+        customFiles: [newFile, ...currentFiles],
+      },
+    });
+
+    setNewFileName('');
+    setIsAddFileOpen(false);
+    showToast(`فایل «${newFile.name}» با موفقیت به مخزن پروژه اضافه شد.`);
+  };
+
+  const openProjectModal = (
+    rec: OSProjectRecord,
+    initialTab: 'overview' | 'team' | 'files' = 'overview'
+  ) => {
+    setSelectedModalRecordId(rec.id);
+    setModalActiveTab(initialTab);
+    setFileCategoryFilter('all');
+    setFileSearchQuery('');
+    setIsAddFileOpen(false);
+  };
+
   return (
     <div
-      className="flex flex-col h-full bg-[#FAF8F5] text-neutral-900 font-sans select-none overflow-hidden text-right"
+      className="flex flex-col h-full bg-[#FAF8F5] text-neutral-900 font-sans select-none overflow-hidden text-right relative"
       dir="rtl"
     >
       {/* Toast Notification Banner */}
@@ -804,14 +1183,24 @@ export const Dashboard: React.FC<DashboardProps> = ({
               const meta = STATUS_META[rec.status];
               const isExpanded = expandedProjectId === rec.id;
               const isApprovedDeliverable = rec.deliverable?.status === 'approved';
+              const cardTeamPreview = resolveAssignedTeam(
+                rec,
+                teamMembers,
+                overrides[rec.id]?.extraMemberIds || []
+              );
+              const cardFilesCount = buildRepositoryFiles(
+                rec,
+                overrides[rec.id]?.customFiles || []
+              ).length;
 
               return (
                 <article
                   key={rec.id}
-                  className={`bg-white rounded-2xl border transition-all flex flex-col justify-between overflow-hidden ${
+                  onClick={() => openProjectModal(rec, 'overview')}
+                  className={`bg-white rounded-2xl border transition-all flex flex-col justify-between overflow-hidden cursor-pointer group/card ${
                     rec.isMasterProject
-                      ? 'border-amber-300/90 ring-1 ring-amber-400/20 shadow-xs'
-                      : 'border-neutral-200/90 hover:border-neutral-400'
+                      ? 'border-amber-300/90 ring-1 ring-amber-400/20 shadow-xs hover:border-amber-500'
+                      : 'border-neutral-200/90 hover:border-neutral-500 hover:shadow-md'
                   }`}
                 >
                   <div>
@@ -820,7 +1209,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                       <img
                         src={rec.project.coverImage}
                         alt={rec.project.title}
-                        className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover opacity-90 group-hover/card:scale-105 transition-transform duration-500"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/20" />
 
@@ -833,13 +1222,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
                         <select
                           value={rec.status}
-                          onChange={(e) =>
+                          onChange={(e) => {
+                            e.stopPropagation();
                             handleStatusChange(
                               rec.id,
                               rec.project.title,
                               e.target.value as ProjectOSStatus
-                            )
-                          }
+                            );
+                          }}
                           onClick={(e) => e.stopPropagation()}
                           className="bg-black/70 hover:bg-black/90 backdrop-blur-md text-neutral-200 text-[10px] font-bold px-2 py-1 rounded-lg border border-white/15 outline-none cursor-pointer"
                           title="به‌روزرسانی وضعیت پروژه"
@@ -860,26 +1250,41 @@ export const Dashboard: React.FC<DashboardProps> = ({
                           <span aria-hidden="true">·</span>
                           <span className="font-mono">{rec.project.year}</span>
                         </div>
-                        <h3 className="text-sm sm:text-base font-black leading-snug line-clamp-1">
+                        <h3 className="text-sm sm:text-base font-black leading-snug line-clamp-1 group-hover/card:text-amber-300 transition-colors">
                           {rec.project.title}
                         </h3>
                       </div>
                     </div>
 
-                    {/* Card Body: Metadata, Lead, and Interactive Project Timeline */}
+                    {/* Card Body: Metadata, Assigned Team Avatars, and Interactive Project Timeline */}
                     <div className="p-4 space-y-4">
                       {/* Client & Lead Metadata Row */}
-                      <div className="space-y-1">
+                      <div className="space-y-2">
                         <p className="text-xs text-neutral-600 line-clamp-2 leading-relaxed">
                           {rec.project.subtitle}
                         </p>
-                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-neutral-500 pt-1">
-                          <span>
-                            مسئول اجرایی: <strong className="text-neutral-800">{rec.projectLead}</strong>
-                          </span>
-                          <span aria-hidden="true">·</span>
-                          <span>
-                            برند: <strong className="text-neutral-700">{rec.project.client}</strong>
+
+                        {/* Assigned Team Avatar Stack + File Repo Count */}
+                        <div className="flex items-center justify-between pt-1">
+                          <div className="flex items-center gap-2">
+                            <div className="flex -space-x-2 space-x-reverse overflow-hidden">
+                              {cardTeamPreview.slice(0, 4).map((item) => (
+                                <img
+                                  key={item.member.id}
+                                  src={item.member.photo}
+                                  alt={item.member.name}
+                                  title={`${item.member.name} — ${item.projectSpecificRole}`}
+                                  className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover"
+                                />
+                              ))}
+                            </div>
+                            <span className="text-[11px] text-neutral-500">
+                              {cardTeamPreview.length} عضو تیم
+                            </span>
+                          </div>
+
+                          <span className="text-[11px] font-mono text-neutral-500 tabular-nums">
+                            {cardFilesCount} فایل در مخزن
                           </span>
                         </div>
                       </div>
@@ -899,6 +1304,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         <div
                           className="grid grid-cols-4 gap-1.5"
                           title="برای تغییر فاز پروژه روی هر مرحله کلیک کنید"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           {rec.phases.map((phase) => {
                             const isDone = phase.status === 'completed';
@@ -945,9 +1351,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         </div>
                       </div>
 
-                      {/* Expandable Timeline & Deliverables Breakdown */}
+                      {/* Expandable Inline Timeline Preview */}
                       {isExpanded && (
-                        <div className="pt-3 border-t border-neutral-200 space-y-3 animate-fade-in">
+                        <div
+                          className="pt-3 border-t border-neutral-200 space-y-3 animate-fade-in"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <div className="space-y-1.5">
                             <span className="block text-[11px] font-black text-neutral-900">
                               مراحل تایم‌لاین پروژه (کلیک جهت تغییر فاز):
@@ -991,86 +1400,45 @@ export const Dashboard: React.FC<DashboardProps> = ({
                               })}
                             </div>
                           </div>
-
-                          {rec.project.deliverables && rec.project.deliverables.length > 0 && (
-                            <div className="space-y-1 pt-2 border-t border-neutral-100">
-                              <span className="block text-[11px] font-black text-neutral-900">
-                                جزئیات و خروجی‌های این کارت:
-                              </span>
-                              <ul className="space-y-1 text-[11px] text-neutral-600 pr-3 list-disc">
-                                {rec.project.deliverables.slice(0, 4).map((del, i) => (
-                                  <li key={i}>{del}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
                         </div>
                       )}
                     </div>
                   </div>
 
                   {/* Card Footer Action Bar */}
-                  <div className="px-4 py-3 bg-neutral-50/80 border-t border-neutral-200/80 flex items-center justify-between gap-2">
+                  <div
+                    className="px-4 py-3 bg-neutral-50/80 border-t border-neutral-200/80 flex items-center justify-between gap-2"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <div className="flex items-center gap-1.5">
-                      {rec.deliverable ? (
-                        <>
-                          {onApproveDeliverable && (
-                            <button
-                              type="button"
-                              disabled={isApprovedDeliverable}
-                              onClick={() => {
-                                onApproveDeliverable(rec.deliverable!.id, rec.deliverable!.title);
-                                handleStatusChange(rec.id, rec.project.title, 'completed');
-                              }}
-                              className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                                isApprovedDeliverable
-                                  ? 'bg-emerald-100 text-emerald-700 opacity-65 cursor-default'
-                                  : 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                              }`}
-                            >
-                              {isApprovedDeliverable ? '✓ تایید شده' : '✓ تایید نسخه'}
-                            </button>
-                          )}
-                          {onRequestRevision && (
-                            <button
-                              type="button"
-                              onClick={() => onRequestRevision(rec.deliverable!)}
-                              className="px-2.5 py-1.5 rounded-xl border border-neutral-300 hover:bg-white text-neutral-700 text-xs font-bold transition-colors cursor-pointer"
-                            >
-                              ثبت اصلاحیه
-                            </button>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          {onSelectProject && !rec.project.id.includes('__master') && (
-                            <button
-                              type="button"
-                              onClick={() => onSelectProject(rec.project)}
-                              className="px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold transition-colors cursor-pointer"
-                            >
-                              پرونده کامل پروژه
-                            </button>
-                          )}
-                          {onSwitchTab && (
-                            <button
-                              type="button"
-                              onClick={() => onSwitchTab('brief')}
-                              className="px-2.5 py-1.5 rounded-xl border border-neutral-300 hover:bg-white text-neutral-800 text-xs font-bold transition-colors cursor-pointer"
-                            >
-                              بریف برند
-                            </button>
-                          )}
-                        </>
+                      <button
+                        type="button"
+                        onClick={() => openProjectModal(rec, 'overview')}
+                        className="px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold transition-colors cursor-pointer"
+                      >
+                        باز کردن جزئیات و مخزن فایل
+                      </button>
+
+                      {rec.deliverable && onApproveDeliverable && !isApprovedDeliverable && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onApproveDeliverable(rec.deliverable!.id, rec.deliverable!.title);
+                            handleStatusChange(rec.id, rec.project.title, 'completed');
+                          }}
+                          className="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all cursor-pointer"
+                        >
+                          ✓ تایید
+                        </button>
                       )}
                     </div>
 
                     <button
                       type="button"
                       onClick={() => setExpandedProjectId(isExpanded ? null : rec.id)}
-                      className="px-2.5 py-1.5 rounded-xl text-neutral-600 hover:text-neutral-950 hover:bg-neutral-200/60 text-xs font-bold transition-colors cursor-pointer"
+                      className="px-2 py-1.5 rounded-xl text-neutral-600 hover:text-neutral-950 hover:bg-neutral-200/60 text-[11px] font-bold transition-colors cursor-pointer"
                     >
-                      {isExpanded ? 'بستن تایم‌لاین ▲' : 'جزئیات تایم‌لاین ▼'}
+                      {isExpanded ? 'بستن ▲' : 'فازها ▼'}
                     </button>
                   </div>
                 </article>
@@ -1097,7 +1465,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 return (
                   <div
                     key={rec.id}
-                    className="grid grid-cols-12 items-center gap-4 px-4 py-4 hover:bg-neutral-50/80 transition-colors"
+                    onClick={() => openProjectModal(rec, 'overview')}
+                    className="grid grid-cols-12 items-center gap-4 px-4 py-4 hover:bg-neutral-50/80 transition-colors cursor-pointer"
                   >
                     {/* Col 1: Project Identity */}
                     <div className="col-span-12 lg:col-span-4 flex items-center gap-3">
@@ -1141,7 +1510,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     </div>
 
                     {/* Col 3: 4-Stage Visual Timeline */}
-                    <div className="col-span-12 lg:col-span-4">
+                    <div
+                      className="col-span-12 lg:col-span-4"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <div className="grid grid-cols-4 gap-2">
                         {rec.phases.map((ph) => {
                           const isDone = ph.status === 'completed';
@@ -1171,33 +1543,21 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     </div>
 
                     {/* Col 4: Dates & Actions */}
-                    <div className="col-span-6 lg:col-span-2 flex flex-col items-end justify-center gap-1.5 text-left">
+                    <div
+                      className="col-span-6 lg:col-span-2 flex flex-col items-end justify-center gap-1.5 text-left"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <span className="text-[11px] font-mono text-neutral-500">
                         تحویل: {rec.deliveryDate}
                       </span>
                       <div className="flex items-center gap-1.5">
-                        {rec.deliverable && onApproveDeliverable ? (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              onApproveDeliverable(rec.deliverable!.id, rec.deliverable!.title)
-                            }
-                            className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold cursor-pointer"
-                          >
-                            ✓ تایید نسخه
-                          </button>
-                        ) : (
-                          onSelectProject &&
-                          !rec.project.id.includes('__master') && (
-                            <button
-                              type="button"
-                              onClick={() => onSelectProject(rec.project)}
-                              className="px-2.5 py-1 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white text-[11px] font-bold cursor-pointer"
-                            >
-                              پرونده
-                            </button>
-                          )
-                        )}
+                        <button
+                          type="button"
+                          onClick={() => openProjectModal(rec, 'overview')}
+                          className="px-2.5 py-1 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white text-[11px] font-bold cursor-pointer"
+                        >
+                          پرونده و فایل‌ها
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -1207,6 +1567,836 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         )}
       </div>
+
+      {/* =====================================================================
+          EXPANDABLE PROJECT DETAIL MODAL VIEW
+          (Granular Details + Assigned Team Members + Detailed File Repository)
+          ===================================================================== */}
+      {selectedModalRecord && (
+        <div
+          className="fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 animate-fade-in"
+          onClick={() => setSelectedModalRecordId(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className={`bg-[#FAF8F5] border border-neutral-300 shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ${
+              isModalMaximized
+                ? 'w-full h-full rounded-none'
+                : 'w-full max-w-5xl h-[88vh] rounded-3xl'
+            }`}
+          >
+            {/* Modal Top OS Window Header */}
+            <div className="bg-neutral-950 text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-3 shrink-0 border-b border-neutral-800">
+              <div className="flex items-center gap-3 min-w-0">
+                <img
+                  src={selectedModalRecord.project.coverImage}
+                  alt={selectedModalRecord.project.title}
+                  className="w-11 h-11 rounded-xl object-cover border border-white/15 shrink-0"
+                />
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 text-[10px] font-mono text-amber-400">
+                    <span>{selectedModalRecord.project.trackCode}</span>
+                    <span aria-hidden="true">·</span>
+                    <span>{selectedModalRecord.project.year}</span>
+                  </div>
+                  <h3 className="text-sm sm:text-base font-black text-white truncate">
+                    {selectedModalRecord.project.title}
+                  </h3>
+                </div>
+              </div>
+
+              {/* Header Status Control + Expand/Collapse Toggle + Close */}
+              <div className="flex items-center gap-2">
+                <select
+                  value={selectedModalRecord.status}
+                  onChange={(e) =>
+                    handleStatusChange(
+                      selectedModalRecord.id,
+                      selectedModalRecord.project.title,
+                      e.target.value as ProjectOSStatus
+                    )
+                  }
+                  className="bg-neutral-900 hover:bg-neutral-800 text-amber-300 text-xs font-bold px-3 py-1.5 rounded-xl border border-neutral-700 outline-none cursor-pointer"
+                >
+                  <option value="in-production">وضعیت: در حال پروداکشن</option>
+                  <option value="post-production">وضعیت: تدوین و پست‌پروداکشن</option>
+                  <option value="review">وضعیت: بازبینی کارفرما</option>
+                  <option value="completed">وضعیت: تکمیل و لانچ شده</option>
+                </select>
+
+                <button
+                  type="button"
+                  onClick={() => setIsModalMaximized(!isModalMaximized)}
+                  className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+                  title={isModalMaximized ? 'بازگشت به اندازه استاندارد' : 'بزرگ‌نمایی تمام‌صفحه'}
+                >
+                  <span>{isModalMaximized ? '⤡' : '⤢'}</span>
+                  <span className="hidden sm:inline">
+                    {isModalMaximized ? 'اندازه استاندارد' : 'بزرگ‌نمایی کامل'}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedModalRecordId(null)}
+                  className="w-8 h-8 rounded-xl bg-neutral-800 hover:bg-rose-600 text-white flex items-center justify-center text-xs font-bold transition-colors cursor-pointer"
+                  title="بستن پنجره"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Sub-Header: Quick Telemetry & Section Navigation Tabs */}
+            <div className="bg-white border-b border-neutral-200 px-5 py-3 flex flex-wrap items-center justify-between gap-4 shrink-0">
+              {/* Section Switcher Tabs */}
+              <div className="flex items-center gap-1.5 bg-neutral-100 p-1 rounded-xl border border-neutral-200/80">
+                <button
+                  type="button"
+                  onClick={() => setModalActiveTab('overview')}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    modalActiveTab === 'overview'
+                      ? 'bg-neutral-900 text-white shadow-2xs'
+                      : 'text-neutral-600 hover:text-neutral-950'
+                  }`}
+                >
+                  ۱. جزئیات عمیق و تایم‌لاین پروژه
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setModalActiveTab('team')}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    modalActiveTab === 'team'
+                      ? 'bg-neutral-900 text-white shadow-2xs'
+                      : 'text-neutral-600 hover:text-neutral-950'
+                  }`}
+                >
+                  <span>۲. تیم اجرایی تخصیص‌یافته</span>
+                  <span className="font-mono text-[11px] opacity-80">
+                    ({modalAssignedTeam.length})
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setModalActiveTab('files')}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    modalActiveTab === 'files'
+                      ? 'bg-neutral-900 text-white shadow-2xs'
+                      : 'text-neutral-600 hover:text-neutral-950'
+                  }`}
+                >
+                  <span>۳. مخزن فایل‌ها (File Repository)</span>
+                  <span className="font-mono text-[11px] opacity-80">
+                    ({buildRepositoryFiles(selectedModalRecord, overrides[selectedModalRecord.id]?.customFiles || []).length})
+                  </span>
+                </button>
+              </div>
+
+              {/* Key Telemetry Metrics */}
+              <div className="flex items-center gap-5 text-xs">
+                <div>
+                  <span className="text-neutral-400 ml-1.5">پیشرفت کل:</span>
+                  <strong className="font-mono font-black text-neutral-950 tabular-nums">
+                    {selectedModalRecord.progressPercent}%
+                  </strong>
+                </div>
+                <div>
+                  <span className="text-neutral-400 ml-1.5">شروع:</span>
+                  <strong className="font-mono text-neutral-800">
+                    {selectedModalRecord.startDate}
+                  </strong>
+                </div>
+                <div>
+                  <span className="text-neutral-400 ml-1.5">تحویل نهایی:</span>
+                  <strong className="font-mono text-neutral-800">
+                    {selectedModalRecord.deliveryDate}
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Scrollable Body */}
+            <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
+              {modalActiveTab === 'overview' && (
+                /* =========================================================
+                   TAB 1: GRANULAR PROJECT DETAILS, TIMELINE & QUICK PREVIEWS
+                   ========================================================= */
+                <div className="space-y-6">
+                  {/* Top Split: Cover + Strategic Challenge & Creative Solution */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                    <div className="lg:col-span-5 bg-neutral-900 rounded-2xl overflow-hidden border border-neutral-200 relative min-h-[220px] flex flex-col justify-end p-4 text-white">
+                      <img
+                        src={selectedModalRecord.project.coverImage}
+                        alt={selectedModalRecord.project.title}
+                        className="absolute inset-0 w-full h-full object-cover opacity-80"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                      <div className="relative z-10 space-y-1.5">
+                        <span className="text-[11px] font-mono text-amber-300 block">
+                          {selectedModalRecord.project.categoryLabel}
+                        </span>
+                        <h4 className="text-base font-black leading-snug">
+                          {selectedModalRecord.project.title}
+                        </h4>
+                        <p className="text-xs text-neutral-300">
+                          کارفرما: {selectedModalRecord.project.client} • مدیر مسئول: {selectedModalRecord.projectLead}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="lg:col-span-7 bg-white rounded-2xl border border-neutral-200 p-5 flex flex-col justify-between space-y-4">
+                      <div className="space-y-3">
+                        <div>
+                          <span className="text-[11px] font-mono font-bold text-amber-700 block mb-1">
+                            01 // CHALLENGE & STRATEGIC OBJECTIVE
+                          </span>
+                          <h4 className="text-sm font-black text-neutral-950 mb-1">
+                            مسئله محوری و هدف استراتژیک پروژه
+                          </h4>
+                          <p className="text-xs text-neutral-600 leading-relaxed">
+                            {selectedModalRecord.project.challenge || selectedModalRecord.project.subtitle}
+                          </p>
+                        </div>
+
+                        <div className="pt-3 border-t border-neutral-100">
+                          <span className="text-[11px] font-mono font-bold text-emerald-700 block mb-1">
+                            02 // CREATIVE DIRECTION & EXECUTION
+                          </span>
+                          <h4 className="text-sm font-black text-neutral-950 mb-1">
+                            راه‌حل خلاقانه و معماری اجرایی استودیو
+                          </h4>
+                          <p className="text-xs text-neutral-600 leading-relaxed">
+                            {selectedModalRecord.project.solution || selectedModalRecord.project.subtitle}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="pt-3 border-t border-neutral-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+                        <span className="text-neutral-500">
+                          شاخص کلیدی: <strong className="text-neutral-900">{selectedModalRecord.project.metrics}</strong>
+                        </span>
+                        {onSelectProject && !selectedModalRecord.project.id.includes('__master') && !selectedModalRecord.deliverable && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const targetProj = selectedModalRecord.project;
+                              setSelectedModalRecordId(null);
+                              onSelectProject(targetProj);
+                            }}
+                            className="text-amber-700 hover:text-amber-900 font-bold cursor-pointer"
+                          >
+                            مشاهده گالری کامل پروژه ⟵
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Granular 4-Stage Interactive Project Timeline */}
+                  <div className="bg-white rounded-2xl border border-neutral-200 p-5 space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <h4 className="text-sm font-black text-neutral-950">
+                          تایم‌لاین اجرایی ۴ مرحله‌ای پروژه (Interactive Production Pipeline)
+                        </h4>
+                        <p className="text-xs text-neutral-500 mt-0.5">
+                          با کلیک روی هر فاز، وضعیت پیشرفت پروژه در سیستم به‌روزرسانی می‌شود.
+                        </p>
+                      </div>
+                      <span className="text-xs font-mono font-black text-neutral-900 tabular-nums">
+                        پیشرفت فعلی: {selectedModalRecord.progressPercent}%
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                      {selectedModalRecord.phases.map((ph) => {
+                        const isDone = ph.status === 'completed';
+                        const isCurrent = ph.status === 'in-progress';
+                        return (
+                          <button
+                            key={ph.id}
+                            type="button"
+                            onClick={() => handlePhaseClick(selectedModalRecord, ph.stepNumber)}
+                            className={`p-4 rounded-2xl border text-right transition-all flex flex-col justify-between cursor-pointer ${
+                              isCurrent
+                                ? 'bg-amber-50/90 border-amber-400 ring-1 ring-amber-400/30'
+                                : isDone
+                                ? 'bg-emerald-50/40 border-emerald-200'
+                                : 'bg-neutral-50 border-neutral-200/80 hover:border-neutral-300'
+                            }`}
+                          >
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-mono font-bold text-neutral-500">
+                                  {ph.titleEn}
+                                </span>
+                                <span
+                                  className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                                    isDone
+                                      ? 'bg-emerald-600 text-white'
+                                      : isCurrent
+                                      ? 'bg-amber-500 text-neutral-950'
+                                      : 'bg-neutral-200 text-neutral-600'
+                                  }`}
+                                >
+                                  {isDone ? '✓' : ph.stepNumber}
+                                </span>
+                              </div>
+                              <h5 className="text-xs font-black text-neutral-950">
+                                {ph.title}
+                              </h5>
+                              <p className="text-[11px] text-neutral-600 leading-relaxed">
+                                {ph.description}
+                              </p>
+                            </div>
+
+                            <div className="pt-3 mt-3 border-t border-black/5 flex items-center justify-between text-[10px] font-mono text-neutral-500">
+                              <span>{ph.dateLabel}</span>
+                              <span className="font-sans font-bold">
+                                {isDone ? 'تکمیل شد' : isCurrent ? 'در حال اجرا' : 'در نوبت'}
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Quick Summary of Assigned Team & File Repository inside Overview */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    {/* Assigned Team Preview Box */}
+                    <div className="bg-white rounded-2xl border border-neutral-200 p-5 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-black text-neutral-950">
+                          اعضای تیم اجرایی این پروژه ({modalAssignedTeam.length} نفر)
+                        </h4>
+                        <button
+                          type="button"
+                          onClick={() => setModalActiveTab('team')}
+                          className="text-xs font-bold text-amber-700 hover:text-amber-900 cursor-pointer"
+                        >
+                          مدیریت و جزئیات تیم ⟵
+                        </button>
+                      </div>
+                      <div className="space-y-2.5">
+                        {modalAssignedTeam.slice(0, 3).map((item) => (
+                          <div
+                            key={item.member.id}
+                            className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-neutral-50 border border-neutral-200/70"
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <img
+                                src={item.member.photo}
+                                alt={item.member.name}
+                                className="w-9 h-9 rounded-xl object-cover shrink-0"
+                              />
+                              <div className="min-w-0">
+                                <h5 className="text-xs font-black text-neutral-900 truncate">
+                                  {item.member.name}
+                                </h5>
+                                <p className="text-[11px] text-neutral-500 truncate">
+                                  {item.projectSpecificRole}
+                                </p>
+                              </div>
+                            </div>
+                            <span className="text-[10px] font-mono text-neutral-500 shrink-0">
+                              {item.member.initials}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* File Repository Quick Box */}
+                    <div className="bg-white rounded-2xl border border-neutral-200 p-5 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-black text-neutral-950">
+                          مخزن فایل‌ها و خروجی‌های پروژه ({modalRepositoryFiles.length} فایل)
+                        </h4>
+                        <button
+                          type="button"
+                          onClick={() => setModalActiveTab('files')}
+                          className="text-xs font-bold text-amber-700 hover:text-amber-900 cursor-pointer"
+                        >
+                          باز کردن مخزن کامل فایل‌ها ⟵
+                        </button>
+                      </div>
+                      <div className="space-y-2.5">
+                        {modalRepositoryFiles.slice(0, 3).map((file) => (
+                          <div
+                            key={file.id}
+                            className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-neutral-50 border border-neutral-200/70"
+                          >
+                            <div className="min-w-0">
+                              <h5 className="text-xs font-bold text-neutral-900 truncate">
+                                {file.name}
+                              </h5>
+                              <p className="text-[10px] font-mono text-neutral-500 truncate" dir="ltr">
+                                {file.format} • {file.size} • {file.version}
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                showToast(`فایل «${file.name}» (${file.version}) آماده دریافت است.`)
+                              }
+                              className="px-2.5 py-1 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white text-[11px] font-bold shrink-0 cursor-pointer"
+                            >
+                              دریافت
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {modalActiveTab === 'team' && (
+                /* =========================================================
+                   TAB 2: TEAM MEMBERS ASSIGNED TO THIS PROJECT
+                   ========================================================= */
+                <div className="space-y-5">
+                  <div className="bg-white rounded-2xl border border-neutral-200 p-5 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h4 className="text-sm sm:text-base font-black text-neutral-950">
+                        تیم اجرایی و متخصصین تخصیص‌یافته به «{selectedModalRecord.project.title}»
+                      </h4>
+                      <p className="text-xs text-neutral-500 mt-0.5">
+                        اعضای کلیدی استودیو که مسئولیت مستقیم کارگردانی، استراتژی، تدوین و اجرای این پروژه را بر عهده دارند.
+                      </p>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-neutral-700 tabular-nums">
+                      {modalAssignedTeam.length} متخصص فعال روی پروژه
+                    </span>
+                  </div>
+
+                  {/* Assigned Team Cards Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {modalAssignedTeam.map((item) => (
+                      <div
+                        key={item.member.id}
+                        className="bg-white rounded-2xl border border-neutral-200 p-4 flex flex-col justify-between space-y-4"
+                      >
+                        <div className="flex items-start gap-3.5">
+                          <img
+                            src={item.member.photo}
+                            alt={item.member.name}
+                            className="w-14 h-14 rounded-2xl object-cover border border-neutral-200 shrink-0"
+                          />
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-[10px] font-mono text-amber-700 font-bold">
+                                {item.member.trackCode}
+                              </span>
+                              {item.isLead && (
+                                <span className="text-[10px] font-bold text-neutral-950 bg-amber-300/80 px-2 py-0.5 rounded-md">
+                                  سرپرست پروژه
+                                </span>
+                              )}
+                            </div>
+                            <h5 className="text-sm font-black text-neutral-950 mt-0.5">
+                              {item.member.name}
+                            </h5>
+                            <p className="text-xs font-bold text-neutral-700 mt-0.5">
+                              نقش در پروژه: {item.projectSpecificRole}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2 pt-3 border-t border-neutral-100 text-xs">
+                          <p className="text-neutral-600 leading-relaxed">
+                            <strong className="text-neutral-900">شرح مسئولیت در این پرونده: </strong>
+                            {item.responsibility}
+                          </p>
+                          <div className="flex flex-wrap items-center gap-1.5 pt-1 text-[11px] text-neutral-500">
+                            <span>تخصص‌ها:</span>
+                            {item.member.specialties.slice(0, 3).map((sp, i) => (
+                              <span key={i} className="text-neutral-700">
+                                {sp}
+                                {i < 2 ? ' · ' : ''}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Assign / Toggle Additional Studio Members */}
+                  <div className="bg-white rounded-2xl border border-neutral-200 p-5 space-y-3">
+                    <h5 className="text-xs font-black text-neutral-900">
+                      تخصیص یا تغییر اعضای کمکی استودیو برای این پروژه:
+                    </h5>
+                    <div className="flex flex-wrap gap-2">
+                      {teamMembers.map((member) => {
+                        const isAssigned = modalAssignedTeam.some((a) => a.member.id === member.id);
+                        return (
+                          <button
+                            key={member.id}
+                            type="button"
+                            onClick={() =>
+                              handleToggleExtraTeamMember(
+                                selectedModalRecord.id,
+                                member.id,
+                                member.name
+                              )
+                            }
+                            className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+                              isAssigned
+                                ? 'bg-neutral-900 text-white border-neutral-900'
+                                : 'bg-neutral-50 text-neutral-700 border-neutral-200 hover:border-neutral-400'
+                            }`}
+                          >
+                            <img
+                              src={member.photo}
+                              alt={member.name}
+                              className="w-5 h-5 rounded-full object-cover"
+                            />
+                            <span>{member.name}</span>
+                            <span>{isAssigned ? '✓' : '+'}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {modalActiveTab === 'files' && (
+                /* =========================================================
+                   TAB 3: DETAILED FILE REPOSITORY LIST
+                   ========================================================= */
+                <div className="space-y-4">
+                  {/* Repository Toolbar: Category Filter + Search + Add New File */}
+                  <div className="bg-white rounded-2xl border border-neutral-200 p-4 flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex flex-wrap items-center gap-1 bg-neutral-100 p-1 rounded-xl border border-neutral-200/70">
+                      <button
+                        type="button"
+                        onClick={() => setFileCategoryFilter('all')}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer ${
+                          fileCategoryFilter === 'all'
+                            ? 'bg-neutral-900 text-white'
+                            : 'text-neutral-600 hover:text-neutral-950'
+                        }`}
+                      >
+                        همه فایل‌ها
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFileCategoryFilter('video')}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer ${
+                          fileCategoryFilter === 'video'
+                            ? 'bg-neutral-900 text-white'
+                            : 'text-neutral-600 hover:text-neutral-950'
+                        }`}
+                      >
+                        ویدیو و مستر 4K
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFileCategoryFilter('document')}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer ${
+                          fileCategoryFilter === 'document'
+                            ? 'bg-neutral-900 text-white'
+                            : 'text-neutral-600 hover:text-neutral-950'
+                        }`}
+                      >
+                        اسناد و سناریو
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFileCategoryFilter('design')}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer ${
+                          fileCategoryFilter === 'design'
+                            ? 'bg-neutral-900 text-white'
+                            : 'text-neutral-600 hover:text-neutral-950'
+                        }`}
+                      >
+                        هویت بصری و سورس
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFileCategoryFilter('audio')}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer ${
+                          fileCategoryFilter === 'audio'
+                            ? 'bg-neutral-900 text-white'
+                            : 'text-neutral-600 hover:text-neutral-950'
+                        }`}
+                      >
+                        صدا و موسیقی
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={fileSearchQuery}
+                        onChange={(e) => setFileSearchQuery(e.target.value)}
+                        placeholder="جستجوی نام فایل یا فرمت..."
+                        className="px-3 py-1.5 rounded-xl border border-neutral-300 bg-neutral-50 focus:bg-white text-xs text-neutral-900 outline-none w-48"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setIsAddFileOpen(!isAddFileOpen)}
+                        className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 text-xs font-black transition-colors cursor-pointer"
+                      >
+                        + ثبت فایل جدید در مخزن
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Inline Add File Form */}
+                  {isAddFileOpen && (
+                    <form
+                      onSubmit={handleAddRepositoryFile}
+                      className="bg-amber-50/70 rounded-2xl border border-amber-300 p-4 space-y-3 animate-fade-in"
+                    >
+                      <div className="flex items-center justify-between">
+                        <h5 className="text-xs font-black text-neutral-950">
+                          افزودن فایل یا دارایی جدید به مخزن این پروژه
+                        </h5>
+                        <button
+                          type="button"
+                          onClick={() => setIsAddFileOpen(false)}
+                          className="text-xs text-neutral-500 hover:text-neutral-900 cursor-pointer"
+                        >
+                          انصراف ✕
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                        <input
+                          type="text"
+                          required
+                          value={newFileName}
+                          onChange={(e) => setNewFileName(e.target.value)}
+                          placeholder="عنوان فایل (مثال: راش‌های روز اول فیلم‌برداری)"
+                          className="sm:col-span-2 px-3 py-2 rounded-xl border border-neutral-300 bg-white text-xs text-neutral-900 outline-none"
+                        />
+                        <select
+                          value={newFileCategory}
+                          onChange={(e) => {
+                            const cat = e.target.value as any;
+                            setNewFileCategory(cat);
+                            if (cat === 'video') setNewFileFormat('MP4 4K');
+                            if (cat === 'document') setNewFileFormat('PDF Document');
+                            if (cat === 'design') setNewFileFormat('ZIP / AI');
+                            if (cat === 'audio') setNewFileFormat('WAV 24bit');
+                          }}
+                          className="px-3 py-2 rounded-xl border border-neutral-300 bg-white text-xs font-bold text-neutral-800 outline-none"
+                        >
+                          <option value="video">دسته: ویدیو و رندر</option>
+                          <option value="document">دسته: سند و سناریو</option>
+                          <option value="design">دسته: طراحی و سورس</option>
+                          <option value="audio">دسته: صدا و موسیقی</option>
+                        </select>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={newFileVersion}
+                            onChange={(e) => setNewFileVersion(e.target.value)}
+                            placeholder="نسخه (v1.0)"
+                            className="w-24 px-2.5 py-2 rounded-xl border border-neutral-300 bg-white text-xs font-mono text-neutral-900 outline-none"
+                            dir="ltr"
+                          />
+                          <button
+                            type="submit"
+                            className="flex-1 px-3 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold cursor-pointer"
+                          >
+                            ثبت فایل
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  )}
+
+                  {/* Detailed File Repository Table */}
+                  <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+                    <div className="grid grid-cols-12 bg-neutral-100 border-b border-neutral-200 px-4 py-3 text-[11px] font-black text-neutral-700">
+                      <div className="col-span-12 lg:col-span-5">نام فایل و مسیر مخزن (Repository Path)</div>
+                      <div className="hidden lg:block lg:col-span-2">فرمت، حجم و نسخه</div>
+                      <div className="hidden lg:block lg:col-span-2">وضعیت و بارگذاری‌کننده</div>
+                      <div className="col-span-12 lg:col-span-3 text-left mt-2 lg:mt-0">
+                        عملیات و تاییدیه کارفرما
+                      </div>
+                    </div>
+
+                    <div className="divide-y divide-neutral-200">
+                      {modalRepositoryFiles.map((file) => {
+                        const isApproved = file.status === 'approved';
+                        const isPending = file.status === 'pending-review';
+                        const isRevision = file.status === 'revision-requested';
+
+                        return (
+                          <div
+                            key={file.id}
+                            className="grid grid-cols-12 items-center gap-3 px-4 py-3.5 hover:bg-neutral-50/90 transition-colors"
+                          >
+                            {/* File Name & Path */}
+                            <div className="col-span-12 lg:col-span-5 flex items-start gap-3 min-w-0">
+                              <div className="w-10 h-10 rounded-xl bg-neutral-900 text-amber-400 font-mono text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
+                                {file.format.split(' ')[0].slice(0, 4)}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <h5 className="text-xs sm:text-sm font-black text-neutral-950 truncate">
+                                  {file.name}
+                                </h5>
+                                <p
+                                  className="text-[11px] font-mono text-neutral-400 truncate mt-0.5"
+                                  dir="ltr"
+                                >
+                                  {file.fileNameCode}
+                                </p>
+                                {file.notes && (
+                                  <p className="text-[11px] text-neutral-600 mt-1 line-clamp-1">
+                                    یادداشت: {file.notes}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Format, Size & Version */}
+                            <div className="col-span-6 lg:col-span-2 text-xs font-mono space-y-0.5">
+                              <div className="font-bold text-neutral-900 tabular-nums">
+                                {file.version} • {file.size}
+                              </div>
+                              <div className="text-[11px] text-neutral-500">
+                                {file.format}
+                              </div>
+                            </div>
+
+                            {/* Status & Uploader */}
+                            <div className="col-span-6 lg:col-span-2 space-y-1">
+                              <div className="flex items-center gap-1.5 text-xs font-bold">
+                                <span
+                                  className={`w-2 h-2 rounded-full ${
+                                    isApproved
+                                      ? 'bg-emerald-500'
+                                      : isPending
+                                      ? 'bg-amber-500 animate-pulse'
+                                      : isRevision
+                                      ? 'bg-rose-500'
+                                      : 'bg-sky-500'
+                                  }`}
+                                />
+                                <span
+                                  className={
+                                    isApproved
+                                      ? 'text-emerald-800'
+                                      : isPending
+                                      ? 'text-amber-800'
+                                      : isRevision
+                                      ? 'text-rose-800'
+                                      : 'text-sky-800'
+                                  }
+                                >
+                                  {isApproved
+                                    ? 'تایید نهایی شده'
+                                    : isPending
+                                    ? 'منتظر بررسی کارفرما'
+                                    : isRevision
+                                    ? 'نیاز به اصلاحیه'
+                                    : 'آرشیو مستر استودیو'}
+                                </span>
+                              </div>
+                              <div className="text-[11px] text-neutral-500">
+                                توسط {file.uploadedBy} • <span className="font-mono">{file.uploadedAt}</span>
+                              </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="col-span-12 lg:col-span-3 flex flex-wrap items-center justify-end gap-1.5">
+                              {file.deliverableRef && onApproveDeliverable && !isApproved && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    onApproveDeliverable(
+                                      file.deliverableRef!.id,
+                                      file.deliverableRef!.title
+                                    );
+                                    handleStatusChange(
+                                      selectedModalRecord.id,
+                                      selectedModalRecord.project.title,
+                                      'completed'
+                                    );
+                                  }}
+                                  className="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer"
+                                >
+                                  ✓ تایید فایل
+                                </button>
+                              )}
+
+                              {file.deliverableRef && onRequestRevision && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const delRef = file.deliverableRef!;
+                                    setSelectedModalRecordId(null);
+                                    onRequestRevision(delRef);
+                                  }}
+                                  className="px-2.5 py-1.5 rounded-xl border border-neutral-300 hover:bg-white text-neutral-700 text-xs font-bold cursor-pointer"
+                                >
+                                  ثبت اصلاحیه
+                                </button>
+                              )}
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  showToast(
+                                    `لینک دریافت مستقیم فایل مستر «${file.name}» (${file.size}) آماده شد.`
+                                  )
+                                }
+                                className="px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold cursor-pointer"
+                              >
+                                دانلود فایل
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer Bar */}
+            <div className="bg-white border-t border-neutral-200 px-5 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0 text-xs">
+              <div className="flex items-center gap-2 text-neutral-500">
+                <span>فضای اختصاصی کارفرما:</span>
+                <strong className="text-neutral-900">
+                  {activeClient?.brandName || selectedModalRecord.project.client}
+                </strong>
+                <span aria-hidden="true">·</span>
+                <span>رمزنگاری و تفکیک کامل داده‌ها</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {onSwitchTab && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedModalRecordId(null);
+                      onSwitchTab('chat');
+                    }}
+                    className="px-3 py-1.5 rounded-xl border border-neutral-300 hover:bg-neutral-100 text-neutral-800 font-bold cursor-pointer"
+                  >
+                    ارسال پیام به مدیر پروژه
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setSelectedModalRecordId(null)}
+                  className="px-4 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white font-bold cursor-pointer"
+                >
+                  بستن نمای جزئیات
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
