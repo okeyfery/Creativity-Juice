@@ -449,8 +449,8 @@ var Au = [
     },
     {
       id: `client-portal`,
-      name: `پورتال کارفرما`,
-      tooltip: `ورود به فضای کار اختصاصی کارفرمایان و شرکای تجاری`,
+      name: `پورتال و پرسونال برند`,
+      tooltip: `ورود به فضای کار، مدیریت سوشال مدیا و ساخت پرسونال برند جدید`,
       isClientPortal: true,
     },
     {
@@ -1172,7 +1172,7 @@ var Au = [
                                     }),
                                     (0, H.jsx)(`span`, {
                                       className: `text-[6px] sm:text-[7px] font-bold text-neutral-600 font-sans tracking-tight mt-0.5 leading-none`,
-                                      children: `کارفرما`,
+                                      children: `پورتال`,
                                     }),
                                   ],
                                 })
@@ -11112,7 +11112,7 @@ var Au = [
         }),
         (0, H.jsx)(`div`, {
           className: `absolute inset-0 top-8 bottom-0 z-10 overflow-hidden pointer-events-none`,
-          children: Au.map((t) => {
+          children: Au.filter((t) => t.id !== `folder-projects` && t.id !== `folder-client-portal`).map((t) => {
             let n =
               t.id === `folder-projects`
                 ? {

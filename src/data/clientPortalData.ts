@@ -70,6 +70,11 @@ export interface ClientWorkspace {
   deliverables: ClientDeliverable[];
   calendar: ClientCalendarPost[];
   feedbacks: ClientFeedbackMessage[];
+  isPersonalBrand?: boolean;
+  targetNiche?: string;
+  socialGoal?: string;
+  brandTone?: string;
+  targetPlatforms?: string[];
 }
 
 export const INITIAL_CLIENT_WORKSPACES: ClientWorkspace[] = [

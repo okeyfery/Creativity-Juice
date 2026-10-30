@@ -11,6 +11,8 @@ import {
   findClientByPinOrSlug,
   updateDeliverableApproval,
   addClientMessage,
+  createPersonalBrandWorkspace,
+  deleteClientWorkspace,
   CLIENT_PORTAL_EVENT,
 } from './clientPortalStore';
 
@@ -46,6 +48,54 @@ export const ClientPortalWindow: React.FC<ClientPortalWindowProps> = ({
 
   // Message input state
   const [newMessageText, setNewMessageText] = useState('');
+
+  // Personal Brand Creation Modal State
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newPosition, setNewPosition] = useState('');
+  const [newCategory, setNewCategory] = useState('سلامت و پزشکی');
+  const [newGoal, setNewGoal] = useState('جذب کلاینت و مراجعین پرمیوم');
+  const [newTone, setNewTone] = useState('سینمایی و فاخر (Creativity Juice Style)');
+  const [newPlatforms, setNewPlatforms] = useState<string[]>(['اینستاگرام']);
+  const [newLogo, setNewLogo] = useState('🌟');
+  const [newPin, setNewPin] = useState('');
+  const [workspaceFilter, setWorkspaceFilter] = useState<'all' | 'personal' | 'clients'>('all');
+
+  const handleCreatePersonalBrand = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName.trim()) {
+      showToast('لطفاً نام یا عنوان پرسونال برند خود را وارد کنید.');
+      return;
+    }
+
+    const created = createPersonalBrandWorkspace({
+      name: newName.trim(),
+      position: newPosition.trim() || 'تولیدکننده محتوا و متخصص',
+      category: newCategory.trim() || 'سوشال مدیا',
+      goal: newGoal || 'جذب کلاینت و ارتقای اعتبار',
+      tone: newTone || 'سینمایی و حرفه‌ای',
+      platforms: newPlatforms.length > 0 ? newPlatforms : ['اینستاگرام'],
+      logoBadge: newLogo || '🌟',
+      pinCode: newPin.trim() || undefined,
+    });
+
+    setWorkspaces(getClientWorkspaces());
+    setLocalActiveId(created.id);
+    setIsCreateModalOpen(false);
+    setNewName('');
+    setNewPosition('');
+    setNewPin('');
+    showToast(`🎉 تبریک! پرسونال برند «${created.brandName}» ساخته شد و پنل شما آماده فعالیت است.`);
+  };
+
+  const handleDeleteWorkspace = (id: string, name: string) => {
+    if (window.confirm(`آیا مایلید فضای پرسونال برند «${name}» حذف گردد؟`)) {
+      deleteClientWorkspace(id);
+      setWorkspaces(getClientWorkspaces());
+      setLocalActiveId(null);
+      showToast(`فضای کاربری «${name}» حذف شد.`);
+    }
+  };
 
   // Sync with store events
   useEffect(() => {
@@ -152,104 +202,213 @@ export const ClientPortalWindow: React.FC<ClientPortalWindowProps> = ({
 
       {/* If Not Logged In: Login & Brand Discovery Screen */}
       {!activeClient ? (
-        <div className="flex-1 overflow-y-auto p-4 sm:p-8 flex flex-col items-center justify-center max-w-4xl mx-auto w-full">
-          <div className="text-center space-y-2 mb-6">
-            <div className="w-14 h-14 rounded-2xl bg-amber-500 text-neutral-950 font-black text-2xl flex items-center justify-center shadow-md mx-auto">
-              💼
+        <div className="flex-1 overflow-y-auto p-4 sm:p-8 flex flex-col items-center justify-start max-w-5xl mx-auto w-full space-y-6">
+          {/* Main Hero Header */}
+          <div className="text-center space-y-2 max-w-2xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300/80 text-[11px] font-bold mb-1">
+              <span>🌟</span>
+              <span>سامانه برندسازی، تولید محتوا و مدیریت سوشال مدیا</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-neutral-950 tracking-tight">
-              درگاه امن کارفرمایان و شرکای تجاری
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-neutral-950 tracking-tight">
+              فضای کار پرسونال برند و کارفرمایان استودیو
             </h2>
-            <p className="text-xs sm:text-sm text-neutral-600 max-w-lg mx-auto leading-relaxed">
-              ورود به فضای کار اختصاصی هر برند جهت رصد پیشرفت، پیش‌نمایش خروجی‌های سینمایی، بازبینی و تأیید فایل‌ها.
+            <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
+              هر فعال و تولیدکننده محتوا در سوشال مدیا می‌تواند بر پایه بریف‌ها و متدولوژی استودیو Creativity Juice، پنل پرسونال برند اختصاصی خود را بسازد و تقویم، سناریوها و هویت برند خود را مدیریت کند.
             </p>
           </div>
 
-          {/* Direct PIN Form */}
-          <div className="w-full max-w-md bg-white p-5 sm:p-6 rounded-2xl border border-neutral-200/90 shadow-sm space-y-4 mb-8">
-            <form onSubmit={handleLoginSubmit} className="space-y-3">
+          {/* Action CTA Hero Banner: Build Personal Brand Workspace */}
+          <div className="w-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 rounded-3xl p-5 sm:p-6 shadow-md border border-amber-300 text-neutral-950 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="space-y-1 text-center sm:text-right">
+              <div className="flex items-center justify-center sm:justify-start gap-2">
+                <span className="text-2xl">✨</span>
+                <h3 className="text-base sm:text-lg font-black tracking-tight">
+                  می‌خواهید در سوشال مدیا پرسونال برند خود را بسازید؟
+                </h3>
+              </div>
+              <p className="text-xs text-neutral-900/85 max-w-xl font-medium leading-relaxed">
+                بدون نیاز به قرارداد، در ۱۰ ثانیه پنل اختصاصی خود را بسازید: تقویم انتشار محتوا، اسناد استراتژی، فرمول سناریونویسی ریلز و بریف هویتی بر اساس استانداردهای سینمایی Creativity Juice.
+              </p>
+            </div>
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="px-5 py-3 rounded-2xl bg-neutral-950 hover:bg-neutral-800 text-white font-black text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer flex items-center gap-2 shrink-0 whitespace-nowrap"
+            >
+              <span>🚀</span>
+              <span>ساخت پرسونال برند من (رایگان و همگانی)</span>
+            </button>
+          </div>
+
+          {/* Direct PIN & Search Form */}
+          <div className="w-full max-w-xl bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200 shadow-2xs space-y-3">
+            <form onSubmit={handleLoginSubmit} className="space-y-2.5">
               <label className="block text-xs font-bold text-neutral-700">
-                کد دسترسی اختصاصی کارفرما یا شناسه برند:
+                کد دسترسی (PIN)، نام یا شناسه برند:
               </label>
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={pinInput}
                   onChange={(e) => setPinInput(e.target.value)}
-                  placeholder="مثال: yousefzadeh یا 1001 یا dr-peiravi"
-                  className="flex-1 px-3.5 py-2 rounded-xl border border-neutral-300 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-xs sm:text-sm text-neutral-900 outline-none transition-all placeholder:text-neutral-400"
+                  placeholder="مثال: yousefzadeh ، 1001 ، dr-peiravi یا نام برند شخصی شما"
+                  className="flex-1 px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-xs sm:text-sm text-neutral-900 outline-none transition-all placeholder:text-neutral-400 bg-neutral-50/50 focus:bg-white"
                   dir="ltr"
                 />
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-neutral-950 font-black text-xs transition-all shadow-sm cursor-pointer whitespace-nowrap"
+                  className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-neutral-950 font-black text-xs transition-all shadow-xs cursor-pointer whitespace-nowrap"
                 >
-                  ورود به فضای کار
+                  ورود به فضا
                 </button>
               </div>
 
               {loginError && (
-                <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium flex items-center gap-2">
+                <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium flex items-center gap-2 animate-fade-in">
                   <span>⚠️</span>
                   <span>{loginError}</span>
                 </div>
               )}
             </form>
 
-            <div className="text-[11px] text-neutral-500 flex items-center justify-between pt-3 border-t border-neutral-100">
-              <span>🔐 دسترسی امن با توکن ایزوله</span>
-              <span>پشتیبانی: Creativity Juice</span>
+            <div className="text-[11px] text-neutral-500 flex items-center justify-between pt-2 border-t border-neutral-100">
+              <span>🔐 دسترسی امن با ذخیره‌سازی ایزوله در سیستم</span>
+              <span>پشتیبانی: استودیو Creativity Juice</span>
             </div>
           </div>
 
-          {/* Quick Access Card Grid for Demo & Clients */}
+          {/* Workspaces Categorized Directory */}
           <div className="w-full space-y-3">
-            <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
-              <h3 className="text-xs sm:text-sm font-black text-neutral-800 flex items-center gap-1.5">
-                <span>⚡</span>
-                <span>ورود سریع برای تست (انتخاب برندهای فعال استودیو)</span>
-              </h3>
-              <span className="text-[11px] font-mono text-neutral-500">
-                {workspaces.length} پرونده کارفرما
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {workspaces.map((client) => (
-                <div
-                  key={client.id}
-                  onClick={() => handleQuickLogin(client)}
-                  className="p-3.5 rounded-xl border border-neutral-200 bg-white hover:border-amber-400 hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between text-right"
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-200 pb-2.5">
+              <div className="flex items-center gap-1.5 bg-neutral-100 p-1 rounded-xl">
+                <button
+                  onClick={() => setWorkspaceFilter('all')}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    workspaceFilter === 'all'
+                      ? 'bg-white text-neutral-900 shadow-2xs'
+                      : 'text-neutral-500 hover:text-neutral-900'
+                  }`}
                 >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-lg">{client.logoBadge}</span>
-                      <span className="px-2 py-0.5 rounded-md bg-neutral-100 font-mono text-[10px] font-bold text-neutral-600">
-                        PIN: {client.pinCode}
-                      </span>
-                    </div>
+                  همه فضاها ({workspaces.length})
+                </button>
+                <button
+                  onClick={() => setWorkspaceFilter('personal')}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                    workspaceFilter === 'personal'
+                      ? 'bg-amber-400 text-neutral-950 font-black shadow-2xs'
+                      : 'text-neutral-500 hover:text-neutral-900'
+                  }`}
+                >
+                  <span>🌟</span>
+                  <span>پرسونال برندها ({workspaces.filter((w) => w.isPersonalBrand).length})</span>
+                </button>
+                <button
+                  onClick={() => setWorkspaceFilter('clients')}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                    workspaceFilter === 'clients'
+                      ? 'bg-white text-neutral-900 shadow-2xs'
+                      : 'text-neutral-500 hover:text-neutral-900'
+                  }`}
+                >
+                  <span>💼</span>
+                  <span>کارفرمایان رسمی ({workspaces.filter((w) => !w.isPersonalBrand).length})</span>
+                </button>
+              </div>
 
-                    <div>
-                      <h4 className="text-xs sm:text-sm font-black text-neutral-900 group-hover:text-amber-800 transition-colors">
-                        {client.brandName}
-                      </h4>
-                      <p className="text-[10px] text-neutral-500 line-clamp-1 mt-0.5">
-                        {client.category}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 pt-2.5 border-t border-neutral-100 flex items-center justify-between text-[10px]">
-                    <span className="text-neutral-600 font-medium">
-                      مدیر پروژه: <strong className="text-neutral-900">{client.projectLead}</strong>
-                    </span>
-                    <span className="text-amber-600 font-bold group-hover:translate-x-[-2px] transition-transform">
-                      ورود ⟵
-                    </span>
-                  </div>
-                </div>
-              ))}
+              <button
+                onClick={() => setIsCreateModalOpen(true)}
+                className="text-xs font-bold text-amber-700 hover:text-amber-900 flex items-center gap-1 cursor-pointer"
+              >
+                <span>+</span>
+                <span>ساخت پرسونال برند جدید</span>
+              </button>
             </div>
+
+            {/* Empty state for personal brands filter */}
+            {workspaceFilter === 'personal' && workspaces.filter((w) => w.isPersonalBrand).length === 0 ? (
+              <div className="p-8 text-center bg-white rounded-2xl border border-dashed border-amber-300 space-y-3">
+                <span className="text-3xl">🌟</span>
+                <h4 className="text-sm font-black text-neutral-900">
+                  هنوز پرسونال برندی ایجاد نکرده‌اید
+                </h4>
+                <p className="text-xs text-neutral-500 max-w-md mx-auto">
+                  شما می‌توانید با کلیک روی دکمه زیر، حوزه فعالیت، اهداف و لحن محتوای خود را تعیین کرده و پنل اختصاصی پرسونال برند خود را بسازید.
+                </p>
+                <button
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 font-black text-xs shadow-xs cursor-pointer inline-flex items-center gap-1.5"
+                >
+                  <span>✨</span>
+                  <span>ساخت نخستین پرسونال برند</span>
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {workspaces
+                  .filter((client) => {
+                    if (workspaceFilter === 'personal') return client.isPersonalBrand;
+                    if (workspaceFilter === 'clients') return !client.isPersonalBrand;
+                    return true;
+                  })
+                  .map((client) => (
+                    <div
+                      key={client.id}
+                      onClick={() => handleQuickLogin(client)}
+                      className={`p-3.5 rounded-2xl border transition-all cursor-pointer group flex flex-col justify-between text-right relative ${
+                        client.isPersonalBrand
+                          ? 'bg-amber-50/40 border-amber-300/80 hover:border-amber-500 hover:shadow-md'
+                          : 'bg-white border-neutral-200 hover:border-amber-400 hover:shadow-md'
+                      }`}
+                    >
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-2xl">{client.logoBadge}</span>
+                          <div className="flex items-center gap-1.5">
+                            {client.isPersonalBrand && (
+                              <span className="px-2 py-0.5 rounded-md bg-amber-200/80 text-amber-950 font-bold text-[9px]">
+                                پرسونال برند
+                              </span>
+                            )}
+                            <span className="px-2 py-0.5 rounded-md bg-neutral-100 font-mono text-[10px] font-bold text-neutral-600">
+                              PIN: {client.pinCode}
+                            </span>
+                            {client.isPersonalBrand && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteWorkspace(client.id, client.brandName);
+                                }}
+                                className="w-5 h-5 rounded-md text-neutral-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center text-xs transition-colors cursor-pointer"
+                                title="حذف این پرسونال برند"
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <h4 className="text-xs sm:text-sm font-black text-neutral-900 group-hover:text-amber-800 transition-colors">
+                            {client.brandName}
+                          </h4>
+                          <p className="text-[10px] text-neutral-500 line-clamp-1 mt-0.5">
+                            {client.category}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 pt-2.5 border-t border-neutral-100 flex items-center justify-between text-[10px]">
+                        <span className="text-neutral-600 font-medium truncate max-w-[170px]">
+                          {client.isPersonalBrand ? 'پرسونال برند عمومی' : `مدیر: ${client.projectLead}`}
+                        </span>
+                        <span className="text-amber-600 font-bold group-hover:translate-x-[-2px] transition-transform shrink-0">
+                          ورود به پنل ⟵
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            )}
           </div>
         </div>
       ) : (
@@ -266,25 +425,51 @@ export const ClientPortalWindow: React.FC<ClientPortalWindowProps> = ({
                   <h2 className="text-sm sm:text-base font-black text-neutral-950">
                     {activeClient.brandName}
                   </h2>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
-                    فضای کار اختصاصی
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                    activeClient.isPersonalBrand
+                      ? 'bg-amber-100 text-amber-900 border-amber-300'
+                      : 'bg-neutral-100 text-neutral-800 border-neutral-300'
+                  }`}>
+                    {activeClient.isPersonalBrand ? '🌟 پرسونال برند اختصاصی' : '💼 پروژه رسمی استودیو'}
                   </span>
                 </div>
                 <div className="text-[11px] text-neutral-500 flex items-center gap-2 mt-0.5">
-                  <span>کارفرما: <strong className="text-neutral-700">{activeClient.ownerName}</strong></span>
+                  <span>صاحب فضا: <strong className="text-neutral-700">{activeClient.ownerName}</strong></span>
                   <span>•</span>
-                  <span>مدیر پروژه در استودیو: <strong className="text-neutral-900 font-bold">{activeClient.projectLead}</strong></span>
+                  <span>{activeClient.isPersonalBrand ? 'مشاور برندینگ:' : 'مدیر پروژه:'} <strong className="text-neutral-900 font-bold">{activeClient.projectLead}</strong></span>
                 </div>
               </div>
             </div>
 
             {/* Quick Actions & Logout */}
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsCreateModalOpen(true)}
+                className="hidden md:flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-xs font-bold transition-colors cursor-pointer"
+                title="ساخت یک پرسونال برند جدید"
+              >
+                <span>+</span>
+                <span>ساخت پرسونال برند جدید</span>
+              </button>
+
+              {activeClient.isPersonalBrand && (
+                <button
+                  type="button"
+                  onClick={() => handleDeleteWorkspace(activeClient.id, activeClient.brandName)}
+                  className="px-2.5 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-colors cursor-pointer"
+                  title="حذف این فضای پرسونال برند"
+                >
+                  <span>🗑️</span>
+                  <span className="hidden sm:inline">حذف فضا</span>
+                </button>
+              )}
+
               {/* Progress Summary Pill */}
-              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-neutral-50 border border-neutral-200 text-xs">
-                <span className="text-neutral-600 font-medium">پیشرفت کلی:</span>
+              <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-neutral-50 border border-neutral-200 text-xs">
+                <span className="text-neutral-600 font-medium">پیشرفت:</span>
                 <span className="font-mono font-black text-neutral-900">{activeClient.progressPercent}%</span>
-                <div className="w-16 h-2 bg-neutral-200 rounded-full overflow-hidden">
+                <div className="w-14 h-2 bg-neutral-200 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-amber-500 rounded-full transition-all duration-500"
                     style={{ width: `${activeClient.progressPercent}%` }}
@@ -296,23 +481,43 @@ export const ClientPortalWindow: React.FC<ClientPortalWindowProps> = ({
               <select
                 value={activeClient.id}
                 onChange={(e) => {
+                  if (e.target.value === '__new__') {
+                    setIsCreateModalOpen(true);
+                    return;
+                  }
                   const target = workspaces.find((w) => w.id === e.target.value);
                   if (target) handleQuickLogin(target);
                 }}
-                className="px-2.5 py-1.5 rounded-xl border border-neutral-200 bg-neutral-50 text-neutral-700 text-xs font-bold outline-none cursor-pointer hover:bg-neutral-100"
+                className="px-2.5 py-1.5 rounded-xl border border-neutral-200 bg-neutral-50 text-neutral-700 text-xs font-bold outline-none cursor-pointer hover:bg-neutral-100 max-w-[170px] sm:max-w-[210px] truncate"
                 title="تغییر سریع برند"
               >
-                {workspaces.map((w) => (
-                  <option key={w.id} value={w.id}>
-                    تغییر برند: {w.brandName.slice(0, 22)}...
-                  </option>
-                ))}
+                {workspaces.filter((w) => w.isPersonalBrand).length > 0 && (
+                  <optgroup label="🌟 پرسونال برندها">
+                    {workspaces
+                      .filter((w) => w.isPersonalBrand)
+                      .map((w) => (
+                        <option key={w.id} value={w.id}>
+                          {w.brandName.slice(0, 22)}...
+                        </option>
+                      ))}
+                  </optgroup>
+                )}
+                <optgroup label="💼 کارفرمایان استودیو">
+                  {workspaces
+                    .filter((w) => !w.isPersonalBrand)
+                    .map((w) => (
+                      <option key={w.id} value={w.id}>
+                        {w.brandName.slice(0, 22)}...
+                      </option>
+                    ))}
+                </optgroup>
+                <option value="__new__">+ ساخت پرسونال برند جدید...</option>
               </select>
 
               <button
                 onClick={handleLogout}
                 className="px-3 py-1.5 rounded-xl border border-neutral-300 hover:bg-neutral-100 text-neutral-700 text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
-                title="خروج از حساب این کارفرما"
+                title="خروج از این فضا"
               >
                 <span>🚪</span>
                 <span className="hidden sm:inline">خروج</span>
@@ -769,20 +974,46 @@ export const ClientPortalWindow: React.FC<ClientPortalWindowProps> = ({
                 </div>
 
                 <div className="space-y-2 text-xs leading-relaxed text-neutral-700">
-                  <strong className="block text-neutral-900 text-sm">چشم‌انداز و هدف استودیو:</strong>
+                  <strong className="block text-neutral-900 text-sm">چشم‌انداز و هدف استراتژیک:</strong>
                   <p>{activeClient.scopeSummary}</p>
                 </div>
 
+                {activeClient.isPersonalBrand && (
+                  <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-base">💎</span>
+                      <h4 className="text-xs font-black text-amber-950">
+                        ستون‌های استراتژی پرسونال برندینگ (متدولوژی Creativity Juice)
+                      </h4>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                      <div className="p-2.5 rounded-xl bg-white/90 border border-amber-200">
+                        <strong className="block text-neutral-800 text-[11px] mb-0.5">هدف محوری در شبکه‌های اجتماعی:</strong>
+                        <p className="text-neutral-600">{activeClient.socialGoal || 'مرجعیت و رشد'}</p>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-white/90 border border-amber-200">
+                        <strong className="block text-neutral-800 text-[11px] mb-0.5">لحن کلامی و شخصیت بصری:</strong>
+                        <p className="text-neutral-600">{activeClient.brandTone || 'سینمایی و فاخر'}</p>
+                      </div>
+                    </div>
+                    <div className="text-[11px] text-amber-900 leading-relaxed font-sans">
+                      💡 <strong>توصیه مشاوران استودیو:</strong> برای کسب بهترین نتیجه، هر هفته ۳ ریلز با ساختار قلاب ۳ ثانیه‌ای ضبط کنید و یادداشت‌های استراتژی در نوت‌پد اختصاصی خود را قبل از ضبط مرور نمایید.
+                    </div>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-neutral-100">
                   <div className="p-3 rounded-xl bg-neutral-50 border border-neutral-200">
-                    <span className="text-[10px] text-neutral-400 font-bold block mb-1">تیم اجرایی تخصیص‌یافته:</span>
+                    <span className="text-[10px] text-neutral-400 font-bold block mb-1">
+                      {activeClient.isPersonalBrand ? 'مشاور ارشد برندسازی:' : 'تیم اجرایی تخصیص‌یافته:'}
+                    </span>
                     <p className="text-xs font-bold text-neutral-900">{activeClient.projectLead}</p>
                     <p className="text-[11px] text-neutral-500">{activeClient.projectLeadRole}</p>
                   </div>
                   <div className="p-3 rounded-xl bg-neutral-50 border border-neutral-200">
-                    <span className="text-[10px] text-neutral-400 font-bold block mb-1">زمان‌بندی و تحویل:</span>
-                    <p className="text-xs font-bold text-neutral-900">انعقاد: {activeClient.contractDate}</p>
-                    <p className="text-[11px] text-neutral-500">تحویل نهایی: {activeClient.deliveryDate}</p>
+                    <span className="text-[10px] text-neutral-400 font-bold block mb-1">زمان‌بندی و دوره‌ها:</span>
+                    <p className="text-xs font-bold text-neutral-900">راه‌اندازی: {activeClient.contractDate}</p>
+                    <p className="text-[11px] text-neutral-500">وضعیت: {activeClient.deliveryDate}</p>
                   </div>
                 </div>
               </div>
@@ -846,6 +1077,177 @@ export const ClientPortalWindow: React.FC<ClientPortalWindowProps> = ({
                   className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-neutral-950 text-xs font-black shadow-sm cursor-pointer active:scale-95"
                 >
                   ارسال اصلاحیه به تیم استودیو
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Personal Brand Creator Modal */}
+      {isCreateModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+          onClick={() => setIsCreateModalOpen(false)}
+        >
+          <div
+            className="w-full max-w-xl bg-white rounded-3xl p-5 sm:p-7 shadow-2xl border border-neutral-200 space-y-4 text-right max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🌟</span>
+                <div>
+                  <h3 className="text-base sm:text-lg font-black text-neutral-950">
+                    ساخت فضای کار و پرسونال برند جدید
+                  </h3>
+                  <p className="text-xs text-neutral-500">
+                    بر اساس متدولوژی برندینگ و تقویم اختصاصی استودیو Creativity Juice
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsCreateModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center text-xs font-bold cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreatePersonalBrand} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-neutral-800 mb-1">
+                  نام شما یا عنوان پرسونال برند: <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  placeholder="مثال: دکتر کیوان راد ، سارا رستمی ، یا نام هنری/کاری شما"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-xs sm:text-sm text-neutral-900 outline-none"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-neutral-800 mb-1">
+                    پوزیشن و عنوان تخصصی:
+                  </label>
+                  <input
+                    type="text"
+                    value={newPosition}
+                    onChange={(e) => setNewPosition(e.target.value)}
+                    placeholder="مثال: مشاور املاک لوکس ، مدرس بازارهای مالی"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-xs sm:text-sm text-neutral-900 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-neutral-800 mb-1">
+                    حوزه فعالیت و صنعت:
+                  </label>
+                  <select
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-xs sm:text-sm text-neutral-900 outline-none bg-white cursor-pointer"
+                  >
+                    <option value="سلامت، زیبایی و پزشکی">سلامت، زیبایی و پزشکی</option>
+                    <option value="املاک، سرمایه‌گذاری و معماری">املاک، سرمایه‌گذاری و معماری</option>
+                    <option value="فایننس، اقتصاد، کریپتو و بازارهای مالی">فایننس، اقتصاد و بازارهای مالی</option>
+                    <option value="تکنولوژی، هوش مصنوعی و نرم‌افزار">تکنولوژی و هوش مصنوعی</option>
+                    <option value="کوچینگ، آموزش و توسعه فردی">کوچینگ و آموزش</option>
+                    <option value="هنر، سینما و تولید محتوای خلاق">هنر، سینما و تولید محتوا</option>
+                    <option value="فشن، فیتنس و سبک زندگی لوکس">فشن، فیتنس و سبک زندگی</option>
+                    <option value="مشاوره حقوقی، کسب‌وکار و B2B">مشاوره حقوقی و کسب‌وکار</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-neutral-800 mb-1">
+                  هدف محوری در سوشال مدیا:
+                </label>
+                <select
+                  value={newGoal}
+                  onChange={(e) => setNewGoal(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-xs sm:text-sm text-neutral-900 outline-none bg-white cursor-pointer"
+                >
+                  <option value="جذب کلاینت‌ها و مشتریان لوکس و باکیفیت">جذب کلاینت‌ها و مشتریان لوکس و باکیفیت</option>
+                  <option value="تثبیت جایگاه به عنوان مرجع و آتوریتی در بازار">تثبیت جایگاه به عنوان مرجع و آتوریتی در بازار</option>
+                  <option value="فروش دوره‌ها، خدمات مشاوره و کارگاه‌های آموزشی">فروش دوره‌ها و خدمات مشاوره</option>
+                  <option value="رشد ارگانیک و جذب اسپانسرهای معتبر">رشد ارگانیک و جذب اسپانسر</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-neutral-800 mb-1">
+                    لحن و استایل محتوا:
+                  </label>
+                  <select
+                    value={newTone}
+                    onChange={(e) => setNewTone(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-xs sm:text-sm text-neutral-900 outline-none bg-white cursor-pointer"
+                  >
+                    <option value="سینمایی و فاخر (Creativity Juice Style)">سینمایی و فاخر (Creativity Juice)</option>
+                    <option value="جدی، علمی، موقر و موثق (Authority)">جدی، علمی و موثق (Authority)</option>
+                    <option value="گرم، صمیمی، پویا و انگیزشی">گرم، صمیمی و پویا</option>
+                    <option value="مینیمال، لوکس و گزیده‌گو (Quiet Luxury)">مینیمال، لوکس و گزیده‌گو</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-neutral-800 mb-1">
+                    پین کد اختصاصی (جهت ورودهای بعدی):
+                  </label>
+                  <input
+                    type="text"
+                    value={newPin}
+                    onChange={(e) => setNewPin(e.target.value)}
+                    placeholder="مثال: 7777 یا kaveh (اختیاری)"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-xs sm:text-sm text-neutral-900 outline-none font-mono"
+                    dir="ltr"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-neutral-800 mb-1.5">
+                  نشان و آیکون برند:
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {['🌟', '🚀', '👑', '💎', '🎯', '🎙️', '💡', '🎬', '💼', '🔬', '⚡', '🔮'].map((emoji) => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      onClick={() => setNewLogo(emoji)}
+                      className={`w-10 h-10 rounded-xl text-lg flex items-center justify-center border transition-all cursor-pointer ${
+                        newLogo === emoji
+                          ? 'bg-amber-400 border-amber-500 scale-110 shadow-xs'
+                          : 'bg-neutral-50 border-neutral-200 hover:bg-neutral-100'
+                      }`}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-neutral-100">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl border border-neutral-200 text-xs font-bold text-neutral-600 hover:bg-neutral-100 cursor-pointer"
+                >
+                  انصراف
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 text-xs sm:text-sm font-black shadow-md cursor-pointer active:scale-95 flex items-center gap-2"
+                >
+                  <span>✨</span>
+                  <span>ایجاد پنل و ورود به فضای پرسونال برند</span>
                 </button>
               </div>
             </form>
