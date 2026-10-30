@@ -10761,8 +10761,8 @@ var Au = [
         window.removeEventListener(CJ_STUDIO_DATA_EVENT, handleAuthEvent);
       };
     }, []);
-    let [_, v] = (0, S.useState)([]),
-      [y, b] = (0, S.useState)(30),
+    let [_, v] = (0, S.useState)([{ id: `notes-window`, type: `notes`, zIndex: 31 }]),
+      [y, b] = (0, S.useState)(32),
       [x, C] = (0, S.useState)(null),
       [ee, w] = (0, S.useState)(null),
       te = () => {
@@ -11381,11 +11381,14 @@ var Au = [
                                           zIndex: r.zIndex,
                                           onFocus: () => T(r.id),
                                           containerRef: e,
-                                          width: `w-[96vw] sm:w-[92vw] md:w-[86vw] lg:w-[82vw]`,
-                                          maxWidth: `max-w-6xl`,
+                                          width: `w-[96vw] sm:w-[94vw] md:w-[90vw] lg:w-[86vw]`,
+                                          maxWidth: `max-w-7xl`,
                                           children: (0, H.jsx)(ClientPortalWindow, {
                                             onClose: () => E(r.id),
                                             isAdminAuth: isAdminAuth,
+                                            onSelectProject: (proj) => ne(proj),
+                                            onOpenBrief: (scope) => oe(scope),
+                                            onOpenCalendar: () => pe(),
                                           }),
                                         },
                                         r.id,

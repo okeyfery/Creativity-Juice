@@ -15,15 +15,23 @@ import {
   deleteClientWorkspace,
   CLIENT_PORTAL_EVENT,
 } from './clientPortalStore';
+import { ProjectItem } from './adminStore';
+import { Dashboard } from './Dashboard';
 
 interface ClientPortalWindowProps {
   onClose?: () => void;
   isAdminAuth?: boolean;
+  onSelectProject?: (project: ProjectItem) => void;
+  onOpenBrief?: (prefilledScope?: string) => void;
+  onOpenCalendar?: () => void;
 }
 
 export const ClientPortalWindow: React.FC<ClientPortalWindowProps> = ({
   onClose,
   isAdminAuth = false,
+  onSelectProject,
+  onOpenBrief,
+  onOpenCalendar,
 }) => {
   const [workspaces, setWorkspaces] = useState<ClientWorkspace[]>(getClientWorkspaces);
   const [activeClientId, setLocalActiveId] = useState<string | null>(getActiveClientId);
@@ -536,8 +544,8 @@ export const ClientPortalWindow: React.FC<ClientPortalWindowProps> = ({
                     : 'text-neutral-600 hover:text-neutral-900 hover:bg-white/60'
                 }`}
               >
-                <span>🗺️</span>
-                <span>فازها و نقشه راه ({activeClient.milestones.length})</span>
+                <span>🗂️</span>
+                <span>داشبورد پروژه‌ها و تایم‌لاین ({activeClient.deliverables.length + 1})</span>
               </button>
 
               <button
@@ -593,87 +601,18 @@ export const ClientPortalWindow: React.FC<ClientPortalWindowProps> = ({
             </div>
           </div>
 
-          {/* Tab 1: Milestones & Project Roadmap */}
+          {/* Tab 1: Dedicated Client Project OS Dashboard & Timelines */}
           {activeTab === 'milestones' && (
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
-              <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200/90 shadow-2xs flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <h3 className="text-sm sm:text-base font-black text-neutral-900">
-                    نقشه راه پیشرفت پروژه
-                  </h3>
-                  <p className="text-xs text-neutral-500 mt-0.5">
-                    قرارداد منعقد شده در تاریخ {activeClient.contractDate} • هدف تحویل نهایی: {activeClient.deliveryDate}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">
-                    وضعیت کلی: در جریان پروداکشن
-                  </span>
-                </div>
-              </div>
-
-              {/* Milestones Timeline */}
-              <div className="space-y-3">
-                {activeClient.milestones.map((ms, idx) => {
-                  const isDone = ms.status === 'completed';
-                  const isProgress = ms.status === 'in-progress';
-
-                  return (
-                    <div
-                      key={ms.id}
-                      className={`p-4 rounded-2xl border transition-all ${
-                        isDone
-                          ? 'bg-white border-neutral-200 shadow-2xs'
-                          : isProgress
-                          ? 'bg-amber-50/60 border-amber-300 ring-2 ring-amber-400/20 shadow-xs'
-                          : 'bg-neutral-100/60 border-neutral-200/60 opacity-80'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-start gap-3">
-                          <div
-                            className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${
-                              isDone
-                                ? 'bg-emerald-500 text-white'
-                                : isProgress
-                                ? 'bg-amber-500 text-neutral-950 font-black animate-pulse'
-                                : 'bg-neutral-200 text-neutral-500'
-                            }`}
-                          >
-                            {isDone ? '✓' : idx + 1}
-                          </div>
-
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h4 className="text-xs sm:text-sm font-black text-neutral-900">
-                                {ms.title}
-                              </h4>
-                              <span
-                                className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                                  isDone
-                                    ? 'bg-emerald-100 text-emerald-800'
-                                    : isProgress
-                                    ? 'bg-amber-200 text-amber-900'
-                                    : 'bg-neutral-200 text-neutral-600'
-                                }`}
-                              >
-                                {isDone ? 'تکمیل شد' : isProgress ? 'در حال اجرا' : 'برنامه‌ریزی آینده'}
-                              </span>
-                            </div>
-                            <p className="text-xs text-neutral-600 mt-1 leading-relaxed">
-                              {ms.description}
-                            </p>
-                          </div>
-                        </div>
-
-                        <span className="text-[11px] font-mono text-neutral-400 shrink-0">
-                          {ms.date}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <Dashboard
+                activeClient={activeClient}
+                onSelectProject={onSelectProject}
+                onOpenBrief={onOpenBrief}
+                onOpenCalendar={() => setActiveTab('calendar')}
+                onApproveDeliverable={handleApprove}
+                onRequestRevision={handleOpenRevision}
+                onSwitchTab={setActiveTab}
+              />
             </div>
           )}
 
