@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
   getProjects,
   getTeamMembers,
+  syncProjectTeamMemberRole,
   ProjectItem,
   TeamMemberItem,
   CJ_STUDIO_DATA_EVENT,
@@ -900,10 +901,31 @@ export const Dashboard: React.FC<DashboardProps> = ({
         extraMemberIds: nextExtra,
       },
     });
+
+    const targetRecord = osRecords.find((r) => r.id === recordId);
+    const targetMember = teamMembers.find((m) => m.id === memberId);
+    if (targetRecord && targetMember) {
+      syncProjectTeamMemberRole(
+        memberId,
+        {
+          id: targetRecord.project.id,
+          title: targetRecord.project.title,
+          client: targetRecord.project.client,
+          year: targetRecord.project.year,
+          deliverables: targetRecord.project.deliverables,
+          metrics: targetRecord.project.metrics,
+          coverImage: targetRecord.project.coverImage,
+        },
+        targetMember.role,
+        exists
+      );
+      setTeamMembers(getTeamMembers());
+    }
+
     showToast(
       exists
         ? `عضویت «${memberName}» از تیم این پروژه برداشته شد.`
-        : `«${memberName}» به تیم اجرایی این پروژه اضافه شد.`
+        : `«${memberName}» به تیم اجرایی این پروژه اضافه شد و در پروفایل او نیز ثبت گردید.`
     );
   };
 

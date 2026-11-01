@@ -43,9 +43,9 @@ var Au = [
       nameEn: `Brand Identity & Strategy`,
       trackCode: `TRACK 01 // BRAND DNA`,
       deptId: 1,
-      itemCount: 3,
+      itemCount: 2,
       iconType: `brand`,
-      badge: `۳ سند تخصصی`,
+      badge: `۲ سند تخصصی`,
       desktopPos: { top: 15, left: 8.5, mobileTop: 12, mobileLeft: 20 },
       description: `اسناد استراتژی دی‌ان‌ای، دیزاین سیستم بصری و کتابچه جامع هویت و پکیجینگ`,
     },
@@ -71,31 +71,7 @@ var Au = [
       iconType: `manifesto`,
       badge: `مانیفست + ۶ عضو تیم`,
       desktopPos: { top: 15, left: 21, mobileTop: 12, mobileLeft: 56 },
-      description: `۳ اصل ضد کلیشه، فلسفه استودیو و پروفایل ۶ عضو ارشد تیم`,
-    },
-    {
-      id: `folder-projects`,
-      name: `پرونده پروژه‌ها`,
-      nameEn: `Works & Case Studies`,
-      trackCode: `PORTFOLIO // CASE ARCHIVE`,
-      deptId: 4,
-      itemCount: 8,
-      iconType: `cases`,
-      badge: `آرشیو پروژه‌ها`,
-      desktopPos: { top: 38, left: 21, mobileTop: 24, mobileLeft: 56 },
-      description: `مطالعه و کالبدشکافی کامل پروژه‌ها، هویت برند و تولیدات سینمایی استودیو`,
-    },
-    {
-      id: `folder-client-portal`,
-      name: `پورتال کارفرما`,
-      nameEn: `Client Portal & Workspace`,
-      trackCode: `CLIENT // SECURE WORKSPACE`,
-      deptId: 5,
-      itemCount: 10,
-      iconType: `client`,
-      badge: `ورود و فضای کارفرما`,
-      desktopPos: { top: 61, left: 8.5, mobileTop: 36, mobileLeft: 20 },
-      description: `ورود کارفرمایان به فضای اختصاصی، تاییدیه فایل‌ها، پیشرفت پروژه و تقویم اختصاصی`,
+      description: `۳ اصل ضد کلیشه، فلسفه استودیو و پروفایل ۶ عضو تیم`,
     },
   ],
   ju = [
@@ -219,25 +195,24 @@ var Au = [
     },
     {
       id: `srv-06`,
-      code: `SRV-06 // MONTHLY RETAINER`,
+      code: `SRV-06 // MONTHLY CONTENT`,
       deptId: 2,
       deptName: `سینما، مد و محتوای شاخص`,
       deptTrack: `TRACK 02 // CINEMA & VISUALS`,
       badge: `همکاری مستمر ماهانه`,
-      title: `ریتینر ماهانه تولید محتوای سینمایی`,
-      titleEn: `Monthly Content Retainer`,
-      fileName: `SRV-06_قرارداد_ریتینر_ماهانه_تولید_محتوا.doc`,
+      title: `تولید محتوای ماهانه`,
+      titleEn: `Monthly Content Production`,
+      fileName: `SRV-06_قرارداد_تولید_محتوای_ماهانه.doc`,
       fileSize: `14.2 MB`,
       fileExt: `DOC`,
-      description: `همکاری ثابت ماهانه شامل ۲ جلسه تصویربرداری کامل با تجهیزات استاندارد، تولید ۱۰ ویدیوی آماده با تدوین حرفه‌ای، هدایت خط استوری‌های پیوسته و نظارت ادیتوریال بر انتشار پیج.`,
+      description: `همکاری مستمر در تولید محتوای ماهانه شامل برنامه‌ریزی و هماهنگی جلسات فیلم‌برداری، تحویل خروجی‌ها طبق قرارداد و نیاز کارفرما و نظارت مستمر بر پیج و انتشار محتوا.`,
       deliverables: [
-        `۱۰ ویدیوی سینمایی آماده (Reels / 4K) در ماه`,
-        `۲ جلسه فیلم‌برداری میدانی کامل با تجهیزات نور و تصویر`,
-        `سناریونویسی، هوک اولیه و کال‌تواکشن هدفمند`,
-        `هدایت تقویم محتوایی و چیدمان استوری‌های روزانه`,
+        `هماهنگی جلسات فیلم‌برداری در ماه`,
+        `تحویل خروجی‌ها طبق قرارداد و نیاز کارفرما`,
+        `نظارت مستمر بر پیج و انتشار محتوا`,
       ],
       suitableFor: `کلینیک‌های تخصصی، املاک پرمیوم و کسب‌وکارهای در حال توسعه`,
-      timeline: `دوره قرارداد: حداقل ۳ ماهه`,
+      timeline: `دوره قرارداد: ماهانه / فصلی`,
       engagementType: `retainer`,
       popular: !0,
     },
@@ -330,7 +305,7 @@ var Au = [
         `هدایت بریف‌ها و فیلتر کردن پیمانکاران متفرقه`,
         `پاسداری از شأن، پرستیژ و خطوط قرمز برند در بازار`,
       ],
-      suitableFor: `هلدینگ‌ها و مجموعه‌هایی که مجری دارند اما سکاندار خلاقیت ندارند`,
+      suitableFor: `هلدینگ‌ها و مجموعه‌هایی که تیم اجرایی دارند اما نیازمند هدایت هنری یکپارچه هستند`,
       timeline: `دوره همکاری: فصلی، ۶ ماهه و سالانه`,
       engagementType: `advisory`,
     },
@@ -341,24 +316,24 @@ var Au = [
       title: `تقطیر زوائد و بازگشت به جوهره`,
       titleEn: `Distillation Over Accumulation`,
       description: `ما معتقدیم اضافه کردن المان‌های شلوغ، راهکار هویت نیست. هنر واقعی در حذف تمام اضافات و دستیابی به خالص‌ترین بیان هویتی است که هر مخاطبی با یک نگاه آن را به خاطر بسپارد.`,
-      quote: `«برندی که تلاش کند همه مخاطبان را راضی نگه دارد، در نهایت هیچ‌کس را عمیقاً تحت تأثیر قرار نمی‌دهد. تمایز واقعی نیازمند شهامتِ حذف زوائد است.»`,
-      author: `فریدون یوسف زاده — مدیر هنری و ایده پرداز`,
+      quote: `«Create like a child, edit like a scientist.» — کودکانه و بی‌مرز خلق کن، و همچون یک دانشمند با دقت ویرایش کن.`,
+      author: `Tyler, The Creator`,
     },
     {
       code: `02`,
       title: `ادغام کیفیت هنری با کارآمدی تجاری`,
       titleEn: `Artistic Mastery Meets Commercial Efficiency`,
       description: `زیبایی‌شناسی بدون هدف تجاری، هنر محض است و بازاریابی بدون سلیقه، آلودگی بصری. استودیوی ما نقطه تلاقی وقار زیبایی‌شناختی و اثربخشی مالی در بازار است.`,
-      quote: `«سیستم بصری موفق شبیه یک معماری بی‌نقص است؛ هیچ جزئی در آن تزئینی و بی‌هدف نیست و هر خط، وزنی در تعادل کل دارد.»`,
-      author: `علیرضا شیعه زاده — طراح UI/UX و مشاور هنری`,
+      quote: `«Less, but better.» — کمتر، اما باکیفیت‌تر؛ تمرکز بر جنبه‌های بنیادین و پالایش هر اثر از زوائد.`,
+      author: `Dieter Rams`,
     },
     {
       code: `03`,
-      title: `مسئولیت عالیه و نظارت یکدست`,
-      titleEn: `Singular Authorship & Senior Ownership`,
-      description: `پروژه‌ها هرگز به دست کارآموزان یا زنجیره‌های پیمانکاری ناشناس سپرده نمی‌شوند. تک‌تک خروجی‌ها تحت هدایت مستقیم اعضای ارشد استودیو مهندسی و نظارت می‌شوند.`,
-      quote: `«دوربین وسیله ثبت نیست؛ قلم‌موی انتقال حس است. هر فریم باید راوی شخصیتی باشد که کلمات نمی‌توانند بیان کنند.»`,
-      author: `اسماعیل سامانی پور — کارگردان و تصویربردار`,
+      title: `خلق اثر اصیل و ماندگار`,
+      titleEn: `Authentic Craft & Timeless Vision`,
+      description: `هدف ما کپی‌برداری از ترندهای زودگذر نیست؛ بلکه ساختن جهان بصری و روایتی است که امضای اصیل برند را با استانداردهای دقیق اجرایی به نمایش بگذارد.`,
+      quote: `«The goal of art isn’t to attain perfection. The goal is to share who we are and how we see the world.»`,
+      author: `Rick Rubin`,
     },
   ],
   Nu = [
@@ -367,25 +342,24 @@ var Au = [
       modelCode: `MODEL 01 // SPRINT`,
       name: `همکاری پروژه‌محور (Sprint)`,
       nameEn: `Focused Sprint Engagements`,
-      description: `مناسب برای اهداف معین با تحویل‌دادنی‌های شفاف و محدوده مشخص؛ مانند تدوین استراتژی هویت، طراحی سیستم بصری، یا کارگردانی یک فیلم تجاری شاخص.`,
+      description: `مناسب برای اهداف معین با خروجی‌های مشخص و شفاف و محدوده معین؛ مانند تدوین استراتژی هویت، طراحی سیستم بصری، یا کارگردانی یک فیلم تجاری شاخص.`,
       timeline: `زمان‌بندی متمرکز (۳ تا ۶ هفته)`,
       features: [
         `محدوده خروجی (Scope) مشخص و فازبندی‌شده`,
         `بدون تعهد زمانی طولانی و هزینه‌های مازاد اداری`,
-        `مایل‌استون‌های بازبینی منظم در پایان هر هفته`,
       ],
     },
     {
       id: `model-retainer`,
-      modelCode: `MODEL 02 // RETAINER`,
-      name: `ریتینر ماهانه تولید محتوا (Monthly)`,
-      nameEn: `Ongoing Production Retainer`,
-      description: `برای تولید مستمر دارایی‌های تصویری و سینمایی، هدایت هفتگی رسانه‌ها، سناریوها، جلسات فیلمبرداری ماهیانه و هدایت پیوسته حضور دیجیتال برند.`,
-      timeline: `حداقل دوره همکاری: ۳ ماهه`,
+      modelCode: `MODEL 02 // MONTHLY CONTENT`,
+      name: `تولید محتوای ماهانه`,
+      nameEn: `Monthly Content Production`,
+      description: `همکاری مستمر برای تولید محتوای تصویری و سینمایی، هماهنگی جلسات فیلم‌برداری ماهانه، تحویل خروجی‌ها طبق نیاز کارفرما و نظارت مستمر بر پیج و انتشار محتوا.`,
+      timeline: `دوره همکاری: ماهانه / فصلی`,
       features: [
-        `تخصیص ظرفیت فیلمبرداری اختصاصی در هر ماه`,
-        `۱۰ خروجی ویدیوی سینمایی آماده انتشار در ماه`,
-        `نظارت مستمر ادیتوریال بر پیج و استوری‌ها`,
+        `هماهنگی جلسات فیلم‌برداری در ماه`,
+        `تحویل خروجی‌ها طبق قرارداد و نیاز کارفرما`,
+        `نظارت مستمر بر پیج و انتشار محتوا`,
       ],
     },
     {
@@ -393,7 +367,7 @@ var Au = [
       modelCode: `MODEL 03 // COUNSEL`,
       name: `کنسلیری و مشاوره ارشد (Fractional CD)`,
       nameEn: `Executive Advisory & Governance`,
-      description: `حضور در اتاق فکر و جلسات تصمیم‌گیری کلان برند به عنوان مشاور ارشد هنری و سکاندار کیفیت بصری در کنار هیئت‌مدیره.`,
+      description: `حضور در اتاق فکر و جلسات تصمیم‌گیری کلان برند به عنوان مشاور ارشد هنری و هدایتگر کیفیت بصری در کنار هیئت‌مدیره.`,
       timeline: `همکاری فصلی، ۶ ماهه و سالانه`,
       features: [
         `هدایت استراتژیک خلاقیت و تایید خروجی‌ها`,
@@ -889,6 +863,7 @@ var Au = [
     onDragEnd: o,
   }) => {
     let s = (0, S.useRef)(null),
+      isDraggingRef = (0, S.useRef)(!1),
       [c, l] = (0, S.useState)(
         () => typeof window < `u` && window.innerWidth < 768,
       );
@@ -902,6 +877,7 @@ var Au = [
       );
     }, []);
     let u = (e) => {
+        if (isDraggingRef.current) return;
         (e.stopPropagation(),
           W.playClick(),
           n(),
@@ -920,97 +896,215 @@ var Au = [
       f =
         c && e.desktopPos.mobileLeft !== void 0
           ? e.desktopPos.mobileLeft
-          : e.desktopPos.left;
-    return (0, H.jsxs)(ku.div, {
-      drag: !0,
-      dragConstraints: i,
-      dragMomentum: !1,
-      onDragStart: () => W.playPop(),
-      onDragEnd: (e, t) => {
-        o && a && o({ x: a.x + t.offset.x, y: a.y + t.offset.y });
-      },
-      onClick: u,
-      className: `absolute z-20 pointer-events-auto select-none cursor-pointer flex flex-col items-center group touch-none transition-colors duration-150 rounded-2xl p-1.5 sm:p-2 ${t ? `bg-[#FEF5D9]/85 border border-[#E9D49C] shadow-xs` : `border border-transparent hover:bg-black/[0.03]`}`,
+          : e.desktopPos.left,
+      offsetX = a?.x || 0,
+      offsetY = a?.y || 0;
+    return (0, H.jsx)(`div`, {
+      className: `absolute z-20 pointer-events-none select-none`,
       style: {
         top: `${d}%`,
         left: `${f}%`,
         transform: `translate(-50%, -50%)`,
-        ...(a
-          ? {
-              transform: `translate(calc(-50% + ${a.x}px), calc(-50% + ${a.y}px))`,
-            }
-          : {}),
       },
-      whileHover: { scale: 1.04, y: -2 },
-      whileTap: { scale: 0.97 },
-      transition: { type: `spring`, stiffness: 350, damping: 24 },
-      children: [
-        (0, H.jsx)(`div`, {
-          className: `relative w-14 h-12 sm:w-22 sm:h-18 flex items-center justify-center transition-transform duration-200`,
-          children: (0, H.jsx)(`img`, {
-            src: `/assets/aistudio/folder-icon-mac-png-23_a819e89f.png`,
-            alt: e.name,
-            className: `w-full h-full object-contain filter drop-shadow-[0_6px_14px_rgba(0,0,0,0.2)] select-none pointer-events-none`,
-            draggable: !1,
+      children: (0, H.jsxs)(ku.div, {
+        drag: !0,
+        dragConstraints: i,
+        dragMomentum: !1,
+        dragElastic: 0.08,
+        initial: !1,
+        animate: { x: offsetX, y: offsetY },
+        onDragStart: () => {
+          isDraggingRef.current = !0;
+          W.playPop();
+          n();
+        },
+        onDragEnd: (ev, info) => {
+          setTimeout(() => {
+            isDraggingRef.current = !1;
+          }, 80);
+          o &&
+            o({
+              x: Math.round(offsetX + info.offset.x),
+              y: Math.round(offsetY + info.offset.y),
+            });
+        },
+        onClick: u,
+        className: `pointer-events-auto select-none cursor-grab active:cursor-grabbing flex flex-col items-center group touch-none transition-colors duration-150 rounded-2xl p-1.5 sm:p-2 ${t ? `bg-[#FEF5D9]/85 border border-[#E9D49C] shadow-xs` : `border border-transparent hover:bg-black/[0.03]`}`,
+        whileHover: { scale: 1.04 },
+        whileTap: { scale: 0.97 },
+        transition: { type: `spring`, stiffness: 350, damping: 24 },
+        children: [
+          (0, H.jsx)(`div`, {
+            className: `relative w-14 h-12 sm:w-22 sm:h-18 flex items-center justify-center transition-transform duration-200`,
+            children: (0, H.jsx)(`img`, {
+              src: `/assets/aistudio/folder-icon-mac-png-23_a819e89f.png`,
+              alt: e.name,
+              className: `w-full h-full object-contain filter drop-shadow-[0_6px_14px_rgba(0,0,0,0.2)] select-none pointer-events-none`,
+              draggable: !1,
+            }),
           }),
-        }),
-        (0, H.jsxs)(`div`, {
-          className: `mt-0.5 sm:mt-1 px-1 max-w-[100px] sm:max-w-[140px] text-center`,
-          children: [
-            (0, H.jsx)(`span`, {
-              className: `text-[11px] sm:text-[12px] font-bold tracking-tight leading-tight block text-center truncate text-neutral-900 font-sans`,
-              children: e.name,
-            }),
-            (0, H.jsx)(`span`, {
-              className: `text-[8px] sm:text-[9px] font-mono text-neutral-500 block mt-0.5 font-bold tracking-wider opacity-90 truncate`,
-              dir: `ltr`,
-              children: e.trackCode,
-            }),
-          ],
-        }),
-      ],
+          (0, H.jsxs)(`div`, {
+            className: `mt-0.5 sm:mt-1 px-1 max-w-[100px] sm:max-w-[140px] text-center`,
+            children: [
+              (0, H.jsx)(`span`, {
+                className: `text-[11px] sm:text-[12px] font-bold tracking-tight leading-tight block text-center truncate text-neutral-900 font-sans`,
+                children: e.name,
+              }),
+              (0, H.jsx)(`span`, {
+                className: `text-[8px] sm:text-[9px] font-mono text-neutral-500 block mt-0.5 font-bold tracking-wider opacity-90 truncate`,
+                dir: `ltr`,
+                children: e.trackCode,
+              }),
+            ],
+          }),
+        ],
+      }),
     });
   },
-  Hu = ({ onOpenApp: e, activeAppIds: t, isAdminAuth: isAdminSession = !1 }) => {
+  Hu = ({
+    onOpenApp: e,
+    activeAppIds: t,
+    isAdminAuth: isAdminSession = !1,
+    dockPos: dockOffset,
+    onDockDragEnd: onDockPosChange,
+  }) => {
     let [n, r] = (0, S.useState)(null),
       [i, a] = (0, S.useState)(
         () => typeof window < `u` && window.innerWidth < 768,
-      );
+      ),
+      [dockOrder, setDockOrder] = (0, S.useState)(() => {
+        try {
+          let saved = localStorage.getItem(`cj_dock_order_v1`);
+          if (saved) {
+            let parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+          }
+        } catch {}
+        return Lu.map((item) => item.id);
+      }),
+      [draggedDockId, setDraggedDockId] = (0, S.useState)(null),
+      [dragOverDockId, setDragOverDockId] = (0, S.useState)(null);
     (0, S.useEffect)(() => {
       let e = () => {
         a(window.innerWidth < 768);
       };
+      let handleReset = () => {
+        let defaultOrder = Lu.map((item) => item.id);
+        setDockOrder(defaultOrder);
+        try {
+          localStorage.removeItem(`cj_dock_order_v1`);
+        } catch {}
+      };
       return (
         window.addEventListener(`resize`, e),
-        () => window.removeEventListener(`resize`, e)
+        window.addEventListener(`cj-reset-desktop-layout`, handleReset),
+        () => {
+          window.removeEventListener(`resize`, e);
+          window.removeEventListener(`cj-reset-desktop-layout`, handleReset);
+        }
       );
     }, []);
+    let orderedDockItems = (0, S.useMemo)(() => {
+      let itemMap = new Map(Lu.map((item) => [item.id, item]));
+      let result = [];
+      dockOrder.forEach((id) => {
+        if (itemMap.has(id)) {
+          result.push(itemMap.get(id));
+          itemMap.delete(id);
+        }
+      });
+      itemMap.forEach((item) => result.push(item));
+      return result;
+    }, [dockOrder]);
+    let handleReorderDrop = (targetId) => {
+      if (!draggedDockId || draggedDockId === targetId) {
+        setDraggedDockId(null);
+        setDragOverDockId(null);
+        return;
+      }
+      setDockOrder((prev) => {
+        let currentIds = orderedDockItems.map((it) => it.id);
+        let fromIdx = currentIds.indexOf(draggedDockId);
+        let toIdx = currentIds.indexOf(targetId);
+        if (fromIdx === -1 || toIdx === -1) return prev;
+        let next = [...currentIds];
+        let [moved] = next.splice(fromIdx, 1);
+        next.splice(toIdx, 0, moved);
+        try {
+          localStorage.setItem(`cj_dock_order_v1`, JSON.stringify(next));
+        } catch {}
+        return next;
+      });
+      W.playPop();
+      setDraggedDockId(null);
+      setDragOverDockId(null);
+    };
     let o = (t) => {
       (W.playPop(),
         t.isExternal && t.externalUrl
           ? window.open(t.externalUrl, `_blank`, `noopener,noreferrer`)
           : e(t.id));
     };
+    let dx = dockOffset?.x || 0,
+      dy = dockOffset?.y || 0;
     return (0, H.jsx)(`div`, {
       className: `fixed z-40 pointer-events-none select-none transition-all duration-300 ${i ? `right-1 top-1/2 -translate-y-1/2 flex flex-col items-end` : `bottom-3 inset-x-0 flex justify-center`}`,
-      children: (0, H.jsxs)(`nav`, {
+      children: (0, H.jsxs)(ku.nav, {
         "aria-label": `Applications dock`,
-        className: `dock-glass pointer-events-auto rounded-2xl flex border border-white/60 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.18)] relative backdrop-blur-xl bg-white/80 transition-all ${i ? `flex-col items-center py-2 px-1 space-y-1` : `flex-row items-center px-3 py-1.5 space-x-2 sm:space-x-3`}`,
+        drag: !0,
+        dragMomentum: !1,
+        dragElastic: 0.08,
+        initial: !1,
+        animate: { x: dx, y: dy },
+        onDragEnd: (ev, info) => {
+          onDockPosChange &&
+            onDockPosChange({
+              x: Math.round(dx + info.offset.x),
+              y: Math.round(dy + info.offset.y),
+            });
+        },
+        className: `dock-glass pointer-events-auto rounded-2xl flex border border-white/60 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.18)] relative backdrop-blur-xl bg-white/80 transition-shadow cursor-grab active:cursor-grabbing ${i ? `flex-col items-center py-2 px-1 space-y-1` : `flex-row items-center px-3 py-1.5 space-x-2 sm:space-x-3`}`,
         children: [
           (0, H.jsx)(`div`, {
             className: `absolute inset-0 rounded-2xl bg-white/30 pointer-events-none`,
           }),
-          Lu.map((e) => {
+          orderedDockItems.map((e) => {
             if (e.isAdmin && !isAdminSession) return null;
             let a = t.includes(e.id),
               s = n === e.id,
-              c = e.id === `gallery` || e.id === `brief`;
+              c = e.id === `gallery` || e.id === `brief`,
+              isDropTarget = dragOverDockId === e.id && draggedDockId !== e.id;
             return (0, H.jsxs)(
               S.Fragment,
               {
                 children: [
                   (0, H.jsxs)(`div`, {
-                    className: `relative flex flex-col items-center group cursor-pointer`,
+                    draggable: !0,
+                    onDragStart: (ev) => {
+                      ev.stopPropagation();
+                      setDraggedDockId(e.id);
+                      ev.dataTransfer?.setData(`text/plain`, e.id);
+                    },
+                    onDragOver: (ev) => {
+                      ev.preventDefault();
+                      ev.stopPropagation();
+                      if (draggedDockId && draggedDockId !== e.id) {
+                        setDragOverDockId(e.id);
+                      }
+                    },
+                    onDragLeave: () => {
+                      if (dragOverDockId === e.id) setDragOverDockId(null);
+                    },
+                    onDrop: (ev) => {
+                      ev.preventDefault();
+                      ev.stopPropagation();
+                      handleReorderDrop(e.id);
+                    },
+                    onDragEnd: () => {
+                      setDraggedDockId(null);
+                      setDragOverDockId(null);
+                    },
+                    className: `relative flex flex-col items-center group cursor-pointer transition-transform ${isDropTarget ? `scale-110 ring-2 ring-amber-400 rounded-xl` : ``} ${draggedDockId === e.id ? `opacity-50 scale-95` : ``}`,
                     onMouseEnter: () => {
                       (r(e.id), W.playPop());
                     },
@@ -1784,6 +1878,8 @@ var Au = [
     onOpenManifesto: onManifesto,
     isMobileMode: f = !1,
     onToggleMobileMode: p,
+    themeMode = `light`,
+    onToggleTheme,
   }) => {
     let [m, h] = (0, S.useState)(``),
       [g, _] = (0, S.useState)(null);
@@ -2224,7 +2320,7 @@ var Au = [
                       }),
                     ],
                   }),
-                  d &&
+                    d &&
                     (0, H.jsxs)(`button`, {
                       onClick: () => {
                         (d(), _(null));
@@ -2234,6 +2330,24 @@ var Au = [
                         (0, H.jsx)(`span`, { children: `Works Gallery` }),
                         (0, H.jsx)(Pd, {
                           className: `w-3.5 h-3.5 text-amber-600`,
+                        }),
+                      ],
+                    }),
+                  onToggleTheme &&
+                    (0, H.jsxs)(`button`, {
+                      onClick: () => {
+                        (onToggleTheme(), _(null));
+                      },
+                      className: `w-full text-left px-3 py-1.5 hover:bg-neutral-100 transition-colors flex items-center justify-between cursor-pointer border-t border-neutral-200 mt-1 pt-1.5 font-bold`,
+                      children: [
+                        (0, H.jsx)(`span`, {
+                          children:
+                            themeMode === `dark`
+                              ? `Switch to Light Mode (حالت روز)`
+                              : `Switch to Dark Mode (حالت شب)`,
+                        }),
+                        (0, H.jsx)(`span`, {
+                          children: themeMode === `dark` ? `☀️` : `🌙`,
                         }),
                       ],
                     }),
@@ -2262,6 +2376,26 @@ var Au = [
                     className: `mr-1 text-[9px] text-neutral-600 hover:text-neutral-900 bg-white/70 hover:bg-white px-1.5 py-0.2 rounded cursor-pointer transition shadow-2xs`,
                     title: `خروج از حساب این کارفرما`,
                     children: `خروج ✕`,
+                  }),
+                ],
+              }),
+            onToggleTheme &&
+              (0, H.jsxs)(`button`, {
+                type: `button`,
+                onClick: onToggleTheme,
+                className: `px-2 py-0.5 rounded-md hover:bg-black/8 transition-colors flex items-center gap-1 cursor-pointer border border-black/10 text-[11px] font-bold`,
+                title:
+                  themeMode === `dark`
+                    ? `تغییر به حالت روشن (Light Mode)`
+                    : `تغییر به حالت تیره (Dark Mode)`,
+                children: [
+                  (0, H.jsx)(`span`, {
+                    className: `text-xs leading-none`,
+                    children: themeMode === `dark` ? `☀️` : `🌙`,
+                  }),
+                  (0, H.jsx)(`span`, {
+                    className: `hidden md:inline font-sans`,
+                    children: themeMode === `dark` ? `حالت روز` : `حالت شب`,
                   }),
                 ],
               }),
@@ -2340,9 +2474,11 @@ var Au = [
       g = Du(),
       [_, v] = (0, S.useState)(s),
       [y, b] = (0, S.useState)(`normal`),
-      [x, C] = (0, S.useState)({ x: 0, y: 0 });
+      [x, C] = (0, S.useState)({ x: 0, y: 0 }),
+      [snapSide, setSnapSide] = (0, S.useState)(null),
+      [snapPreview, setSnapPreview] = (0, S.useState)(null);
     (0, S.useEffect)(() => {
-      (v(s), s && C({ x: 0, y: 0 }));
+      (v(s), s && (C({ x: 0, y: 0 }), setSnapSide(null)));
     }, [s]);
     let ee = (e) => {
         (e.stopPropagation(), W.playWindowClose(), r());
@@ -2380,26 +2516,140 @@ var Au = [
       );
     }, [e, y, te]);
     let T = (e) => {
-        (e.stopPropagation(), W.playClick());
+        (e && e.stopPropagation(), W.playClick());
+        if (snapSide) {
+          setSnapSide(null);
+          v(!1);
+          C({ x: 0, y: 0 });
+          return;
+        }
         let t = !_;
         (v(t), t && C({ x: 0, y: 0 }), o && o());
+      },
+      handleSnapToSide = (side, ev) => {
+        ev && ev.stopPropagation();
+        W.playPop();
+        l && l();
+        if (side === `center`) {
+          setSnapSide(null);
+          v(!1);
+          C({ x: 0, y: 0 });
+        } else if (snapSide === side) {
+          setSnapSide(null);
+          v(!1);
+          C({ x: 0, y: 0 });
+        } else {
+          setSnapSide(side);
+          v(!1);
+          C({ x: 0, y: 0 });
+        }
       },
       E = y === `minimizing` || y === `minimized`;
     return (0, H.jsxs)(H.Fragment, {
       children: [
+        (0, H.jsx)(kc, {
+          children:
+            snapPreview &&
+            (0, H.jsx)(ku.div, {
+              initial: { opacity: 0, scale: 0.97 },
+              animate: { opacity: 1, scale: 1 },
+              exit: { opacity: 0, scale: 0.97 },
+              transition: { duration: 0.16 },
+              style: { zIndex: Math.max(10, (c || 30) - 1) },
+              className: `fixed pointer-events-none rounded-2xl border-2 border-amber-400/90 bg-amber-300/20 backdrop-blur-md shadow-[0_0_50px_rgba(245,158,11,0.28)] flex items-center justify-center transition-all duration-150 ${
+                snapPreview === `left`
+                  ? `top-9 bottom-16 left-2 w-[calc(50vw-12px)]`
+                  : snapPreview === `right`
+                    ? `top-9 bottom-16 right-2 w-[calc(50vw-12px)]`
+                    : `top-9 bottom-16 inset-x-2`
+              }`,
+              children: (0, H.jsxs)(`div`, {
+                className: `px-4 py-2 rounded-full bg-[#18181B]/90 text-white text-xs font-bold tracking-tight border border-white/15 shadow-xl flex items-center gap-2`,
+                dir: `rtl`,
+                children: [
+                  (0, H.jsx)(`span`, {
+                    className: `w-2 h-2 rounded-full bg-amber-400 animate-ping`,
+                  }),
+                  (0, H.jsx)(`span`, {
+                    children:
+                      snapPreview === `left`
+                        ? `چسباندن پنجره به نیمه چپ صفحه (Snap Left)`
+                        : snapPreview === `right`
+                          ? `چسباندن پنجره به نیمه راست صفحه (Snap Right)`
+                          : `تمام‌صفحه کردن پنجره (Maximize)`,
+                  }),
+                ],
+              }),
+            }),
+        }),
         (0, H.jsx)(`div`, {
           dir: `ltr`,
-          className: `fixed inset-0 pointer-events-none flex items-center justify-center p-2 sm:p-4 overflow-hidden select-none`,
+          className: `fixed inset-0 pointer-events-none flex overflow-hidden select-none ${
+            snapSide === `left`
+              ? `items-stretch justify-start pt-9 pb-16 pl-2 pr-1`
+              : snapSide === `right`
+                ? `items-stretch justify-end pt-9 pb-16 pr-2 pl-1`
+                : `items-center justify-center p-2 sm:p-4`
+          }`,
           style: { zIndex: c, perspective: 1200, perspectiveOrigin: `50% 90%` },
           onMouseDown: l,
           children: (0, H.jsxs)(ku.div, {
             ref: h,
-            drag: !_ && y === `normal`,
+            drag: y === `normal`,
             dragListener: !1,
             dragControls: g,
             dragMomentum: !1,
-            onDragEnd: (e, t) => {
-              C((e) => ({ x: e.x + t.offset.x, y: e.y + t.offset.y }));
+            onDrag: (ev, info) => {
+              let clientX =
+                ev?.clientX ??
+                ev?.touches?.[0]?.clientX ??
+                info?.point?.x ??
+                0;
+              let clientY =
+                ev?.clientY ??
+                ev?.touches?.[0]?.clientY ??
+                info?.point?.y ??
+                0;
+              let vw = typeof window < `u` ? window.innerWidth : 1280;
+              let edgeThreshold = 68;
+              if (clientX > 0 && clientX <= edgeThreshold) {
+                if (snapPreview !== `left`) setSnapPreview(`left`);
+              } else if (clientX >= vw - edgeThreshold) {
+                if (snapPreview !== `right`) setSnapPreview(`right`);
+              } else if (clientY > 0 && clientY <= 46) {
+                if (snapPreview !== `top`) setSnapPreview(`top`);
+              } else if (snapPreview !== null) {
+                setSnapPreview(null);
+              }
+            },
+            onDragEnd: (ev, info) => {
+              let activePreview = snapPreview;
+              setSnapPreview(null);
+              if (activePreview === `left`) {
+                W.playPop();
+                setSnapSide(`left`);
+                v(!1);
+                C({ x: 0, y: 0 });
+              } else if (activePreview === `right`) {
+                W.playPop();
+                setSnapSide(`right`);
+                v(!1);
+                C({ x: 0, y: 0 });
+              } else if (activePreview === `top`) {
+                W.playPop();
+                setSnapSide(null);
+                v(!0);
+                C({ x: 0, y: 0 });
+              } else if (snapSide || _) {
+                setSnapSide(null);
+                v(!1);
+                C({ x: 0, y: 0 });
+              } else {
+                C((prev) => ({
+                  x: prev.x + info.offset.x,
+                  y: prev.y + info.offset.y,
+                }));
+              }
             },
             initial: {
               opacity: 0,
@@ -2424,8 +2674,8 @@ var Au = [
                   opacity: 1,
                   scaleX: 1,
                   scaleY: 1,
-                  x: _ ? 0 : x.x,
-                  y: _ ? 0 : x.y,
+                  x: _ || snapSide ? 0 : x.x,
+                  y: _ || snapSide ? 0 : x.y,
                   rotateX: 0,
                   filter: `blur(0px)`,
                 },
@@ -2461,7 +2711,13 @@ var Au = [
               transformStyle: `preserve-3d`,
               display: y === `minimized` ? `none` : `flex`,
             },
-            className: `relative pointer-events-auto flex flex-col rounded-2xl sm:rounded-xl overflow-hidden border border-black/15 shadow-[0_28px_80px_-15px_rgba(0,0,0,0.32)] bg-[#FAF8F5] text-neutral-900 transition-[width,height,max-width] duration-300 will-change-transform ${_ ? `w-[calc(100vw-12px)] sm:w-[calc(100vw-36px)] h-[calc(100vh-76px)] sm:h-[calc(100vh-92px)] max-w-none mt-1 sm:mt-2 mb-16 sm:mb-18 rounded-2xl sm:rounded-xl` : `w-[calc(100vw-12px)] sm:${d} max-w-full sm:${f} h-[88vh] sm:h-auto sm:max-h-[85vh]`} ${p}`,
+            className: `relative pointer-events-auto flex flex-col rounded-2xl sm:rounded-xl overflow-hidden border border-black/15 shadow-[0_28px_80px_-15px_rgba(0,0,0,0.32)] bg-[#FAF8F5] text-neutral-900 transition-[width,height,max-width] duration-300 will-change-transform ${
+              snapSide === `left` || snapSide === `right`
+                ? `w-[calc(100vw-16px)] sm:w-[calc(50vw-12px)] h-[calc(100vh-100px)] max-w-none max-h-none rounded-xl`
+                : _
+                  ? `w-[calc(100vw-12px)] sm:w-[calc(100vw-36px)] h-[calc(100vh-76px)] sm:h-[calc(100vh-92px)] max-w-none mt-1 sm:mt-2 mb-16 sm:mb-18 rounded-2xl sm:rounded-xl`
+                  : `w-[calc(100vw-12px)] sm:${d} max-w-full sm:${f} h-[88vh] sm:h-auto sm:max-h-[85vh]`
+            } ${p}`,
             children: [
               (0, H.jsx)(kc, {
                 children:
@@ -2504,16 +2760,126 @@ var Au = [
                       (0, H.jsx)(`button`, {
                         onClick: T,
                         className: `w-4 h-4 sm:w-3 sm:h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/60 flex items-center justify-center hover:opacity-90 active:scale-90 transition-all focus:outline-none cursor-pointer`,
-                        title: _
-                          ? `اندازه اصلی (Restore)`
-                          : `تمام‌صفحه (Full Screen)`,
-                        children: _
-                          ? (0, H.jsx)(xd, {
-                              className: `w-2 h-2 sm:w-1.5 sm:h-1.5 text-black/70 opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity`,
-                            })
-                          : (0, H.jsx)(bd, {
-                              className: `w-2 h-2 sm:w-1.5 sm:h-1.5 text-black/70 opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity`,
+                        title:
+                          _ || snapSide
+                            ? `اندازه اصلی (Restore)`
+                            : `تمام‌صفحه (Full Screen)`,
+                        children:
+                          _ || snapSide
+                            ? (0, H.jsx)(xd, {
+                                className: `w-2 h-2 sm:w-1.5 sm:h-1.5 text-black/70 opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity`,
+                              })
+                            : (0, H.jsx)(bd, {
+                                className: `w-2 h-2 sm:w-1.5 sm:h-1.5 text-black/70 opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity`,
+                              }),
+                      }),
+                      (0, H.jsxs)(`div`, {
+                        className: `hidden sm:flex items-center gap-0.5 ml-2 pl-2 border-l border-black/10`,
+                        children: [
+                          (0, H.jsx)(`button`, {
+                            type: `button`,
+                            onClick: (ev) => handleSnapToSide(`left`, ev),
+                            title: `چسباندن به نیمه چپ صفحه (Snap Left)`,
+                            className: `p-1 rounded-md transition-colors cursor-pointer ${
+                              snapSide === `left`
+                                ? `bg-amber-200/90 text-neutral-900 border border-amber-400/80`
+                                : `text-neutral-500 hover:text-neutral-900 hover:bg-black/5`
+                            }`,
+                            children: (0, H.jsxs)(`svg`, {
+                              className: `w-3.5 h-3.5`,
+                              viewBox: `0 0 16 16`,
+                              fill: `none`,
+                              children: [
+                                (0, H.jsx)(`rect`, {
+                                  x: `1.5`,
+                                  y: `2.5`,
+                                  width: `13`,
+                                  height: `11`,
+                                  rx: `2`,
+                                  stroke: `currentColor`,
+                                  strokeWidth: `1.3`,
+                                }),
+                                (0, H.jsx)(`rect`, {
+                                  x: `2.5`,
+                                  y: `3.5`,
+                                  width: `5.5`,
+                                  height: `9`,
+                                  rx: `1`,
+                                  fill: `currentColor`,
+                                }),
+                              ],
                             }),
+                          }),
+                          (0, H.jsx)(`button`, {
+                            type: `button`,
+                            onClick: (ev) => handleSnapToSide(`center`, ev),
+                            title: `حالت عادی وسط صفحه (Center Window)`,
+                            className: `p-1 rounded-md transition-colors cursor-pointer ${
+                              !snapSide && !_
+                                ? `bg-black/10 text-neutral-900`
+                                : `text-neutral-500 hover:text-neutral-900 hover:bg-black/5`
+                            }`,
+                            children: (0, H.jsxs)(`svg`, {
+                              className: `w-3.5 h-3.5`,
+                              viewBox: `0 0 16 16`,
+                              fill: `none`,
+                              children: [
+                                (0, H.jsx)(`rect`, {
+                                  x: `1.5`,
+                                  y: `2.5`,
+                                  width: `13`,
+                                  height: `11`,
+                                  rx: `2`,
+                                  stroke: `currentColor`,
+                                  strokeWidth: `1.3`,
+                                }),
+                                (0, H.jsx)(`rect`, {
+                                  x: `4`,
+                                  y: `4.5`,
+                                  width: `8`,
+                                  height: `7`,
+                                  rx: `1`,
+                                  fill: `currentColor`,
+                                  fillOpacity: `0.55`,
+                                }),
+                              ],
+                            }),
+                          }),
+                          (0, H.jsx)(`button`, {
+                            type: `button`,
+                            onClick: (ev) => handleSnapToSide(`right`, ev),
+                            title: `چسباندن به نیمه راست صفحه (Snap Right)`,
+                            className: `p-1 rounded-md transition-colors cursor-pointer ${
+                              snapSide === `right`
+                                ? `bg-amber-200/90 text-neutral-900 border border-amber-400/80`
+                                : `text-neutral-500 hover:text-neutral-900 hover:bg-black/5`
+                            }`,
+                            children: (0, H.jsxs)(`svg`, {
+                              className: `w-3.5 h-3.5`,
+                              viewBox: `0 0 16 16`,
+                              fill: `none`,
+                              children: [
+                                (0, H.jsx)(`rect`, {
+                                  x: `1.5`,
+                                  y: `2.5`,
+                                  width: `13`,
+                                  height: `11`,
+                                  rx: `2`,
+                                  stroke: `currentColor`,
+                                  strokeWidth: `1.3`,
+                                }),
+                                (0, H.jsx)(`rect`, {
+                                  x: `8`,
+                                  y: `3.5`,
+                                  width: `5.5`,
+                                  height: `9`,
+                                  rx: `1`,
+                                  fill: `currentColor`,
+                                }),
+                              ],
+                            }),
+                          }),
+                        ],
                       }),
                     ],
                   }),
@@ -2689,32 +3055,6 @@ var Au = [
             `جای خالی در بازار: ارزشی که در غیاب شما هیچ رقیب دیگری قادر به تأمین آن نیست.`,
             `دشمن مشترک: کلیشه‌ها و رفتارهای ناخوشایندی که برند شما علیه آن قیام کرده است.`,
             `خروجی‌های مورد انتظار: لوگوتایپ، سیستم تایپوگرافی، بسته‌بندی یا گایدلاین کامل.`,
-          ],
-        },
-      ],
-    },
-    {
-      id: `doc-brand-03`,
-      folderId: `folder-track-1`,
-      fileName: `03_دستورالعمل_گرید_بصری_و_تایپوگرافی.pdf`,
-      fileExt: `PDF`,
-      fileSize: `3.4 MB`,
-      dateModified: `Oct 04`,
-      title: `دستورالعمل جامع گریدبندی ادیتوریال و تایپوگرافی`,
-      subtitle: `قواعد ریاضیاتی فواصل، هارمونی حروف فارسی و انگلیسی و دیزاین سیستم`,
-      author: `آتلیه تایپوگرافی // Creativity Juice`,
-      readTime: `زمان مطالعه: ۴ دقیقه`,
-      category: `TYPOGRAPHY & GRIDS`,
-      glyph: `ruler`,
-      badgeColor: `#FF3B30`,
-      sections: [
-        {
-          heading: `اصول معماری تایپوگرافی در استودیو`,
-          content: `تایپوگرافی صدای خاموش متن است. در پروژه‌های استودیو، هماهنگی وزن، زاویه کرسی و فواصل حروف فارسی با خطوط لاتین بر پایه یک گرید اختصاصی ۱۲ ستونه تنظیم می‌شود تا هیچ گسست بصری در اسناد دو زبانه حس نشود.`,
-          bullets: [
-            `تنظیم دقیق نسبت‌های طلایی در سلسله‌مراتب تیترها و متون بدنه`,
-            `طراحی پترن‌ها و ساختارهای شبکه‌ای ادیتوریال هماهنگ با چاپ و صفحه دیجیتال`,
-            `قواعد حاشیه‌گذاری و فضای منفی جهت خلق پرستیژ بصری آرامش‌بخش`,
           ],
         },
       ],
@@ -3066,10 +3406,10 @@ var Au = [
         t());
       };
     return (0, H.jsx)(`div`, {
-      className: `fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/50 backdrop-blur-sm select-none`,
+      className: `absolute inset-0 z-50 flex flex-col w-full h-full bg-[#FAF9F6] select-none overflow-hidden`,
       children: (0, H.jsxs)(`div`, {
         dir: `ltr`,
-        className: `w-full max-w-4xl bg-[#FAF9F6] rounded-2xl border border-neutral-300 shadow-2xl overflow-hidden flex flex-col h-[90vh] sm:h-auto sm:max-h-[88vh] animate-window-pop text-neutral-900 font-sans`,
+        className: `w-full h-full bg-[#FAF9F6] overflow-hidden flex flex-col text-neutral-900 font-sans`,
         children: [
           (0, H.jsxs)(`div`, {
             className: `h-11 bg-[#F4F2EE] border-b border-neutral-200 flex items-center justify-between px-3 sm:px-4 select-none shrink-0`,
@@ -3077,21 +3417,16 @@ var Au = [
               (0, H.jsxs)(`div`, {
                 className: `flex items-center space-x-2`,
                 children: [
-                  (0, H.jsx)(`button`, {
+                  (0, H.jsxs)(`button`, {
                     onClick: () => {
                       (W.playWindowClose(), t());
                     },
-                    className: `w-4 h-4 sm:w-3 sm:h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/60 flex items-center justify-center hover:opacity-90 active:scale-90 transition-all cursor-pointer`,
-                    title: `بستن سند`,
-                    children: (0, H.jsx)(Vd, {
-                      className: `w-2.5 h-2.5 sm:w-2 sm:h-2 text-black/70`,
-                    }),
-                  }),
-                  (0, H.jsx)(`span`, {
-                    className: `w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/60 hidden sm:inline-block opacity-60`,
-                  }),
-                  (0, H.jsx)(`span`, {
-                    className: `w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/60 hidden sm:inline-block opacity-60`,
+                    className: `px-2.5 py-1 rounded-lg bg-white hover:bg-neutral-100 border border-neutral-300 text-[11px] font-bold text-neutral-800 flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs`,
+                    title: `بازگشت به فولدر`,
+                    children: [
+                      (0, H.jsx)(`span`, { children: `←` }),
+                      (0, H.jsx)(`span`, { children: `بازگشت به فولدر` }),
+                    ],
                   }),
                 ],
               }),
@@ -3537,7 +3872,7 @@ var Au = [
       }),
     });
   },
-  Kd = `cj_studio_documents`,
+  Kd = `cj_studio_documents_v2`,
   qd = ({
     initialFolderId: e,
     onClose: t,
@@ -3561,7 +3896,11 @@ var Au = [
       [T, E] = (0, S.useState)(() => {
         try {
           let e = localStorage.getItem(Kd);
-          if (e) return JSON.parse(e);
+          if (e) {
+            let parsed = JSON.parse(e);
+            if (Array.isArray(parsed))
+              return parsed.filter((doc) => doc && doc.id !== `doc-brand-03`);
+          }
         } catch {}
         return Wd;
       }),
@@ -3779,7 +4118,7 @@ var Au = [
       width: `w-[96vw] sm:w-[94vw] md:w-[90vw] lg:w-[86vw] xl:w-[80vw]`,
       maxWidth: `max-w-6xl`,
       children: (0, H.jsxs)(`div`, {
-        className: `flex flex-col flex-1 h-full min-h-[560px] bg-white text-neutral-900 select-none font-sans`,
+        className: `relative flex flex-col flex-1 h-full min-h-[560px] bg-white text-neutral-900 select-none font-sans`,
         children: [
           (0, H.jsxs)(`div`, {
             dir: `ltr`,
@@ -4215,186 +4554,6 @@ var Au = [
                   }),
                 ],
               }),
-              k &&
-                (0, H.jsxs)(`div`, {
-                  dir: `rtl`,
-                  className: `hidden lg:flex w-72 sm:w-80 border-r border-neutral-200 bg-[#FAF9F6] p-4 flex-col justify-between overflow-y-auto shrink-0 select-none text-right font-sans`,
-                  children: [
-                    (0, H.jsxs)(`div`, {
-                      className: `space-y-4`,
-                      children: [
-                        (0, H.jsx)(`div`, {
-                          className: `py-2 flex justify-center`,
-                          children: fe(k),
-                        }),
-                        (0, H.jsxs)(`div`, {
-                          className: `border-b border-neutral-200 pb-3`,
-                          children: [
-                            (0, H.jsx)(`span`, {
-                              className: `text-[10px] font-mono font-bold text-neutral-400 block mb-1`,
-                              dir: `ltr`,
-                              children: k.name,
-                            }),
-                            (0, H.jsx)(`h3`, {
-                              className: `text-sm font-black text-neutral-900 leading-snug`,
-                              children: k.titleFa,
-                            }),
-                            k.subtitleFa &&
-                              (0, H.jsx)(`p`, {
-                                className: `text-xs text-neutral-500 mt-1 leading-relaxed`,
-                                children: k.subtitleFa,
-                              }),
-                          ],
-                        }),
-                        (0, H.jsxs)(`div`, {
-                          className: `space-y-2 text-xs`,
-                          children: [
-                            k.readTime &&
-                              (0, H.jsxs)(`div`, {
-                                className: `flex items-center justify-between text-neutral-600`,
-                                children: [
-                                  (0, H.jsx)(`span`, {
-                                    className: `text-neutral-400 font-medium`,
-                                    children: `زمان مطالعه:`,
-                                  }),
-                                  (0, H.jsx)(`span`, {
-                                    className: `font-bold text-neutral-800`,
-                                    children: k.readTime,
-                                  }),
-                                ],
-                              }),
-                            k.author &&
-                              (0, H.jsxs)(`div`, {
-                                className: `flex items-center justify-between text-neutral-600`,
-                                children: [
-                                  (0, H.jsx)(`span`, {
-                                    className: `text-neutral-400 font-medium`,
-                                    children: `مرجع تدوین:`,
-                                  }),
-                                  (0, H.jsx)(`span`, {
-                                    className: `font-bold text-neutral-800 truncate max-w-[180px]`,
-                                    children: k.author,
-                                  }),
-                                ],
-                              }),
-                            (0, H.jsxs)(`div`, {
-                              className: `flex items-center justify-between text-neutral-600`,
-                              children: [
-                                (0, H.jsx)(`span`, {
-                                  className: `text-neutral-400 font-medium`,
-                                  children: `وضعیت سند:`,
-                                }),
-                                (0, H.jsx)(`span`, {
-                                  className: `font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200`,
-                                  children: `تأییدشده و قابل ویرایش`,
-                                }),
-                              ],
-                            }),
-                          ],
-                        }),
-                        (0, H.jsxs)(`div`, {
-                          className: `p-3 rounded-xl bg-white border border-neutral-200 space-y-2`,
-                          children: [
-                            (0, H.jsx)(`span`, {
-                              className: `text-[11px] font-bold text-neutral-800 block`,
-                              children: `خلاصه محتوای سند:`,
-                            }),
-                            (0, H.jsx)(`p`, {
-                              className: `text-xs text-neutral-600 leading-relaxed font-normal`,
-                              children: k.description,
-                            }),
-                          ],
-                        }),
-                        k.deliverables &&
-                          k.deliverables.length > 0 &&
-                          (0, H.jsxs)(`div`, {
-                            className: `space-y-1.5`,
-                            children: [
-                              (0, H.jsx)(`span`, {
-                                className: `text-[11px] font-bold text-neutral-700 block`,
-                                children: `خروجی‌ها و سرفصل‌ها:`,
-                              }),
-                              (0, H.jsx)(`div`, {
-                                className: `space-y-1`,
-                                children: k.deliverables
-                                  .slice(0, 3)
-                                  .map((e, t) =>
-                                    (0, H.jsxs)(
-                                      `div`,
-                                      {
-                                        className: `flex items-start gap-1.5 text-xs text-neutral-700`,
-                                        children: [
-                                          (0, H.jsx)(rd, {
-                                            className: `w-3.5 h-3.5 text-neutral-800 shrink-0 mt-0.5`,
-                                          }),
-                                          (0, H.jsx)(`span`, {
-                                            className: `line-clamp-2`,
-                                            children: e,
-                                          }),
-                                        ],
-                                      },
-                                      t,
-                                    ),
-                                  ),
-                              }),
-                            ],
-                          }),
-                      ],
-                    }),
-                    (0, H.jsxs)(`div`, {
-                      className: `pt-4 space-y-2 border-t border-neutral-200`,
-                      children: [
-                        (0, H.jsxs)(`button`, {
-                          type: `button`,
-                          onClick: ue,
-                          className: `w-full py-2.5 px-3 rounded-xl bg-neutral-900 hover:bg-black text-white text-xs font-black flex items-center justify-center gap-2 shadow-xs cursor-pointer transition-all active:scale-98`,
-                          children: [
-                            (0, H.jsx)(q, {
-                              className: `w-3.5 h-3.5 text-amber-300`,
-                            }),
-                            (0, H.jsx)(`span`, {
-                              children: `مطالعه و ویرایش کامل سند 📖`,
-                            }),
-                          ],
-                        }),
-                        a &&
-                          (0, H.jsxs)(`button`, {
-                            type: `button`,
-                            onClick: () => {
-                              (W.playWindowOpen(),
-                                a(k.briefPrefill || k.titleFa));
-                            },
-                            className: `w-full py-2 px-3 rounded-xl bg-white hover:bg-neutral-100 border border-neutral-300 text-neutral-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-98`,
-                            children: [
-                              (0, H.jsx)(jd, {
-                                className: `w-3.5 h-3.5 text-neutral-600`,
-                              }),
-                              (0, H.jsx)(`span`, {
-                                children: `تنظیم بریف بر اساس این سند 🚀`,
-                              }),
-                            ],
-                          }),
-                        k.fullDoc &&
-                          (0, H.jsxs)(`button`, {
-                            type: `button`,
-                            onClick: () => {
-                              window.confirm(
-                                `آیا از پاک کردن سند «${k.name}» اطمینان دارید؟`,
-                              ) && ie(k.id);
-                            },
-                            className: `w-full py-1.5 px-3 rounded-xl border border-red-200 hover:bg-red-50 text-red-600 text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors`,
-                            title: `پاک کردن این سند از فولدر`,
-                            children: [
-                              (0, H.jsx)(Id, { className: `w-3.5 h-3.5` }),
-                              (0, H.jsx)(`span`, {
-                                children: `پاک کردن این سند از فولدر`,
-                              }),
-                            ],
-                          }),
-                      ],
-                    }),
-                  ],
-                }),
             ],
           }),
           g &&
@@ -5176,7 +5335,7 @@ var Au = [
                           s.engagementType === `sprint`
                             ? `اسپرینت پروژه‌محور`
                             : s.engagementType === `retainer`
-                              ? `ریتینر ماهانه`
+                              ? `تولید محتوای ماهانه`
                               : `کنسلیری و مشاوره`,
                       }),
                     ],
@@ -5241,7 +5400,7 @@ var Au = [
         {
           id: `counsel`,
           name: `پارتنر دائمی و هدایت فصلی`,
-          desc: `مدیریت ارشد خلاقیت (Fractional CD) و ریتینر اختصاصی تولید محتوا`,
+          desc: `مدیریت ارشد خلاقیت (Fractional CD) و تولید محتوای ماهانه`,
           baseWeeks: 12,
           baseDeliverables: 32,
           baseLeadHours: 140,
@@ -5458,7 +5617,7 @@ var Au = [
                 children: [
                   (0, H.jsx)(`label`, {
                     className: `block text-xs font-bold uppercase tracking-wider text-neutral-500 mb-1.5`,
-                    children: `۴. ریتینر ماهانه تولید محتوا`,
+                    children: `۴. تولید محتوای ماهانه`,
                   }),
                   (0, H.jsxs)(`div`, {
                     onClick: () => {
@@ -5471,11 +5630,11 @@ var Au = [
                         children: [
                           (0, H.jsx)(`span`, {
                             className: `font-bold block`,
-                            children: `افزودن ریتینر ۱۰ ویدیوی سینمایی`,
+                            children: `افزودن پکیج تولید محتوای ماهانه`,
                           }),
                           (0, H.jsx)(`span`, {
                             className: `text-[10px] text-neutral-500`,
-                            children: `تولید مداوم ماهانه همراه با تیم ثابت`,
+                            children: `هماهنگی جلسات فیلم‌برداری و نظارت مستمر بر پیج`,
                           }),
                         ],
                       }),
@@ -5728,12 +5887,12 @@ var Au = [
                   (0, H.jsx)(`button`, {
                     onClick: () => c(`team`),
                     className: `px-3.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${i === `team` ? `bg-white text-neutral-900 shadow-xs` : `text-neutral-600 hover:text-black`}`,
-                    children: `سرپرستان و تیم خلاقیت (۵)`,
+                    children: `اعضا و تیم خلاقیت`,
                   }),
                   (0, H.jsx)(`button`, {
                     onClick: () => c(`models`),
                     className: `px-3.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${i === `models` ? `bg-white text-neutral-900 shadow-xs` : `text-neutral-600 hover:text-black`}`,
-                    children: `مدل‌های ۳گانه همکاری`,
+                    children: `مدل‌های استاندارد همکاری`,
                   }),
                 ],
               }),
@@ -5837,20 +5996,20 @@ var Au = [
                       children: [
                         (0, H.jsx)(`span`, {
                           className: `text-[11px] font-mono uppercase bg-amber-50 text-amber-800 px-2 py-0.5 rounded border border-amber-200 font-bold`,
-                          children: `SENIOR LEADERSHIP & DIRECTORS`,
+                          children: `CREATIVE TEAM & MEMBERS`,
                         }),
                         (0, H.jsx)(`h3`, {
                           className: `text-2xl font-black text-neutral-900 mt-2`,
-                          children: `سرپرستان ارشد و معماران خلاقیت`,
+                          children: `اعضا و تیم خلاقیت استودیو`,
                         }),
                         (0, H.jsx)(`p`, {
                           className: `text-xs sm:text-sm text-neutral-500 mt-1`,
-                          children: `پروژه‌ها در استودیو هرگز به پیمانکاران ناشناس واگذار نمی‌شوند؛ این ۵ سرپرست مستقیماً بر تمام جزئیات نظارت دارند.`,
+                          children: `اعضای تیم استودیو مستقیماً بر تمام جزئیات ایده‌پردازی، طراحی و اجرای پروژه‌ها تمرکز دارند.`,
                         }),
                       ],
                     }),
                     (0, H.jsx)(`div`, {
-                      className: `grid grid-cols-2 sm:grid-cols-5 gap-2.5 pt-2`,
+                      className: `grid grid-cols-2 sm:grid-cols-6 gap-2.5 pt-2`,
                       children: currentTeam.map((e) => {
                         let t = selectedMember && selectedMember.id === e.id;
                         return (0, H.jsxs)(
@@ -5875,7 +6034,7 @@ var Au = [
                               }),
                               (0, H.jsx)(`span`, {
                                 className: `text-[10px] text-neutral-500 block truncate font-medium`,
-                                children: (e.role || '').split(`و`)[0] || e.role,
+                                children: (e.role || '').split(/[،,]/)[0] || e.role,
                               }),
                             ],
                           },
@@ -5916,42 +6075,27 @@ var Au = [
                           className: `text-xs sm:text-sm text-neutral-700 leading-relaxed font-normal`,
                           children: selectedMember?.bio || ``,
                         }),
-                        (0, H.jsxs)(`div`, {
-                          className: `grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs`,
-                          children: [
-                            (0, H.jsxs)(`div`, {
-                              className: `bg-white p-3.5 rounded-xl border border-neutral-200 shadow-2xs`,
-                              children: [
-                                (0, H.jsx)(`span`, {
-                                  className: `text-neutral-500 block text-[10px] font-bold mb-1`,
-                                  children: `پیشینه و سوابق:`,
-                                }),
-                                (0, H.jsx)(`p`, {
-                                  className: `text-neutral-800 leading-relaxed font-normal`,
-                                  children: selectedMember?.experience || ``,
-                                }),
-                              ],
-                            }),
-                            (0, H.jsxs)(`div`, {
-                              className: `bg-white p-3.5 rounded-xl border border-neutral-200 shadow-2xs`,
-                              children: [
-                                (0, H.jsx)(`span`, {
-                                  className: `text-neutral-500 block text-[10px] font-bold mb-1`,
-                                  children: `فلسفه فردی:`,
-                                }),
-                                (0, H.jsx)(`p`, {
-                                  className: `text-amber-800 font-semibold italic leading-relaxed`,
-                                  children: selectedMember?.philosophy || ``,
-                                }),
-                              ],
-                            }),
-                          ],
+                        (0, H.jsx)(`div`, {
+                          className: `pt-1 text-xs`,
+                          children: (0, H.jsxs)(`div`, {
+                            className: `bg-white p-3.5 rounded-xl border border-neutral-200 shadow-2xs`,
+                            children: [
+                              (0, H.jsx)(`span`, {
+                                className: `text-neutral-500 block text-[10px] font-bold mb-1`,
+                                children: `فلسفه فردی در هنر:`,
+                              }),
+                              (0, H.jsx)(`p`, {
+                                className: `text-amber-800 font-semibold italic leading-relaxed`,
+                                children: selectedMember?.philosophy || `«وصل کردن ایده‌های خوب به همدیگه»`,
+                              }),
+                            ],
+                          }),
                         }),
                         (0, H.jsxs)(`div`, {
                           children: [
                             (0, H.jsx)(`span`, {
                               className: `text-[11px] font-bold text-neutral-600 block mb-2`,
-                              children: `تخصص‌های کانونی:`,
+                              children: `مهارت‌ها و حوزه‌های تخصصی:`,
                             }),
                             (0, H.jsx)(`div`, {
                               className: `flex flex-wrap gap-1.5`,
@@ -6122,7 +6266,7 @@ var Au = [
                         }),
                         (0, H.jsx)(`h3`, {
                           className: `text-2xl font-black text-neutral-900 mt-2`,
-                          children: `۳ مدل استاندارد همکاری با استودیو`,
+                          children: `مدل‌های استاندارد همکاری با استودیو`,
                         }),
                         (0, H.jsx)(`p`, {
                           className: `text-xs sm:text-sm text-neutral-500 mt-1 leading-relaxed`,
@@ -8988,6 +9132,8 @@ var Au = [
     onToggleSound: l,
     onOpenServices: u,
     onOpenCalculator: d,
+    themeMode = `light`,
+    onToggleTheme,
   }) => {
     (0, S.useEffect)(() => {
       let e = () => n();
@@ -9001,7 +9147,7 @@ var Au = [
       );
     }, [n]);
     let f = Math.min(e, window.innerWidth - 240),
-      p = Math.min(t, window.innerHeight - 340);
+      p = Math.min(t, window.innerHeight - 360);
     return (0, H.jsxs)(`div`, {
       style: { left: f, top: p },
       className: `fixed z-50 w-60 rounded-xl bg-white/95 backdrop-blur-xl border border-black/12 p-1.5 text-xs text-neutral-800 shadow-2xl select-none animate-window-pop text-right font-sans`,
@@ -9073,6 +9219,28 @@ var Au = [
             ],
           }),
         }),
+        onToggleTheme &&
+          (0, H.jsx)(`button`, {
+            onClick: () => {
+              (onToggleTheme(), n());
+            },
+            className: `w-full text-right px-3 py-1.5 rounded-lg hover:bg-neutral-100 flex items-center justify-between transition-colors cursor-pointer font-bold`,
+            children: (0, H.jsxs)(`span`, {
+              className: `flex items-center gap-2`,
+              children: [
+                (0, H.jsx)(`span`, {
+                  className: `text-xs`,
+                  children: themeMode === `dark` ? `☀️` : `🌙`,
+                }),
+                (0, H.jsx)(`span`, {
+                  children:
+                    themeMode === `dark`
+                      ? `تغییر تم به حالت روشن (Light)`
+                      : `تغییر تم به حالت تیره (Dark)`,
+                }),
+              ],
+            }),
+          }),
         (0, H.jsx)(`button`, {
           onClick: () => {
             (W.playClick(), i(), n());
@@ -9235,9 +9403,11 @@ var Au = [
         (0, H.jsx)(`div`, {
           className: `absolute inset-0 flex flex-col items-center max-md:justify-end max-md:pb-14 md:justify-center text-center px-4 pointer-events-none`,
           children: (0, H.jsxs)(ku.div, {
-            animate: { y: [-4, 4, -4], scale: [1, 1.01, 1] },
-            transition: { duration: 9, repeat: 1 / 0, ease: `easeInOut` },
-            className: `flex flex-col items-center max-w-[95vw]`,
+            drag: !0,
+            dragMomentum: !1,
+            dragElastic: 0.08,
+            whileDrag: { scale: 1.03 },
+            className: `flex flex-col items-center max-w-[95vw] pointer-events-auto cursor-grab active:cursor-grabbing select-none rounded-3xl p-3 transition-shadow hover:bg-white/10`,
             children: [
               (0, H.jsxs)(ku.div, {
                 initial: { opacity: 0, scale: 0.9 },
@@ -9381,6 +9551,36 @@ var Au = [
         e?.tags || [`ری‌برندینگ`, `سینمای تجاری`, `تایپوگرافی`],
       ),
       [O, se] = (0, S.useState)(``),
+      allTeamList = (0, S.useMemo)(() => {
+        try {
+          return getTeamMembers();
+        } catch {
+          return Pu;
+        }
+      }, []),
+      [assignedTeamIds, setAssignedTeamIds] = (0, S.useState)(() => {
+        if (Array.isArray(e?.assignedTeamIds)) return e.assignedTeamIds;
+        let initialIds = [];
+        try {
+          let members = getTeamMembers();
+          members.forEach((m) => {
+            if (
+              m.projectRoles?.some((pr) => pr.projectId === e?.id) ||
+              (e?.role && e.role.includes(m.name))
+            ) {
+              initialIds.push(m.id);
+            }
+          });
+        } catch {}
+        return initialIds;
+      }),
+      toggleAssignedMember = (member) => {
+        W.playClick();
+        setAssignedTeamIds((prev) => {
+          let exists = prev.includes(member.id);
+          return exists ? prev.filter((id) => id !== member.id) : [...prev, member.id];
+        });
+      },
       k = [
         { label: `معماری و هویت برند`, track: `TRACK 01 // BRAND IDENTITY` },
         {
@@ -9439,6 +9639,7 @@ var Au = [
                   category: g,
                   deptTrack: v,
                   role: b.trim() || `مدیر ارشد خلاقیت`,
+                  assignedTeamIds,
                   metrics: C.trim() || `اجرا با بالاترین کیفیت استودیویی`,
                   coverImage: w.trim() || sf[0].url,
                   highResImage: w.trim() || sf[0].url,
@@ -9630,6 +9831,38 @@ var Au = [
                                 className: `w-full bg-white border border-neutral-300 rounded-lg px-3 py-1.5 text-xs text-neutral-900 focus:outline-none focus:border-neutral-900 text-center`,
                               }),
                             ],
+                          }),
+                        ],
+                      }),
+                      (0, H.jsxs)(`div`, {
+                        className: `sm:col-span-2 pt-1`,
+                        children: [
+                          (0, H.jsx)(`label`, {
+                            className: `block text-xs font-bold text-neutral-700 mb-1.5`,
+                            children: `اعضای تیم در این پروژه (انتخاب همکاران برای نمایش خودکار در پروفایل اعضا):`,
+                          }),
+                          (0, H.jsx)(`div`, {
+                            className: `flex flex-wrap gap-1.5`,
+                            children: allTeamList.map((member) => {
+                              let active = assignedTeamIds.includes(member.id);
+                              return (0, H.jsxs)(
+                                `button`,
+                                {
+                                  type: `button`,
+                                  onClick: () => toggleAssignedMember(member),
+                                  className: `px-2.5 py-1 rounded-lg border text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${active ? `bg-neutral-900 text-white border-neutral-900 shadow-2xs` : `bg-white text-neutral-700 border-neutral-300 hover:border-neutral-400`}`,
+                                  children: [
+                                    (0, H.jsx)(`span`, {
+                                      children: active ? `✓` : `+`,
+                                    }),
+                                    (0, H.jsx)(`span`, {
+                                      children: member.name,
+                                    }),
+                                  ],
+                                },
+                                member.id,
+                              );
+                            }),
                           }),
                         ],
                       }),
@@ -10702,8 +10935,22 @@ var Au = [
         return zu[0].url;
       }),
       [r, i] = (0, S.useState)(!0),
-      [a, o] = (0, S.useState)({}),
-      [s, c] = (0, S.useState)({}),
+      [a, o] = (0, S.useState)(() => {
+        try {
+          let saved = localStorage.getItem(`cj_desktop_widget_positions_v1`);
+          return saved ? JSON.parse(saved) : {};
+        } catch {
+          return {};
+        }
+      }),
+      [s, c] = (0, S.useState)(() => {
+        try {
+          let saved = localStorage.getItem(`cj_desktop_folder_positions_v1`);
+          return saved ? JSON.parse(saved) : {};
+        } catch {
+          return {};
+        }
+      }),
       [l, u] = (0, S.useState)(null),
       [d, f] = (0, S.useState)(null),
       [p, m] = (0, S.useState)(() => cf()),
@@ -10711,7 +10958,29 @@ var Au = [
       [isAdminMode, setIsAdminMode] = (0, S.useState)(!1),
       [isAdminAuth, setIsAdminAuth] = (0, S.useState)(() => isAdminAuthenticated()),
       [showPinModal, setShowPinModal] = (0, S.useState)(!1),
-      [activeClient, setActiveClient] = (0, S.useState)(() => getActiveClient());
+      [activeClient, setActiveClient] = (0, S.useState)(() => getActiveClient()),
+      [themeMode, setThemeMode] = (0, S.useState)(() => {
+        try {
+          return localStorage.getItem(`cj_theme_mode`) === `dark`
+            ? `dark`
+            : `light`;
+        } catch {
+          return `light`;
+        }
+      });
+    (0, S.useEffect)(() => {
+      if (typeof document < `u`) {
+        document.documentElement.classList.toggle(`dark`, themeMode === `dark`);
+        document.documentElement.setAttribute(`data-theme`, themeMode);
+      }
+      try {
+        localStorage.setItem(`cj_theme_mode`, themeMode);
+      } catch {}
+    }, [themeMode]);
+    let toggleTheme = (0, S.useCallback)(() => {
+      W.playClick();
+      setThemeMode((prev) => (prev === `dark` ? `light` : `dark`));
+    }, []);
     (0, S.useEffect)(() => {
       let e = () => {
         m(cf());
@@ -10997,7 +11266,16 @@ var Au = [
                             : t.id === `bin` && k());
       },
       A = () => {
-        (W.playTrash(), o({}), c({}), u(null), f(null));
+        W.playTrash();
+        o({});
+        c({});
+        u(null);
+        f(null);
+        try {
+          localStorage.removeItem(`cj_desktop_folder_positions_v1`);
+          localStorage.removeItem(`cj_desktop_widget_positions_v1`);
+          window.dispatchEvent(new CustomEvent(`cj-reset-desktop-layout`));
+        } catch {}
       },
       ue = (e) => {
         (e.preventDefault(), W.playPop(), w({ x: e.clientX, y: e.clientY }));
@@ -11109,6 +11387,8 @@ var Au = [
           onOpenClientPortal: openClientPortal,
           activeClient: activeClient,
           currentWallpaperName: zu.find((e) => e.url === t)?.name || `Custom`,
+          themeMode: themeMode,
+          onToggleTheme: toggleTheme,
         }),
         (0, H.jsx)(`div`, {
           className: `absolute inset-0 top-8 bottom-0 z-10 overflow-hidden pointer-events-none`,
@@ -11132,13 +11412,39 @@ var Au = [
                 onOpen: () => D(t.id),
                 containerRef: e,
                 currentPos: s[t.id],
-                onDragEnd: (e) => c((n) => ({ ...n, [t.id]: e })),
+                onDragEnd: (e) =>
+                  c((n) => {
+                    let next = { ...n, [t.id]: e };
+                    try {
+                      localStorage.setItem(
+                        `cj_desktop_folder_positions_v1`,
+                        JSON.stringify(next),
+                      );
+                    } catch {}
+                    return next;
+                  }),
               },
               t.id,
             );
           }),
         }),
-        (0, H.jsx)(Hu, { onOpenApp: le, activeAppIds: de, isAdminAuth: isAdminAuth }),
+        (0, H.jsx)(Hu, {
+          onOpenApp: le,
+          activeAppIds: de,
+          isAdminAuth: isAdminAuth,
+          dockPos: a.dock,
+          onDockDragEnd: (pos) =>
+            o((prev) => {
+              let next = { ...prev, dock: pos };
+              try {
+                localStorage.setItem(
+                  `cj_desktop_widget_positions_v1`,
+                  JSON.stringify(next),
+                );
+              } catch {}
+              return next;
+            }),
+        }),
         (0, H.jsx)(kc, {
           children: _.map((r) => {
             if (r.type === `folder` && r.data)
@@ -11455,6 +11761,8 @@ var Au = [
             onOpenCalculator: re,
             soundEnabled: r,
             onToggleSound: te,
+            themeMode: themeMode,
+            onToggleTheme: toggleTheme,
           }),
         (0, H.jsx)(AdminPinModal, {
           isOpen: showPinModal,

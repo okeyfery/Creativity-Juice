@@ -210,40 +210,28 @@ export const ClientPortalWindow: React.FC<ClientPortalWindowProps> = ({
 
       {/* If Not Logged In: Login & Brand Discovery Screen */}
       {!activeClient ? (
-        <div className="flex-1 overflow-y-auto p-4 sm:p-8 flex flex-col items-center justify-start max-w-5xl mx-auto w-full space-y-6">
-          {/* Main Hero Header */}
-          <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300/80 text-[11px] font-bold mb-1">
-              <span>🌟</span>
-              <span>سامانه برندسازی، تولید محتوا و مدیریت سوشال مدیا</span>
-            </div>
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-neutral-950 tracking-tight">
-              فضای کار پرسونال برند و کارفرمایان استودیو
-            </h2>
-            <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
-              هر فعال و تولیدکننده محتوا در سوشال مدیا می‌تواند بر پایه بریف‌ها و متدولوژی استودیو Creativity Juice، پنل پرسونال برند اختصاصی خود را بسازد و تقویم، سناریوها و هویت برند خود را مدیریت کند.
-            </p>
-          </div>
-
-          {/* Action CTA Hero Banner: Build Personal Brand Workspace */}
-          <div className="w-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 rounded-3xl p-5 sm:p-6 shadow-md border border-amber-300 text-neutral-950 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-8 flex flex-col items-center justify-start max-w-5xl mx-auto w-full space-y-5">
+          {/* Clean, Minimal Branding Helper Invitation */}
+          <div className="w-full max-w-3xl bg-gradient-to-r from-amber-400/95 via-amber-400 to-amber-500/95 rounded-2xl px-5 py-4 sm:px-6 sm:py-5 shadow-sm border border-amber-300/90 text-neutral-950 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="space-y-1 text-center sm:text-right">
               <div className="flex items-center justify-center sm:justify-start gap-2">
-                <span className="text-2xl">✨</span>
-                <h3 className="text-base sm:text-lg font-black tracking-tight">
-                  می‌خواهید در سوشال مدیا پرسونال برند خود را بسازید؟
-                </h3>
+                <span className="text-[11px] font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-neutral-950/10 text-neutral-950">
+                  Branding Helper
+                </span>
+                <h2 className="text-base sm:text-lg font-black tracking-tight text-neutral-950">
+                  برند شخصی خودت رو ساده و مرحله‌به‌مرحله بساز
+                </h2>
               </div>
-              <p className="text-xs text-neutral-900/85 max-w-xl font-medium leading-relaxed">
-                بدون نیاز به قرارداد، در ۱۰ ثانیه پنل اختصاصی خود را بسازید: تقویم انتشار محتوا، اسناد استراتژی، فرمول سناریونویسی ریلز و بریف هویتی بر اساس استانداردهای سینمایی Creativity Juice.
+              <p className="text-xs text-neutral-900/80 font-medium">
+                مسیر محتوا، لحن برند و تقویم سوشال مدیات رو یه‌جا بچین و مدیریت کن.
               </p>
             </div>
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="px-5 py-3 rounded-2xl bg-neutral-950 hover:bg-neutral-800 text-white font-black text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer flex items-center gap-2 shrink-0 whitespace-nowrap"
+              className="px-5 py-2.5 rounded-xl bg-neutral-950 hover:bg-neutral-800 text-white font-bold text-xs sm:text-sm shadow-sm transition-all active:scale-95 cursor-pointer flex items-center gap-2 shrink-0 whitespace-nowrap"
             >
-              <span>🚀</span>
-              <span>ساخت پرسونال برند من (رایگان و همگانی)</span>
+              <span>شروع ساخت برند من</span>
+              <span>⟵</span>
             </button>
           </div>
 
@@ -407,7 +395,7 @@ export const ClientPortalWindow: React.FC<ClientPortalWindowProps> = ({
 
                       <div className="mt-3 pt-2.5 border-t border-neutral-100 flex items-center justify-between text-[10px]">
                         <span className="text-neutral-600 font-medium truncate max-w-[170px]">
-                          {client.isPersonalBrand ? 'پرسونال برند عمومی' : `مدیر: ${client.projectLead}`}
+                          {client.isPersonalBrand ? 'Branding Helper' : `مدیر: ${client.projectLead}`}
                         </span>
                         <span className="text-amber-600 font-bold group-hover:translate-x-[-2px] transition-transform shrink-0">
                           ورود به پنل ⟵
@@ -1035,13 +1023,13 @@ export const ClientPortalWindow: React.FC<ClientPortalWindowProps> = ({
           >
             <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
               <div className="flex items-center gap-2">
-                <span className="text-2xl">🌟</span>
+                <span className="text-2xl">✨</span>
                 <div>
                   <h3 className="text-base sm:text-lg font-black text-neutral-950">
-                    ساخت فضای کار و پرسونال برند جدید
+                    Branding Helper — ساخت پرسونال برند
                   </h3>
                   <p className="text-xs text-neutral-500">
-                    بر اساس متدولوژی برندینگ و تقویم اختصاصی استودیو Creativity Juice
+                    چند مشخصه ساده از برندت رو وارد کن تا پنل محتوا و تقویمت آماده بشه
                   </p>
                 </div>
               </div>

@@ -37,6 +37,7 @@ export interface ProjectItem {
   colorAccent: string;
   featured?: boolean;
   isPublished?: boolean;
+  assignedTeamIds?: string[];
   desktopPos?: { top: number; left: number; mobileTop?: number; mobileLeft?: number };
   createdAt: string;
   updatedAt: string;
@@ -142,9 +143,9 @@ const STORAGE_KEYS = {
   PROJECTS: 'cj_studio_projects_v4',
   MEDIA: 'cj_studio_media_v3',
   SETTINGS: 'cj_studio_settings_v3',
-  SERVICES: 'cj_studio_services_v3',
-  TEAM: 'cj_studio_team_v4',
-  MANIFESTO: 'cj_studio_manifesto_v3',
+  SERVICES: 'cj_studio_services_v5',
+  TEAM: 'cj_studio_team_v5',
+  MANIFESTO: 'cj_studio_manifesto_v5',
 };
 
 // Initial Seed Media Items
@@ -364,6 +365,61 @@ export function saveProject(project: ProjectItem): ProjectItem {
   }
 
   saveProjects(nextProjects);
+
+  // Sync project assignment with team members if role or assignedTeamIds reference any member
+  try {
+    const rawTeam = localStorage.getItem(STORAGE_KEYS.TEAM);
+    const members: TeamMemberItem[] = rawTeam ? JSON.parse(rawTeam) : [...SEED_TEAM];
+    if (Array.isArray(members) && members.length > 0) {
+      let teamChanged = false;
+      const roleText = `${updatedItem.role || ''} ${(updatedItem.tags || []).join(' ')}`;
+      const assignedIds = updatedItem.assignedTeamIds || [];
+      const nextMembers = members.map((m) => {
+        const firstName = m.name.split(' ')[0];
+        const isMatchedByText =
+          roleText.includes(m.name) ||
+          (firstName.length > 2 && roleText.includes(firstName));
+        const isMatchedById = assignedIds.includes(m.id);
+        const existingRoles = m.projectRoles ? [...m.projectRoles] : [];
+        const existingIdx = existingRoles.findIndex((pr) => pr.projectId === updatedItem.id);
+
+        if (isMatchedById || isMatchedByText) {
+          const newEntry: MemberProjectRole = {
+            projectId: updatedItem.id,
+            projectTitle: updatedItem.title,
+            client: updatedItem.client,
+            roleInProject:
+              existingIdx >= 0
+                ? existingRoles[existingIdx].roleInProject
+                : updatedItem.role || m.role,
+            year: updatedItem.year || '۱۴۰۳',
+            keyDeliverables:
+              updatedItem.deliverables && updatedItem.deliverables.length > 0
+                ? updatedItem.deliverables.slice(0, 3)
+                : existingIdx >= 0
+                ? existingRoles[existingIdx].keyDeliverables
+                : [],
+            impact: updatedItem.metrics || (existingIdx >= 0 ? existingRoles[existingIdx].impact : ''),
+            coverImage: updatedItem.coverImage,
+          };
+          if (existingIdx >= 0) {
+            existingRoles[existingIdx] = newEntry;
+          } else {
+            existingRoles.unshift(newEntry);
+          }
+          teamChanged = true;
+          return { ...m, projectRoles: existingRoles };
+        }
+        return m;
+      });
+      if (teamChanged) {
+        saveTeamMembers(nextMembers, true);
+      }
+    }
+  } catch (e) {
+    console.error('Error syncing team members on saveProject:', e);
+  }
+
   return updatedItem;
 }
 
@@ -599,25 +655,24 @@ export const SEED_SERVICES: ServiceItem[] = [
   },
   {
     id: 'srv-06',
-    code: 'SRV-06 // MONTHLY RETAINER',
+    code: 'SRV-06 // MONTHLY CONTENT',
     deptId: 2,
     deptName: 'سینما، مد و محتوای شاخص',
     deptTrack: 'TRACK 02 // CINEMA & VISUALS',
     badge: 'همکاری مستمر ماهانه',
-    title: 'ریتینر ماهانه تولید محتوای سینمایی',
-    titleEn: 'Monthly Content Retainer',
-    fileName: 'SRV-06_قرارداد_ریتینر_ماهانه_تولید_محتوا.doc',
+    title: 'تولید محتوای ماهانه',
+    titleEn: 'Monthly Content Production',
+    fileName: 'SRV-06_قرارداد_تولید_محتوای_ماهانه.doc',
     fileSize: '14.2 MB',
     fileExt: 'DOC',
-    description: 'همکاری ثابت ماهانه شامل ۲ جلسه تصویربرداری کامل با تجهیزات استاندارد، تولید ۱۰ ویدیوی آماده با تدوین حرفه‌ای، هدایت خط استوری‌های پیوسته و نظارت ادیتوریال بر انتشار پیج.',
+    description: 'همکاری مستمر در تولید محتوای ماهانه شامل برنامه‌ریزی و هماهنگی جلسات فیلم‌برداری، تحویل خروجی‌ها طبق قرارداد و نیاز کارفرما و نظارت مستمر بر پیج و انتشار محتوا.',
     deliverables: [
-      '۱۰ ویدیوی سینمایی آماده (Reels / 4K) در ماه',
-      '۲ جلسه فیلم‌برداری میدانی کامل با تجهیزات نور و تصویر',
-      'سناریونویسی، هوک اولیه و کال‌تواکشن هدفمند',
-      'هدایت تقویم محتوایی و چیدمان استوری‌های روزانه',
+      'هماهنگی جلسات فیلم‌برداری در ماه',
+      'تحویل خروجی‌ها طبق قرارداد و نیاز کارفرما',
+      'نظارت مستمر بر پیج و انتشار محتوا',
     ],
     suitableFor: 'کلینیک‌های تخصصی، املاک پرمیوم و کسب‌وکارهای در حال توسعه',
-    timeline: 'دوره قرارداد: حداقل ۳ ماهه',
+    timeline: 'دوره قرارداد: ماهانه / فصلی',
     engagementType: 'retainer',
     popular: true,
   },
@@ -710,7 +765,7 @@ export const SEED_SERVICES: ServiceItem[] = [
       'هدایت بریف‌ها و فیلتر کردن پیمانکاران متفرقه',
       'پاسداری از شأن، پرستیژ و خطوط قرمز برند در بازار',
     ],
-    suitableFor: 'هلدینگ‌ها و مجموعه‌هایی که مجری دارند اما سکاندار خلاقیت ندارند',
+    suitableFor: 'هلدینگ‌ها و مجموعه‌هایی که تیم اجرایی دارند اما نیازمند هدایت هنری یکپارچه هستند',
     timeline: 'دوره همکاری: فصلی، ۶ ماهه و سالانه',
     engagementType: 'advisory',
   },
@@ -780,35 +835,168 @@ export function deleteService(id: string): void {
 export const SEED_TEAM: TeamMemberItem[] = INITIAL_TEAM as unknown as TeamMemberItem[];
 
 export function getTeamMembers(): TeamMemberItem[] {
+  let baseMembers: TeamMemberItem[] = SEED_TEAM;
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.TEAM);
     if (raw !== null) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Automatically upgrade if cache still has previous dummy members
-        const hasDummy = parsed.some((m: any) => m && (m.name === 'کامیار آریا' || m.name === 'آرشام کاویانی' || m.id === 'member-01' || m.id === 'member-02'));
+        const hasDummy = parsed.some(
+          (m: any) =>
+            m &&
+            (m.name === 'کامیار آریا' ||
+              m.name === 'آرشام کاویانی' ||
+              m.id === 'member-01' ||
+              m.id === 'member-02')
+        );
         if (!hasDummy) {
-          // Automatically populate seed projectRoles if missing from older store version
-          const enriched = parsed.map((m: TeamMemberItem) => {
-            if (!m.projectRoles || m.projectRoles.length === 0) {
-              const seedMatch = SEED_TEAM.find((s) => s.id === m.id);
-              if (seedMatch && seedMatch.projectRoles) {
-                return { ...m, projectRoles: seedMatch.projectRoles };
-              }
-            }
-            return m;
+          baseMembers = parsed.map((m: TeamMemberItem) => {
+            const seedMatch = SEED_TEAM.find((s) => s.id === m.id);
+            const cleanedBio = (m.bio || '').replace(/سکاندار/g, 'هدایتگر');
+            const cleanedPhilosophy =
+              m.id === 'fereydoun-yousefzadeh' &&
+              (!m.philosophy || m.philosophy.includes('هنر در تبلیغات'))
+                ? '«وصل کردن ایده‌های خوب به همدیگه»'
+                : m.philosophy;
+            return {
+              ...m,
+              bio: cleanedBio,
+              experience: '',
+              philosophy: cleanedPhilosophy,
+              projectRoles:
+                m.projectRoles && m.projectRoles.length > 0
+                  ? m.projectRoles
+                  : seedMatch?.projectRoles || [],
+            };
           });
-          return enriched;
+        } else {
+          saveTeamMembers(SEED_TEAM, false);
         }
       } else if (Array.isArray(parsed) && parsed.length === 0) {
         return [];
       }
+    } else {
+      saveTeamMembers(SEED_TEAM, false);
     }
   } catch (e) {
     console.error('Error reading team members:', e);
   }
-  saveTeamMembers(SEED_TEAM, false);
-  return SEED_TEAM;
+
+  // Dynamically enrich each member's projectRoles from active projects & Dashboard OS assignments
+  try {
+    const allProjects = getProjects();
+    let osOverrides: Record<string, { extraMemberIds?: string[] }> = {};
+    try {
+      const rawOverrides = localStorage.getItem('cj_os_project_status_overrides_v2');
+      if (rawOverrides) {
+        osOverrides = JSON.parse(rawOverrides);
+      }
+    } catch {
+      // ignore
+    }
+
+    return baseMembers.map((member) => {
+      const rolesMap = new Map<string, MemberProjectRole>();
+      (member.projectRoles || []).forEach((pr) => {
+        rolesMap.set(pr.projectId, pr);
+      });
+
+      const firstName = member.name.split(' ')[0];
+
+      allProjects.forEach((proj) => {
+        const roleStr = `${proj.role || ''} ${(proj.tags || []).join(' ')}`;
+        const assignedIds = proj.assignedTeamIds || [];
+        const extraIds = osOverrides[proj.id]?.extraMemberIds || [];
+
+        const isAssigned =
+          assignedIds.includes(member.id) ||
+          extraIds.includes(member.id) ||
+          roleStr.includes(member.name) ||
+          (firstName.length > 2 && roleStr.includes(firstName));
+
+        if (isAssigned && !rolesMap.has(proj.id)) {
+          rolesMap.set(proj.id, {
+            projectId: proj.id,
+            projectTitle: proj.title,
+            client: proj.client,
+            roleInProject: proj.role && !proj.role.includes('/') ? proj.role : member.role,
+            year: proj.year || '۱۴۰۳',
+            keyDeliverables: proj.deliverables ? proj.deliverables.slice(0, 3) : [],
+            impact: proj.metrics || '',
+            coverImage: proj.coverImage,
+          });
+        }
+      });
+
+      return {
+        ...member,
+        projectRoles: Array.from(rolesMap.values()),
+      };
+    });
+  } catch {
+    return baseMembers;
+  }
+}
+
+export function syncProjectTeamMemberRole(
+  memberId: string,
+  project: {
+    id: string;
+    title: string;
+    client?: string;
+    year?: string;
+    deliverables?: string[];
+    metrics?: string;
+    coverImage?: string;
+  },
+  roleInProject: string,
+  remove = false
+): void {
+  try {
+    const current = getTeamMembers();
+    const nextMembers = current.map((m) => {
+      if (m.id !== memberId) return m;
+      const existing = m.projectRoles ? [...m.projectRoles] : [];
+      if (remove) {
+        return {
+          ...m,
+          projectRoles: existing.filter(
+            (pr) => pr.projectId !== project.id && pr.projectTitle !== project.title
+          ),
+        };
+      }
+      const idx = existing.findIndex(
+        (pr) => pr.projectId === project.id || pr.projectTitle === project.title
+      );
+      const roleEntry: MemberProjectRole = {
+        projectId: project.id,
+        projectTitle: project.title,
+        client: project.client || 'کارفرمای اختصاصی',
+        roleInProject: roleInProject || m.role,
+        year: project.year || '۱۴۰۳',
+        keyDeliverables:
+          project.deliverables && project.deliverables.length > 0
+            ? project.deliverables.slice(0, 3)
+            : ['اجرای تخصصی در پروژه'],
+        impact: project.metrics || 'اجرای استاندارد استودیویی',
+        coverImage:
+          project.coverImage ||
+          'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
+      };
+      if (idx >= 0) {
+        existing[idx] = roleEntry;
+      } else {
+        existing.unshift(roleEntry);
+      }
+      return {
+        ...m,
+        projectRoles: existing,
+      };
+    });
+    saveTeamMembers(nextMembers, true);
+  } catch (e) {
+    console.error('Error syncing project team member role:', e);
+  }
 }
 
 export function saveTeamMembers(members: TeamMemberItem[], notify = true): void {
@@ -864,24 +1052,24 @@ export const SEED_MANIFESTO: ManifestoItem[] = [
     title: 'تقطیر زوائد و بازگشت به جوهره',
     titleEn: 'Distillation Over Accumulation',
     description: 'ما معتقدیم اضافه کردن المان‌های شلوغ، راهکار هویت نیست. هنر واقعی در حذف تمام اضافات و دستیابی به خالص‌ترین بیان هویتی است که هر مخاطبی با یک نگاه آن را به خاطر بسپارد.',
-    quote: '«برندی که تلاش کند همه مخاطبان را راضی نگه دارد، در نهایت هیچ‌کس را عمیقاً تحت تأثیر قرار نمی‌دهد. تمایز واقعی نیازمند شهامتِ حذف زوائد است.»',
-    author: 'فریدون یوسف زاده — مدیر هنری و ایده پرداز',
+    quote: '«Create like a child, edit like a scientist.» — کودکانه و بی‌مرز خلق کن، و همچون یک دانشمند با دقت ویرایش کن.',
+    author: 'Tyler, The Creator',
   },
   {
     code: '02',
     title: 'ادغام کیفیت هنری با کارآمدی تجاری',
     titleEn: 'Artistic Mastery Meets Commercial Efficiency',
     description: 'زیبایی‌شناسی بدون هدف تجاری، هنر محض است و بازاریابی بدون سلیقه، آلودگی بصری. استودیوی ما نقطه تلاقی وقار زیبایی‌شناختی و اثربخشی مالی در بازار است.',
-    quote: '«سیستم بصری موفق شبیه یک معماری بی‌نقص است؛ هیچ جزئی در آن تزئینی و بی‌هدف نیست و هر خط، وزنی در تعادل کل دارد.»',
-    author: 'علیرضا شیعه زاده — طراح UI/UX و مشاور هنری',
+    quote: '«Less, but better.» — کمتر، اما باکیفیت‌تر؛ تمرکز بر جنبه‌های بنیادین و پالایش هر اثر از زوائد.',
+    author: 'Dieter Rams',
   },
   {
     code: '03',
-    title: 'مسئولیت عالیه و نظارت یکدست',
-    titleEn: 'Singular Authorship & Senior Ownership',
-    description: 'پروژه‌ها هرگز به دست کارآموزان یا زنجیره‌های پیمانکاری ناشناس سپرده نمی‌شوند. تک‌تک خروجی‌ها تحت هدایت مستقیم اعضای ارشد استودیو مهندسی و نظارت می‌شوند.',
-    quote: '«دوربین وسیله ثبت نیست؛ قلم‌موی انتقال حس است. هر فریم باید راوی شخصیتی باشد که کلمات نمی‌توانند بیان کنند.»',
-    author: 'اسماعیل سامانی پور — کارگردان و تصویربردار',
+    title: 'خلق اثر اصیل و ماندگار',
+    titleEn: 'Authentic Craft & Timeless Vision',
+    description: 'هدف ما کپی‌برداری از ترندهای زودگذر نیست؛ بلکه ساختن جهان بصری و روایتی است که امضای اصیل برند را با استانداردهای دقیق اجرایی به نمایش بگذارد.',
+    quote: '«The goal of art isn’t to attain perfection. The goal is to share who we are and how we see the world.»',
+    author: 'Rick Rubin',
   },
 ];
 

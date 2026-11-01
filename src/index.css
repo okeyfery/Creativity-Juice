@@ -207,3 +207,161 @@
 .animate-window-pop {
   animation: 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards windowPop;
 }
+
+/* === Dark Mode Theme Adaptation (html.dark) === */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.38);
+}
+
+html.dark .topbar-glass {
+  background: rgba(18, 19, 24, 0.88) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f3f4f6 !important;
+}
+
+html.dark .dock-glass {
+  background: rgba(24, 26, 33, 0.82) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55), 0 2px 10px rgba(0, 0, 0, 0.35) !important;
+}
+
+html.dark .mac-glass {
+  background: rgba(22, 24, 31, 0.92) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Primary surfaces, windows, modals, and sidebars */
+html.dark .bg-\[\#F5F4F0\],
+html.dark .bg-\[\#F7F5F0\] {
+  background-color: #0d0e12 !important;
+}
+
+html.dark .from-\[\#FAF8F5\].via-\[\#F4F1EA\].to-\[\#EEEAE1\] {
+  background-image: linear-gradient(to bottom right, #0e1015, #13161f, #181b26) !important;
+}
+
+html.dark .bg-\[\#FAF8F5\],
+html.dark .bg-\[\#FAF9F6\],
+html.dark .bg-\[\#FAF9F7\] {
+  background-color: #14161d !important;
+  color: #f3f4f6 !important;
+}
+
+html.dark .bg-\[\#F4F2EE\],
+html.dark .bg-\[\#F6F5F2\],
+html.dark .bg-\[\#F5F2EB\] {
+  background-color: #191c24 !important;
+  color: #e5e7eb !important;
+}
+
+html.dark .bg-white,
+html.dark .bg-white\/95,
+html.dark .bg-white\/90,
+html.dark .bg-white\/85,
+html.dark .bg-white\/80 {
+  background-color: #1b1e27 !important;
+  color: #f3f4f6 !important;
+}
+
+html.dark .bg-neutral-50,
+html.dark .bg-neutral-50\/60,
+html.dark .bg-neutral-50\/50,
+html.dark .bg-neutral-100 {
+  background-color: #232733 !important;
+  color: #e5e7eb !important;
+}
+
+html.dark .bg-neutral-200,
+html.dark .bg-neutral-200\/80,
+html.dark .bg-neutral-200\/90 {
+  background-color: #2d3240 !important;
+  color: #f3f4f6 !important;
+}
+
+html.dark .bg-\[\#FFF9EE\],
+html.dark .bg-\[\#FEF5D9\]\/85 {
+  background-color: rgba(245, 158, 11, 0.16) !important;
+  border-color: rgba(245, 158, 11, 0.45) !important;
+}
+
+html.dark .bg-\[\#FDE68A\]\/75 {
+  background-color: rgba(245, 158, 11, 0.25) !important;
+  color: #fef3c7 !important;
+}
+
+/* Borders */
+html.dark .border-neutral-100,
+html.dark .border-neutral-150,
+html.dark .border-neutral-200,
+html.dark .border-neutral-200\/90,
+html.dark .border-neutral-200\/80,
+html.dark .border-neutral-200\/60,
+html.dark .border-neutral-300,
+html.dark .border-neutral-300\/80,
+html.dark .border-neutral-300\/90,
+html.dark .border-black\/10,
+html.dark .border-black\/12,
+html.dark .border-black\/15 {
+  border-color: rgba(255, 255, 255, 0.11) !important;
+}
+
+/* Text colors */
+html.dark .text-neutral-950,
+html.dark .text-neutral-900,
+html.dark .text-neutral-800 {
+  color: #f3f4f6 !important;
+}
+
+html.dark .text-neutral-700,
+html.dark .text-neutral-600 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .text-neutral-500,
+html.dark .text-neutral-400 {
+  color: #94a3b8 !important;
+}
+
+/* Preserve dark text on bright amber buttons/banners */
+html.dark .bg-amber-400,
+html.dark .bg-amber-500,
+html.dark [class*="from-amber-400"],
+html.dark [class*="from-amber-500"] {
+  color: #090a0f !important;
+}
+
+html.dark [class*="from-amber-400"] .text-neutral-950,
+html.dark [class*="from-amber-400"] .text-neutral-900\/80,
+html.dark [class*="from-amber-500"] .text-neutral-950,
+html.dark .bg-amber-400 .text-neutral-950,
+html.dark .bg-amber-500 .text-neutral-950 {
+  color: #090a0f !important;
+}
+
+/* Hero Typography in Dark Mode */
+html.dark .from-\[\#18181B\].via-\[\#27272A\].to-\[\#451A03\] {
+  background-image: linear-gradient(to right, #ffffff, #fde68a, #f59e0b) !important;
+}
+
+/* Inputs, selects, textareas */
+html.dark input:not([type="checkbox"]):not([type="radio"]),
+html.dark textarea,
+html.dark select {
+  background-color: #161922 !important;
+  color: #f3f4f6 !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
