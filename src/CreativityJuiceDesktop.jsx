@@ -71,7 +71,7 @@ var Au = [
       iconType: `manifesto`,
       badge: `مانیفست + ۶ عضو تیم`,
       desktopPos: { top: 15, left: 21, mobileTop: 12, mobileLeft: 56 },
-      description: `۳ اصل ضد کلیشه، فلسفه استودیو و پروفایل ۶ عضو تیم`,
+      description: `فکر. تصویر. صدا. مانیفست، دایره توانمندی‌ها، سیستم کار ما، نحوه همکاری و معرفی اعضای تیم`,
     },
   ],
   ju = [
@@ -313,66 +313,76 @@ var Au = [
   Mu = [
     {
       code: `01`,
-      title: `تقطیر زوائد و بازگشت به جوهره`,
-      titleEn: `Distillation Over Accumulation`,
-      description: `ما معتقدیم اضافه کردن المان‌های شلوغ، راهکار هویت نیست. هنر واقعی در حذف تمام اضافات و دستیابی به خالص‌ترین بیان هویتی است که هر مخاطبی با یک نگاه آن را به خاطر بسپارد.`,
-      quote: `«Create like a child, edit like a scientist.» — کودکانه و بی‌مرز خلق کن، و همچون یک دانشمند با دقت ویرایش کن.`,
-      author: `Tyler, The Creator`,
+      title: `ذهن: استراتژی، برندینگ و فروش`,
+      titleEn: `The Mind`,
+      description: `ما زیرساخت فکری و تجاری پروژه شما را می‌سازیم. از کشف هویت برند و کپی‌رایتینگ تا طراحی کمپین‌های مارکتینگ و مهندسی قیف فروش برای شرکت‌ها و هنرمندان.`,
+      quote: `خروجی‌ها: استراتژی برند / مشاوره مارکتینگ و فروش / کپی‌رایتینگ و سناریو / هدایت خلاق تیم‌ها.`,
+      author: `Creativity juice`,
     },
     {
       code: `02`,
-      title: `ادغام کیفیت هنری با کارآمدی تجاری`,
-      titleEn: `Artistic Mastery Meets Commercial Efficiency`,
-      description: `زیبایی‌شناسی بدون هدف تجاری، هنر محض است و بازاریابی بدون سلیقه، آلودگی بصری. استودیوی ما نقطه تلاقی وقار زیبایی‌شناختی و اثربخشی مالی در بازار است.`,
-      quote: `«Less, but better.» — کمتر، اما باکیفیت‌تر؛ تمرکز بر جنبه‌های بنیادین و پالایش هر اثر از زوائد.`,
-      author: `Dieter Rams`,
+      title: `چشم: کارگردانی و تولیدات تصویری`,
+      titleEn: `The Eye`,
+      description: `ما به استراتژی‌های شما فرم بصری و روایت سینمایی می‌بخشیم. تولید محتوایی که استانداردهای زیبایی‌شناسی را با الگوریتم‌های توجه و فروش پیوند می‌زند.`,
+      quote: `خروجی‌ها: تیزر تبلیغاتی / موزیک‌ویدیو / فیلم کوتاه / استراتژی و پروداکشن یوتیوب / کارگردانی هنری.`,
+      author: `Creativity juice`,
     },
     {
       code: `03`,
-      title: `خلق اثر اصیل و ماندگار`,
-      titleEn: `Authentic Craft & Timeless Vision`,
-      description: `هدف ما کپی‌برداری از ترندهای زودگذر نیست؛ بلکه ساختن جهان بصری و روایتی است که امضای اصیل برند را با استانداردهای دقیق اجرایی به نمایش بگذارد.`,
-      quote: `«The goal of art isn’t to attain perfection. The goal is to share who we are and how we see the world.»`,
-      author: `Rick Rubin`,
+      title: `گوش: تولید موسیقی و مهندسی صدا`,
+      titleEn: `The Ear`,
+      description: `ما اتمسفر و امضای شنیداری خلق می‌کنیم. هدایت هنری و تولید آثار موسیقایی جریان‌ساز برای هنرمندان و خلق هویت صوتی متمایز برای پروژه‌های تصویری و تجاری.`,
+      quote: `خروجی‌ها: تولید صفر تا صد آلبوم و سینگل ترک / موسیقی متن و طراحی صدا / هویت شنیداری برند.`,
+      author: `Creativity juice`,
     },
   ],
   Nu = [
     {
-      id: `model-sprint`,
-      modelCode: `MODEL 01 // SPRINT`,
-      name: `همکاری پروژه‌محور (Sprint)`,
-      nameEn: `Focused Sprint Engagements`,
-      description: `مناسب برای اهداف معین با خروجی‌های مشخص و شفاف و محدوده معین؛ مانند تدوین استراتژی هویت، طراحی سیستم بصری، یا کارگردانی یک فیلم تجاری شاخص.`,
-      timeline: `زمان‌بندی متمرکز (۳ تا ۶ هفته)`,
+      id: `model-production-partner`,
+      modelCode: `01 // PRODUCTION PARTNER`,
+      name: `۰۱. شریک تولید (Production Partner)`,
+      nameEn: `Production Partner`,
+      description: `اجرای صفر تا صد یک پروژه مشخص با بالاترین استاندارد کارگردانی. مناسب برای ساخت تیزر تبلیغاتی، موزیک‌ویدیو، آلبوم موسیقی، فیلم کوتاه یا راه‌اندازی کانال یوتیوب.`,
+      audience: `برندها و هنرمندان`,
+      focus: `کارگردانی و تولید تخصصی`,
+      timeline: `کوتاه‌مدت و مشخص`,
+      outcome: `اثر نهایی آماده انتشار`,
       features: [
-        `محدوده خروجی (Scope) مشخص و فازبندی‌شده`,
-        `بدون تعهد زمانی طولانی و هزینه‌های مازاد اداری`,
+        `مخاطب اصلی: برندها و هنرمندان`,
+        `تمرکز کلیدی: کارگردانی و تولید تخصصی`,
+        `خروجی نهایی: اثر نهایی آماده انتشار`,
       ],
     },
     {
-      id: `model-retainer`,
-      modelCode: `MODEL 02 // MONTHLY CONTENT`,
-      name: `تولید محتوای ماهانه`,
-      nameEn: `Monthly Content Production`,
-      description: `همکاری مستمر برای تولید محتوای تصویری و سینمایی، هماهنگی جلسات فیلم‌برداری ماهانه، تحویل خروجی‌ها طبق نیاز کارفرما و نظارت مستمر بر پیج و انتشار محتوا.`,
-      timeline: `دوره همکاری: ماهانه / فصلی`,
+      id: `model-strategic-retainer`,
+      modelCode: `02 // STRATEGIC RETAINER`,
+      name: `۰۲. مشاور و کارگردان مستمر (Strategic Retainer)`,
+      nameEn: `Strategic Retainer`,
+      description: `حضور ماهانه در کنار مدیران و هنرمندان به عنوان کریتیو دایرکتور و مشاور فروش؛ برای هدایت تیم‌ها، طراحی کمپین‌ها و بهینه‌سازی مسیر درآمدزایی.`,
+      audience: `مدیران و تیم‌های فعال`,
+      focus: `استراتژی، هدایت و فروش`,
+      timeline: `قرارداد ماهانه`,
+      outcome: `رشد مستمر و ارتقای کیفیت`,
       features: [
-        `هماهنگی جلسات فیلم‌برداری در ماه`,
-        `تحویل خروجی‌ها طبق قرارداد و نیاز کارفرما`,
-        `نظارت مستمر بر پیج و انتشار محتوا`,
+        `مخاطب اصلی: مدیران و تیم‌های فعال`,
+        `تمرکز کلیدی: استراتژی، هدایت و فروش`,
+        `خروجی نهایی: رشد مستمر و ارتقای کیفیت`,
       ],
     },
     {
-      id: `model-counsel`,
-      modelCode: `MODEL 03 // COUNSEL`,
-      name: `کنسلیری و مشاوره ارشد (Fractional CD)`,
-      nameEn: `Executive Advisory & Governance`,
-      description: `حضور در اتاق فکر و جلسات تصمیم‌گیری کلان برند به عنوان مشاور ارشد هنری و هدایتگر کیفیت بصری در کنار هیئت‌مدیره.`,
-      timeline: `همکاری فصلی، ۶ ماهه و سالانه`,
+      id: `model-full-scale`,
+      modelCode: `03 // FULL-SCALE ARCHITECTURE`,
+      name: `۰۳. معماری ۳۶۰ درجه (Full-Scale Architecture)`,
+      nameEn: `Full-Scale Architecture`,
+      description: `خلق کامل یک برند یا پروژه هنری از صفر تا بازار؛ ترکیب هم‌زمان استراتژی برند، تولیدات چندرسانه‌ای و مهندسی قیف فروش در یک پکیج واحد.`,
+      audience: `کسب‌وکارها و آرتیست‌ها`,
+      focus: `خلق هویت، تولید و عرضه`,
+      timeline: `میان‌مدت تا بلندمدت`,
+      outcome: `اکوسیستم کامل برند و فروش`,
       features: [
-        `هدایت استراتژیک خلاقیت و تایید خروجی‌ها`,
-        `حفاظت از پرستیژ و خطوط قرمز هویت در بازار`,
-        `فیلتر کردن پیمانکاران متفرقه و اصلاح فرآیندها`,
+        `مخاطب اصلی: کسب‌وکارها و آرتیست‌ها`,
+        `تمرکز کلیدی: خلق هویت، تولید و عرضه`,
+        `خروجی نهایی: اکوسیستم کامل برند و فروش`,
       ],
     },
   ],
@@ -3168,91 +3178,130 @@ var Au = [
     {
       id: `doc-team-01`,
       folderId: `folder-manifesto`,
-      fileName: `01_بیانیه_برند_و_مانیفست_Creativity_Juice.doc`,
+      fileName: `01_معرفی_و_دایره_توانمندی‌ها_Creativity_Juice.doc`,
       fileExt: `DOC`,
       fileSize: `4.8 MB`,
       dateModified: `Aug 15`,
-      title: `مانیفست بنیادین و جهان‌بینی استودیو Creativity Juice`,
-      subtitle: `داستان پیدایش استودیو، سه اصل ضد کلیشه و جهان مستقل ما`,
-      author: `شورای عالی خلاقیت // استودیو Creativity Juice`,
+      title: `Creativity juice — معرفی و دایره توانمندی‌ها (The Capabilities)`,
+      subtitle: `فکر. تصویر. صدا. معماری کامل از ایده تا بازار.`,
+      author: `Creativity juice`,
       readTime: `زمان مطالعه: ۵ دقیقه`,
-      category: `STUDIO MANIFESTO`,
+      category: `02 // THE CAPABILITIES`,
       glyph: `scroll`,
       badgeColor: `#007AFF`,
       sections: [
         {
-          heading: `۱. داستان پیدایش استودیو: پناهگاهی در برابر ابتذال`,
-          content: `استودیو Creativity Juice نه یک شرکت تبلیغاتی پیمانکاری معمولی، بلکه یک جریان مستقل ادیتوریال است که از خستگی عمیق نسبت به خروجی‌های شبیه به هم، تکراری و بی‌هویت آژانس‌های مرسوم زاده شد. ما باور داریم که هر برند شاخص، شایسته خلق یک دنیای سینمایی، باوقار و اصیل است؛ دنیایی که به جای التماس برای توجه، با پرستیژ خود نگاه‌ها را خیره کند.`,
-          callout: `«ما با مشتریانی همکاری می‌کنیم که شهامت متفاوت بودن دارند و ترجیح می‌دهند یک اثر ماندگار خلق کنند تا یک آگهی فراموش‌شدنی.»`,
+          heading: `Creativity juice`,
+          content: `مرز میان هنر، رسانه و تجارت دیگر وجود ندارد. امروز یک اثر هنری به استراتژی مارکتینگ نیاز دارد، و یک کسب‌وکار برای فروختن، نیازمند جسارت و ظرافت یک اثر هنری است.\nمن در همین نقطه مرزی کار می‌کنم. به عنوان کارگردان خلاق و مشاور برند، کار من اتصال ایده‌های ناب به اجرای استاندارد و نتایج تجاری است. از کارگردانی فیلم کوتاه، موزیک‌ویدیو و تولید آلبوم، تا ساخت تیزرهای تبلیغاتی، مدیریت استراتژیک یوتیوب؛ من به برندها و هنرمندان کمک می‌کنم جهان منحصربه‌فرد خودشان را بسازند، روایت کنند و به درآمد تبدیل سازند.`,
+          callout: `«شما مجبور نیستید بین یک آژانس مارکتینگ، یک استودیوی فیلم‌سازی و یک لیبل موسیقی یکی را انتخاب کنید؛ ما نقطه تلاقی هر سه هستیم.»`,
         },
         {
-          heading: `۲. سه اصل ضد کلیشه در استودیو`,
-          content: `اصول سه‌گانه زیر در تمام خطوط طراحی، سناریونویسی و تصمیمات استراتژیک استودیو بدون هیچ‌گونه مصالحه‌ای جاری است:`,
+          heading: `۰۲ / دایره توانمندی‌ها (The Capabilities): فکر. تصویر. صدا. معماری کامل از ایده تا بازار.`,
+          content: `سه ستون تخصصی استودیو از ایده تا بازار:`,
           bullets: [
-            `اصل اول // تکینگی فرم و فرمول‌گریزی (Singularity of Form): هیچ قالبی از پیش آماده وجود ندارد. ما مخالف بسته‌های آماده و پکیج‌های فرمولی هستیم؛ هر برند روحی مستقل دارد و باید کالبدی منحصر به فرد برای آن تراشیده شود.`,
-            `اصل دوم // ارجحیت وقار ادیتوریال بر هیاهوی سخیف (Quiet Editorial Dignity): قدرت در داد زدن نیست، بلکه در اصالت لحن و عمق زیبایی‌شناسی است. برندهای لوکس و ماندگار تاریخ هرگز التماس نمی‌کنند؛ آنها مجذوب می‌کنند.`,
-            `اصل سوم // ساخت جهان منسجم نه یک تصویر منفرد (World-Building Cohesion): هویت بصری، کلمات، فیلم‌ها و وب‌سایت باید مانند قطعات یک پازل بی‌نقص در کنار هم قرار گیرند تا مخاطب احساس کند وارد یک جهان مستقل شده است.`,
+            `۰۱ / ذهن: استراتژی، برندینگ و فروش (The Mind) — ما زیرساخت فکری و تجاری پروژه شما را می‌سازیم. از کشف هویت برند و کپی‌رایتینگ تا طراحی کمپین‌های مارکتینگ و مهندسی قیف فروش برای شرکت‌ها و هنرمندان. • خروجی‌ها: استراتژی برند / مشاوره مارکتینگ و فروش / کپی‌رایتینگ و سناریو / هدایت خلاق تیم‌ها.`,
+            `۰۲ / چشم: کارگردانی و تولیدات تصویری (The Eye) — ما به استراتژی‌های شما فرم بصری و روایت سینمایی می‌بخشیم. تولید محتوایی که استانداردهای زیبایی‌شناسی را با الگوریتم‌های توجه و فروش پیوند می‌زند. • خروجی‌ها: تیزر تبلیغاتی / موزیک‌ویدیو / فیلم کوتاه / استراتژی و پروداکشن یوتیوب / کارگردانی هنری.`,
+            `۰۳ / گوش: تولید موسیقی و مهندسی صدا (The Ear) — ما اتمسفر و امضای شنیداری خلق می‌کنیم. هدایت هنری و تولید آثار موسیقایی جریان‌ساز برای هنرمندان و خلق هویت صوتی متمایز برای پروژه‌های تصویری و تجاری. • خروجی‌ها: تولید صفر تا صد آلبوم و سینگل ترک / موسیقی متن و طراحی صدا / هویت شنیداری برند.`,
           ],
         },
         {
-          heading: `۳. مدل همکاری: شراکت استراتژیک به جای کارفرمایی و پیمانکاری`,
-          content: `ما خود را امانت‌دار و سنگربان ارزش برند شما می‌دانیم. ارتباط ما با پروژه‌ها یک رابطه مکانیکی فروش خدمت نیست، بلکه شراکتی نزدیک و متعهدانه در بالاترین سطوح تصمیم‌گیری برای تضمین ماندگاری نام برند در تاریخ بازار است.`,
+          heading: `جدول نقش ما برای شرکت‌ها، کسب‌وکارها و هنرمندان`,
+          content: `تفکیک نقش استودیو در هر ستون تخصصی و نتیجه نهایی:`,
+          bullets: [
+            `۰۱. استراتژی و فروش — شرکت‌ها و کسب‌وکارها: بازطراحی برند، اصلاح قیف فروش و افزایش نرخ تبدیل | هنرمندان و کریتورها: برندینگ شخصی، استراتژی انتشار اثر و جذب اسپانسر/مخاطب | نتیجه نهایی: رشد درآمد و سهم بازار`,
+            `۰۲. کارگردانی بصری — شرکت‌ها و کسب‌وکارها: ساخت تیزرهای متقاعدکننده و راه‌اندازی کانال یوتیوب برند | هنرمندان و کریتورها: ساخت موزیک‌ویدیو، فیلم کوتاه، کاور آرت و پروموهای بصری | نتیجه نهایی: پرستیژ بصری و تسخیر توجه`,
+            `۰۳. کارگردانی صوتی — شرکت‌ها و کسب‌وکارها: خلق هویت شنیداری، موسیقی اختصاصی تیزر و طراحی صدا | هنرمندان و کریتورها: کارگردانی هنری آلبوم، آهنگسازی، تنظیم و خلق امضای صوتی | نتیجه نهایی: ماندگاری در حافظه مخاطب`,
+          ],
         },
       ],
     },
     {
       id: `doc-team-02`,
       folderId: `folder-manifesto`,
-      fileName: `02_معرفی_اعضای_تیم_و_سرپرستان_ارشد.doc`,
+      fileName: `02_سیستم_کار_و_نحوه_همکاری.doc`,
       fileExt: `DOC`,
-      fileSize: `3.6 MB`,
-      dateModified: `Sep 10`,
-      title: `پرونده معرفی سرپرستان ارشد دپارتمان‌های استودیو`,
-      subtitle: `کارنامه حرفه‌ای، تخصص‌ها و فلسفه ۵ لیدر استودیو در راهبری پروژه‌ها`,
-      author: `هیئت راهبری // Creativity Juice`,
+      fileSize: `4.2 MB`,
+      dateModified: `Sep 05`,
+      title: `۰۵ / سیستم کار ما (Our Process) و ۰۷ / نحوه همکاری`,
+      subtitle: `چهار گام، از جرقه اولیه تا تسلط بر بازار • ساختار منعطف. تعهد ثابت به نتیجه.`,
+      author: `Creativity juice`,
       readTime: `زمان مطالعه: ۴ دقیقه`,
-      category: `LEADERSHIP DOSSIER`,
-      glyph: `team`,
+      category: `05 & 07 // PROCESS & MODELS`,
+      glyph: `scroll`,
       badgeColor: `#007AFF`,
       sections: [
         {
-          heading: `ساختار فرماندهی و سرپرستی پروژه‌ها`,
-          content: `در استودیو Creativity Juice، هر پرونده توسط ۵ سرپرست ارشد هدایت و کنترل کیفی می‌شود تا از یکپارچگی استراتژی، بصری و اجرایی اطمینان حاصل گردد:`,
+          heading: `۰۵ / سیستم کار ما (Our Process): چهار گام، از جرقه اولیه تا تسلط بر بازار.`,
+          content: `مسیر چهارگانه پروژه از تحلیل اولیه تا مهندسی فروش:`,
           bullets: [
-            `۱. سرپرست ارشد هویت و معماری برند: هدایت کالبدشکافی جایگاه، استعاره محوری، تایپوگرافی اختصاصی و کتابچه راهنما.`,
-            `۲. سرپرست ارشد کارگردانی و تولید محتوای سینمایی: نگارش سناریو، استوری‌بورد، کارگردانی میدانی و نظارت بر مسترینگ فیلم‌ها.`,
-            `۳. سرپرست ارشد مارکتینگ و استراتژی کمپین: تدوین نقشه‌راه لانچ، مهندسی رسانه، اینفلوئنسر سیدینگ و فعال‌سازی‌های بین‌رشته‌ای.`,
-            `۴. سرپرست ارشد تکنولوژی و تجارب تعاملی وب ۳بعدی: معماری تجارب وب، شیدرهای سه‌بعدی و نوآوری‌های دیجیتال تعاملی.`,
-            `۵. مدیر هماهنگی ارشد و ارتباط با کارفرما: پایش ددلاین‌ها، همگام‌سازی تصمیمات اتاق فکر و پشتیبانی اختصاصی از کارفرمایان.`,
+            `۰۱. کاوش و استراتژی (Decode): تحلیل بازار، شناخت مخاطب و کشف هسته مرکزی برند یا اثر هنری. ما قبل از حرکت، مقصد و مسیر برنده را مشخص می‌کنیم.`,
+            `۰۲. جهان‌سازی و کارگردانی (Design): تبدیل استراتژی به کانسپت، داستان، کپی‌رایتینگ و فرم بصری یا شنیداری. خلقِ زبان اختصاصی پروژه.`,
+            `۰۳. پروداکشن و اجرا (Produce): کارگردانی و تولید بی‌نقص در استودیو و لوکیشن؛ از آلبوم موسیقی و فیلم کوتاه تا تیزرهای تبلیغاتی و محتوای اینستاگرام و یوتیوب.`,
+            `۰۴. عرضه و مهندسی فروش (Scale): اجرای کمپین مارکتینگ، مدیریت انتشار و چیدمان قیف فروش برای تبدیل توجه مخاطب به سهم بازار و درآمد پایدار.`,
           ],
         },
         {
-          heading: `تعهد حرفه‌ای تیم`,
-          content: `تیم استودیو به صورت متمرکز و با ظرفیت محدود پروژه می‌پذیرد تا کیفیت و توجه شخصی به تک‌تک جزئیات در بالاترین سطح ممکن باقی بماند.`,
+          heading: `۰۷ / نحوه همکاری (How We Work Together): ساختار منعطف. تعهد ثابت به نتیجه.`,
+          content: `سه مدل همکاری با استودیو بر اساس نیاز پروژه و سازمان شما:`,
+          bullets: [
+            `۰۱. شریک تولید (Production Partner): اجرای صفر تا صد یک پروژه مشخص با بالاترین استاندارد کارگردانی. مناسب برای ساخت تیزر تبلیغاتی، موزیک‌ویدیو، آلبوم موسیقی، فیلم کوتاه یا راه‌اندازی کانال یوتیوب.`,
+            `۰۲. مشاور و کارگردان مستمر (Strategic Retainer): حضور ماهانه در کنار مدیران و هنرمندان به عنوان کریتیو دایرکتور و مشاور فروش؛ برای هدایت تیم‌ها، طراحی کمپین‌ها و بهینه‌سازی مسیر درآمدزایی.`,
+            `۰۳. معماری ۳۶۰ درجه (Full-Scale Architecture): خلق کامل یک برند یا پروژه هنری از صفر تا بازار؛ ترکیب هم‌زمان استراتژی برند، تولیدات چندرسانه‌ای و مهندسی قیف فروش در یک پکیج واحد.`,
+          ],
+        },
+        {
+          heading: `جدول مقایسه سریع مدل‌های همکاری`,
+          content: `مقایسه مخاطب اصلی، تمرکز کلیدی، بازه زمانی و خروجی نهایی:`,
+          bullets: [
+            `۰۱. پروژه‌محور — مخاطب اصلی: برندها و هنرمندان | تمرکز کلیدی: کارگردانی و تولید تخصصی | بازه زمانی: کوتاه‌مدت و مشخص | خروجی نهایی: اثر نهایی آماده انتشار`,
+            `۰۲. مشاوره مستمر — مخاطب اصلی: مدیران و تیم‌های فعال | تمرکز کلیدی: استراتژی، هدایت و فروش | بازه زمانی: قرارداد ماهانه | خروجی نهایی: رشد مستمر و ارتقای کیفیت`,
+            `۰۳. معماری ۳۶۰ — مخاطب اصلی: کسب‌وکارها و آرتیست‌ها | تمرکز کلیدی: خلق هویت، تولید و عرضه | بازه زمانی: میان‌مدت تا بلندمدت | خروجی نهایی: اکوسیستم کامل برند و فروش`,
+          ],
         },
       ],
     },
     {
       id: `doc-team-03`,
       folderId: `folder-manifesto`,
-      fileName: `03_فرم_بریف_استعلام_همکاری_با_تیم.brief`,
+      fileName: `03_معرفی_اعضای_تیم_Creativity_Juice.doc`,
+      fileExt: `DOC`,
+      fileSize: `3.6 MB`,
+      dateModified: `Sep 10`,
+      title: `معرفی اعضای تیم و خلاقیت استودیو`,
+      subtitle: `تخصص‌ها، فلسفه فردی در هنر و پروژه‌های اعضای تیم استودیو`,
+      author: `Creativity juice`,
+      readTime: `زمان مطالعه: ۴ دقیقه`,
+      category: `TEAM DOSSIER`,
+      glyph: `team`,
+      badgeColor: `#007AFF`,
+      sections: [
+        {
+          heading: `اعضا و تیم خلاقیت استودیو`,
+          content: `اعضای تیم استودیو مستقیماً بر تمام جزئیات ایده‌پردازی، طراحی و اجرای پروژه‌ها تمرکز دارند و هر عضو با فلسفه فردی در هنر («وصل کردن ایده‌های خوب به همدیگه») در خلق آثار نقش‌آفرینی می‌کند.`,
+        },
+      ],
+    },
+    {
+      id: `doc-team-04`,
+      folderId: `folder-manifesto`,
+      fileName: `04_رفتن_به_بریف_پروژه.brief`,
       fileExt: `BRIEF`,
       fileSize: `2.9 MB`,
       dateModified: `Sep 15`,
-      title: `پرسشنامه و بریف استعلام همکاری با استودیو`,
-      subtitle: `فرم درخواست جلسه اولیه کشف، عارضه‌یابی و مشاوره با سرپرستان ارشد`,
-      author: `سامانه بریف استودیو // دبیرخانه همکاری‌ها`,
+      title: `پروژه بعدی شما به یک فایلِ جدید نیاز دارد، یا یک استانداردِ جدید؟`,
+      subtitle: `هر جریان بزرگی با یک گفتگوی دقیق شروع می‌شود.`,
+      author: `Creativity juice`,
       readTime: `زمان تکمیل: ۴ دقیقه`,
-      category: `INTAKE PROTOCOL`,
+      category: `PROJECT BRIEF`,
       glyph: `brief`,
       badgeColor: `#FF9500`,
       isBriefTrigger: !0,
-      briefPrefill: `درخواست جلسه استراتژیک کشف و بررسی همکاری با سرپرستان ارشد دپارتمان‌ها`,
+      briefPrefill: `درخواست گفتگو و ثبت بریف پروژه در Creativity juice`,
       sections: [
         {
-          heading: `راهنمای ثبت درخواست همکاری با تیم`,
-          content: `این فرم برای کسب‌وکارهایی طراحی شده که مایلند پیش از آغاز هر پروژه، چالش‌های کلیدی برند خود را در یک جلسه فشرده عارضه‌یابی با حضور سرپرستان ارشد به بحث بگذارند.`,
-          callout: `جهت تکمیل مستقیم و ارسال الکترونیکی، روی دکمه «تکمیل و ثبت بریف آنلاین» در پایین این صفحه کلیک فرمایید.`,
+          heading: `هر جریان بزرگی با یک گفتگوی دقیق شروع می‌شود.`,
+          content: `چه در ابتدای مسیر خلق یک ایده باشید و چه به دنبال رشد فروش و دیده‌شدن آنچه ساخته‌اید؛ ما آماده‌ایم تا تصویر بزرگ‌تر را کنار هم ترسیم کنیم.`,
+          callout: `رفتن به بریف پروژه`,
         },
       ],
     },
@@ -5778,21 +5827,13 @@ var Au = [
       }),
     });
   },
-  Zd = ({ onClose: e, zIndex: t, onFocus: n, containerRef: r, onOpenProject: pProj }) => {
+  Zd = ({ onClose: e, zIndex: t, onFocus: n, containerRef: r, onOpenProject: pProj, onOpenBrief: pBrief }) => {
     let [liveTeam, setLiveTeam] = (0, S.useState)(() => {
       try {
         let members = getTeamMembers();
         if (members && members.length > 0) return members;
       } catch {}
       return Pu;
-    });
-
-    let [liveManifesto, setLiveManifesto] = (0, S.useState)(() => {
-      try {
-        let manifesto = getManifestoItems();
-        if (manifesto && manifesto.length > 0) return manifesto;
-      } catch {}
-      return Mu;
     });
 
     (0, S.useEffect)(() => {
@@ -5803,8 +5844,6 @@ var Au = [
             setLiveTeam(members);
             s((prev) => members.find((m) => m.id === prev?.id) || members[0]);
           }
-          let manifesto = getManifestoItems();
-          if (manifesto && manifesto.length > 0) setLiveManifesto(manifesto);
         } catch {}
       };
       window.addEventListener(CJ_STUDIO_DATA_EVENT, handleData);
@@ -5813,13 +5852,127 @@ var Au = [
 
     let [i, a] = (0, S.useState)(`manifesto`),
       [o, s] = (0, S.useState)(liveTeam[0] || Pu[0]),
-      c = (e) => {
-        (W.playClick(), a(e));
+      scrollContainerRef = (0, S.useRef)(null),
+      c = (sectionKey) => {
+        W.playClick();
+        a(sectionKey);
+        if (scrollContainerRef.current) {
+          let targetEl = scrollContainerRef.current.querySelector(`[data-dossier-section="${sectionKey}"]`);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: `smooth`, block: `start` });
+          }
+        }
       };
 
     let currentTeam = (liveTeam && liveTeam.length > 0) ? liveTeam : Pu;
-    let currentManifesto = (liveManifesto && liveManifesto.length > 0) ? liveManifesto : Mu;
     let selectedMember = currentTeam.find((m) => m && m.id === o?.id) || currentTeam[0] || Pu[0];
+
+    let capabilitiesPillars = [
+      {
+        code: `۰۱`,
+        title: `ذهن: استراتژی، برندینگ و فروش`,
+        titleEn: `The Mind`,
+        description: `ما زیرساخت فکری و تجاری پروژه شما را می‌سازیم. از کشف هویت برند و کپی‌رایتینگ تا طراحی کمپین‌های مارکتینگ و مهندسی قیف فروش برای شرکت‌ها و هنرمندان.`,
+        deliverables: `استراتژی برند / مشاوره مارکتینگ و فروش / کپی‌رایتینگ و سناریو / هدایت خلاق تیم‌ها.`,
+      },
+      {
+        code: `۰۲`,
+        title: `چشم: کارگردانی و تولیدات تصویری`,
+        titleEn: `The Eye`,
+        description: `ما به استراتژی‌های شما فرم بصری و روایت سینمایی می‌بخشیم. تولید محتوایی که استانداردهای زیبایی‌شناسی را با الگوریتم‌های توجه و فروش پیوند می‌زند.`,
+        deliverables: `تیزر تبلیغاتی / موزیک‌ویدیو / فیلم کوتاه / استراتژی و پروداکشن یوتیوب / کارگردانی هنری.`,
+      },
+      {
+        code: `۰۳`,
+        title: `گوش: تولید موسیقی و مهندسی صدا`,
+        titleEn: `The Ear`,
+        description: `ما اتمسفر و امضای شنیداری خلق می‌کنیم. هدایت هنری و تولید آثار موسیقایی جریان‌ساز برای هنرمندان و خلق هویت صوتی متمایز برای پروژه‌های تصویری و تجاری.`,
+        deliverables: `تولید صفر تا صد آلبوم و سینگل ترک / موسیقی متن و طراحی صدا / هویت شنیداری برند.`,
+      },
+    ];
+
+    let capabilitiesMatrix = [
+      {
+        pillar: `۰۱. استراتژی و فروش`,
+        forBrands: `بازطراحی برند، اصلاح قیف فروش و افزایش نرخ تبدیل`,
+        forArtists: `برندینگ شخصی، استراتژی انتشار اثر و جذب اسپانسر/مخاطب`,
+        outcome: `رشد درآمد و سهم بازار`,
+      },
+      {
+        pillar: `۰۲. کارگردانی بصری`,
+        forBrands: `ساخت تیزرهای متقاعدکننده و راه‌اندازی کانال یوتیوب برند`,
+        forArtists: `ساخت موزیک‌ویدیو، فیلم کوتاه، کاور آرت و پروموهای بصری`,
+        outcome: `پرستیژ بصری و تسخیر توجه`,
+      },
+      {
+        pillar: `۰۳. کارگردانی صوتی`,
+        forBrands: `خلق هویت شنیداری، موسیقی اختصاصی تیزر و طراحی صدا`,
+        forArtists: `کارگردانی هنری آلبوم، آهنگسازی، تنظیم و خلق امضای صوتی`,
+        outcome: `ماندگاری در حافظه مخاطب`,
+      },
+    ];
+
+    let processSteps = [
+      {
+        code: `۰۱`,
+        title: `کاوش و استراتژی`,
+        titleEn: `Decode`,
+        description: `تحلیل بازار، شناخت مخاطب و کشف هسته مرکزی برند یا اثر هنری. ما قبل از حرکت، مقصد و مسیر برنده را مشخص می‌کنیم.`,
+      },
+      {
+        code: `۰۲`,
+        title: `جهان‌سازی و کارگردانی`,
+        titleEn: `Design`,
+        description: `تبدیل استراتژی به کانسپت، داستان، کپی‌رایتینگ و فرم بصری یا شنیداری. خلقِ زبان اختصاصی پروژه.`,
+      },
+      {
+        code: `۰۳`,
+        title: `پروداکشن و اجرا`,
+        titleEn: `Produce`,
+        description: `کارگردانی و تولید بی‌نقص در استودیو و لوکیشن؛ از آلبوم موسیقی و فیلم کوتاه تا تیزرهای تبلیغاتی و محتوای اینستاگرام و یوتیوب.`,
+      },
+      {
+        code: `۰۴`,
+        title: `عرضه و مهندسی فروش`,
+        titleEn: `Scale`,
+        description: `اجرای کمپین مارکتینگ، مدیریت انتشار و چیدمان قیف فروش برای تبدیل توجه مخاطب به سهم بازار و درآمد پایدار.`,
+      },
+    ];
+
+    let renderBriefCtaBlock = () =>
+      (0, H.jsxs)(`div`, {
+        "data-dossier-section": `cta`,
+        className: `p-6 sm:p-8 rounded-2xl bg-[#FAF9F7] border border-neutral-200 space-y-3.5 text-right scroll-mt-4`,
+        children: [
+          (0, H.jsx)(`h4`, {
+            className: `text-xl sm:text-2xl font-black text-neutral-900 leading-snug`,
+            children: `پروژه بعدی شما به یک فایلِ جدید نیاز دارد، یا یک استانداردِ جدید؟`,
+          }),
+          (0, H.jsx)(`p`, {
+            className: `text-sm font-bold text-amber-800`,
+            children: `هر جریان بزرگی با یک گفتگوی دقیق شروع می‌شود.`,
+          }),
+          (0, H.jsx)(`p`, {
+            className: `text-xs sm:text-sm text-neutral-600 leading-relaxed`,
+            children: `چه در ابتدای مسیر خلق یک ایده باشید و چه به دنبال رشد فروش و دیده‌شدن آنچه ساخته‌اید؛ ما آماده‌ایم تا تصویر بزرگ‌تر را کنار هم ترسیم کنیم.`,
+          }),
+          (0, H.jsx)(`div`, {
+            className: `pt-2`,
+            children: (0, H.jsxs)(`button`, {
+              type: `button`,
+              onClick: () => {
+                W.playClick();
+                if (pBrief) pBrief();
+              },
+              className: `inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#18181b] hover:bg-neutral-800 text-white text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-xs`,
+              children: [
+                (0, H.jsx)(`span`, { children: `رفتن به بریف پروژه` }),
+                (0, H.jsx)(`span`, { children: `⟵` }),
+              ],
+            }),
+          }),
+        ],
+      });
 
     let handleOpenCaseStudy = (role) => {
       if (!pProj) return;
@@ -5862,8 +6015,8 @@ var Au = [
 
     return (0, H.jsx)(Ud, {
       id: `manifesto-team-window`,
-      title: `مانیفست، سرپرستان و مدل‌های همکاری • Creativity Juice`,
-      subtitle: `فلسفه بنیادین و ساختار انسانی استودیو`,
+      title: `اسناد تیم و مانیفست • Creativity juice`,
+      subtitle: `فکر. تصویر. صدا. معماری کامل از ایده تا بازار.`,
       onClose: e,
       zIndex: t,
       onFocus: n,
@@ -5874,469 +6027,643 @@ var Au = [
         className: `flex flex-col bg-white text-neutral-900 min-h-[520px] select-none font-sans`,
         children: [
           (0, H.jsxs)(`div`, {
-            className: `p-3 bg-[#F8F7F5] border-b border-neutral-200 flex items-center justify-between`,
+            className: `p-3 bg-[#F8F7F5] border-b border-neutral-200 flex items-center justify-between gap-2 overflow-x-auto`,
             children: [
               (0, H.jsxs)(`div`, {
-                className: `flex rounded-lg bg-neutral-200/70 p-1 space-x-1 space-x-reverse`,
+                className: `flex flex-wrap rounded-lg bg-neutral-200/70 p-1 gap-1`,
                 children: [
                   (0, H.jsx)(`button`, {
                     onClick: () => c(`manifesto`),
-                    className: `px-3.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${i === `manifesto` ? `bg-white text-neutral-900 shadow-xs` : `text-neutral-600 hover:text-black`}`,
-                    children: `اصول و مانیفست بنیادین`,
+                    className: `px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${i === `manifesto` ? `bg-white text-neutral-900 shadow-xs` : `text-neutral-600 hover:text-black`}`,
+                    children: `Creativity juice`,
+                  }),
+                  (0, H.jsx)(`button`, {
+                    onClick: () => c(`capabilities`),
+                    className: `px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${i === `capabilities` ? `bg-white text-neutral-900 shadow-xs` : `text-neutral-600 hover:text-black`}`,
+                    children: `۰۲ / دایره توانمندی‌ها`,
+                  }),
+                  (0, H.jsx)(`button`, {
+                    onClick: () => c(`process`),
+                    className: `px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${i === `process` ? `bg-white text-neutral-900 shadow-xs` : `text-neutral-600 hover:text-black`}`,
+                    children: `۰۵ / سیستم کار ما`,
                   }),
                   (0, H.jsx)(`button`, {
                     onClick: () => c(`team`),
-                    className: `px-3.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${i === `team` ? `bg-white text-neutral-900 shadow-xs` : `text-neutral-600 hover:text-black`}`,
-                    children: `اعضا و تیم خلاقیت`,
+                    className: `px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${i === `team` ? `bg-white text-neutral-900 shadow-xs` : `text-neutral-600 hover:text-black`}`,
+                    children: `معرفی اعضای تیم`,
                   }),
                   (0, H.jsx)(`button`, {
                     onClick: () => c(`models`),
-                    className: `px-3.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${i === `models` ? `bg-white text-neutral-900 shadow-xs` : `text-neutral-600 hover:text-black`}`,
-                    children: `مدل‌های استاندارد همکاری`,
+                    className: `px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${i === `models` ? `bg-white text-neutral-900 shadow-xs` : `text-neutral-600 hover:text-black`}`,
+                    children: `۰۷ / نحوه همکاری`,
                   }),
                 ],
               }),
               (0, H.jsx)(`span`, {
-                className: `text-[11px] font-mono text-neutral-400 hidden sm:inline font-bold`,
-                children: `CREATIVITY JUICE // THE MANIFESTO`,
+                className: `text-[11px] font-mono text-neutral-400 hidden lg:inline font-bold shrink-0`,
+                children: `CREATIVITY JUICE // FULL DOSSIER`,
               }),
             ],
           }),
           (0, H.jsxs)(`div`, {
-            className: `p-5 sm:p-7 overflow-y-auto max-h-[68vh] flex-1 bg-white`,
+            ref: scrollContainerRef,
+            className: `p-5 sm:p-7 overflow-y-auto max-h-[68vh] flex-1 bg-white space-y-10 text-right`,
             children: [
-              i === `manifesto` &&
-                (0, H.jsxs)(`div`, {
-                  className: `space-y-6 animate-window-pop text-right`,
-                  children: [
-                    (0, H.jsxs)(`div`, {
-                      children: [
-                        (0, H.jsx)(`span`, {
-                          className: `text-[11px] font-mono uppercase bg-amber-50 text-amber-800 px-2 py-0.5 rounded border border-amber-200 font-bold`,
-                          children: `EDITORIAL PURITY & CORE MANIFESTO`,
-                        }),
-                        (0, H.jsx)(`h3`, {
-                          className: `text-2xl font-black text-neutral-900 mt-2`,
-                          children: `مانیفست خلوص ادیتوریال و خطوط قرمز استودیو`,
-                        }),
-                        (0, H.jsx)(`p`, {
-                          className: `text-xs sm:text-sm text-neutral-500 mt-1 leading-relaxed`,
-                          children: `ما به تزیینات بی‌پشتوانه و کپی‌برداری از ترندهای گذرا اعتقادی نداریم. این ۳ اصل، راهنمای تصمیم‌گیری ما در هر پروژه است.`,
-                        }),
-                      ],
-                    }),
-                    (0, H.jsx)(`div`, {
-                      className: `space-y-4 pt-2`,
-                      children: currentManifesto.map((e) =>
-                        (0, H.jsxs)(
-                          `div`,
-                          {
-                            className: `p-5 rounded-xl bg-[#FAF9F7] border border-neutral-200 shadow-2xs space-y-3`,
-                            children: [
-                              (0, H.jsxs)(`div`, {
-                                className: `flex items-center justify-between border-b border-neutral-200 pb-2`,
-                                children: [
-                                  (0, H.jsxs)(`div`, {
-                                    className: `flex items-center space-x-2.5 space-x-reverse`,
-                                    children: [
-                                      (0, H.jsx)(`span`, {
-                                        className: `w-6 h-6 rounded-md bg-[#18181b] text-white font-mono font-black text-xs flex items-center justify-center`,
-                                        children: e.code,
-                                      }),
-                                      (0, H.jsx)(`h4`, {
-                                        className: `text-base font-bold text-neutral-900`,
-                                        children: e.title,
-                                      }),
-                                    ],
-                                  }),
-                                  (0, H.jsx)(`span`, {
-                                    className: `text-xs font-mono text-neutral-400 font-bold`,
-                                    dir: `ltr`,
-                                    children: e.titleEn,
-                                  }),
-                                ],
-                              }),
-                              (0, H.jsx)(`p`, {
-                                className: `text-xs sm:text-sm text-neutral-700 leading-relaxed font-normal`,
-                                children: e.description,
-                              }),
-                              (0, H.jsxs)(`div`, {
-                                className: `p-3.5 rounded-lg bg-white border-r-4 border-amber-500 text-xs text-neutral-700 flex items-start space-x-2 space-x-reverse border border-neutral-200/80`,
-                                children: [
-                                  (0, H.jsx)(Ed, {
-                                    className: `w-4 h-4 text-amber-600 shrink-0 mt-0.5`,
-                                  }),
-                                  (0, H.jsxs)(`div`, {
-                                    children: [
-                                      (0, H.jsx)(`p`, {
-                                        className: `font-medium italic`,
-                                        children: e.quote,
-                                      }),
-                                      (0, H.jsxs)(`span`, {
-                                        className: `text-[10px] text-neutral-500 font-bold not-italic block mt-1`,
-                                        children: [`— `, e.author],
-                                      }),
-                                    ],
-                                  }),
-                                ],
-                              }),
-                            ],
-                          },
-                          e.code,
-                        ),
-                      ),
-                    }),
-                  ],
-                }),
-              i === `team` &&
-                (0, H.jsxs)(`div`, {
-                  className: `space-y-6 animate-window-pop text-right`,
-                  children: [
-                    (0, H.jsxs)(`div`, {
-                      children: [
-                        (0, H.jsx)(`span`, {
-                          className: `text-[11px] font-mono uppercase bg-amber-50 text-amber-800 px-2 py-0.5 rounded border border-amber-200 font-bold`,
-                          children: `CREATIVE TEAM & MEMBERS`,
-                        }),
-                        (0, H.jsx)(`h3`, {
-                          className: `text-2xl font-black text-neutral-900 mt-2`,
-                          children: `اعضا و تیم خلاقیت استودیو`,
-                        }),
-                        (0, H.jsx)(`p`, {
-                          className: `text-xs sm:text-sm text-neutral-500 mt-1`,
-                          children: `اعضای تیم استودیو مستقیماً بر تمام جزئیات ایده‌پردازی، طراحی و اجرای پروژه‌ها تمرکز دارند.`,
-                        }),
-                      ],
-                    }),
-                    (0, H.jsx)(`div`, {
-                      className: `grid grid-cols-2 sm:grid-cols-6 gap-2.5 pt-2`,
-                      children: currentTeam.map((e) => {
-                        let t = selectedMember && selectedMember.id === e.id;
-                        return (0, H.jsxs)(
-                          `div`,
-                          {
-                            onClick: () => {
-                              (W.playClick(), s(e));
-                            },
-                            className: `p-2.5 rounded-xl cursor-pointer border transition-all text-center ${t ? `bg-neutral-100 border-neutral-900 shadow-xs ring-1 ring-neutral-900` : `bg-[#FAF9F7] border-neutral-200 hover:border-neutral-400`}`,
-                            children: [
-                              (0, H.jsx)(`div`, {
-                                className: `w-14 h-14 rounded-full overflow-hidden mx-auto mb-2 border border-neutral-300`,
-                                children: (0, H.jsx)(`img`, {
-                                  src: e.photo,
-                                  alt: e.name,
-                                  className: `w-full h-full object-cover`,
-                                }),
-                              }),
-                              (0, H.jsx)(`h4`, {
-                                className: `text-xs font-bold text-neutral-900 truncate`,
-                                children: e.name,
-                              }),
-                              (0, H.jsx)(`span`, {
-                                className: `text-[10px] text-neutral-500 block truncate font-medium`,
-                                children: (e.role || '').split(/[،,]/)[0] || e.role,
-                              }),
-                            ],
-                          },
-                          e.id,
-                        );
+              /* ۱. معرفی و بیانیه بنیادین (Creativity juice) */
+              (0, H.jsxs)(`section`, {
+                "data-dossier-section": `manifesto`,
+                className: `space-y-4 scroll-mt-4`,
+                children: [
+                  (0, H.jsxs)(`div`, {
+                    className: `p-6 sm:p-8 rounded-2xl bg-[#FAF9F7] border border-neutral-200 space-y-5`,
+                    children: [
+                      (0, H.jsx)(`h3`, {
+                        className: `text-2xl sm:text-3xl font-black text-neutral-900 tracking-tight`,
+                        dir: `ltr`,
+                        children: `Creativity juice`,
                       }),
-                    }),
-                    (0, H.jsxs)(`div`, {
-                      className: `p-5 rounded-2xl bg-[#FAF9F7] border border-neutral-200 space-y-4`,
-                      children: [
-                        (0, H.jsxs)(`div`, {
-                          className: `flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-200 pb-3`,
+                      (0, H.jsx)(`p`, {
+                        className: `text-sm sm:text-base text-neutral-800 leading-8 font-medium`,
+                        children: `مرز میان هنر، رسانه و تجارت دیگر وجود ندارد. امروز یک اثر هنری به استراتژی مارکتینگ نیاز دارد، و یک کسب‌وکار برای فروختن، نیازمند جسارت و ظرافت یک اثر هنری است.`,
+                      }),
+                      (0, H.jsx)(`p`, {
+                        className: `text-sm sm:text-base text-neutral-700 leading-8`,
+                        children: `من در همین نقطه مرزی کار می‌کنم. به عنوان کارگردان خلاق و مشاور برند، کار من اتصال ایده‌های ناب به اجرای استاندارد و نتایج تجاری است. از کارگردانی فیلم کوتاه، موزیک‌ویدیو و تولید آلبوم، تا ساخت تیزرهای تبلیغاتی، مدیریت استراتژیک یوتیوب؛ من به برندها و هنرمندان کمک می‌کنم جهان منحصربه‌فرد خودشان را بسازند، روایت کنند و به درآمد تبدیل سازند.`,
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+
+              /* ۲. دایره توانمندی‌ها (۰۲ / The Capabilities) */
+              (0, H.jsxs)(`section`, {
+                "data-dossier-section": `capabilities`,
+                className: `space-y-5 pt-4 border-t border-neutral-200 scroll-mt-4`,
+                children: [
+                  (0, H.jsxs)(`div`, {
+                    children: [
+                      (0, H.jsx)(`span`, {
+                        className: `text-[11px] font-mono bg-amber-50 text-amber-800 px-2.5 py-1 rounded border border-amber-200 font-bold inline-block`,
+                        children: `۰۲ / دایره توانمندی‌ها (The Capabilities)`,
+                      }),
+                      (0, H.jsx)(`h3`, {
+                        className: `text-xl sm:text-2xl font-black text-neutral-900 mt-2.5`,
+                        children: `فکر. تصویر. صدا. معماری کامل از ایده تا بازار.`,
+                      }),
+                    ],
+                  }),
+                  (0, H.jsx)(`div`, {
+                    className: `space-y-4`,
+                    children: capabilitiesPillars.map((item) =>
+                      (0, H.jsxs)(
+                        `div`,
+                        {
+                          className: `p-5 rounded-xl bg-[#FAF9F7] border border-neutral-200 shadow-2xs space-y-3`,
                           children: [
                             (0, H.jsxs)(`div`, {
+                              className: `flex items-center justify-between border-b border-neutral-200 pb-2.5 gap-2`,
                               children: [
+                                (0, H.jsxs)(`div`, {
+                                  className: `flex items-center space-x-2.5 space-x-reverse`,
+                                  children: [
+                                    (0, H.jsx)(`span`, {
+                                      className: `w-7 h-7 rounded-md bg-[#18181b] text-white font-mono font-black text-xs flex items-center justify-center shrink-0`,
+                                      children: item.code,
+                                    }),
+                                    (0, H.jsx)(`h4`, {
+                                      className: `text-sm sm:text-base font-bold text-neutral-900`,
+                                      children: item.title,
+                                    }),
+                                  ],
+                                }),
                                 (0, H.jsx)(`span`, {
-                                  className: `text-[10px] font-mono font-bold text-amber-700`,
-                                  children: selectedMember?.trackCode || `STUDIO // CORE DOSSIER`,
-                                }),
-                                (0, H.jsx)(`h4`, {
-                                  className: `text-xl font-black text-neutral-900`,
-                                  children: selectedMember?.name || `همکار استودیو`,
-                                }),
-                                (0, H.jsxs)(`span`, {
-                                  className: `text-xs text-neutral-500 font-medium`,
-                                  children: [selectedMember?.role || ``, selectedMember?.roleEn ? ` (${selectedMember.roleEn})` : ``],
+                                  className: `text-xs font-mono text-neutral-500 font-bold shrink-0`,
+                                  dir: `ltr`,
+                                  children: item.titleEn,
                                 }),
                               ],
                             }),
-                            (0, H.jsx)(`span`, {
-                              className: `text-xs font-mono text-neutral-400 font-bold`,
-                              dir: `ltr`,
-                              children: selectedMember?.department || ``,
+                            (0, H.jsx)(`p`, {
+                              className: `text-xs sm:text-sm text-neutral-700 leading-relaxed`,
+                              children: item.description,
+                            }),
+                            (0, H.jsxs)(`div`, {
+                              className: `p-3 rounded-lg bg-white border border-neutral-200/80 text-xs text-neutral-800`,
+                              children: [
+                                (0, H.jsx)(`span`, {
+                                  className: `font-bold text-amber-800 ml-1.5`,
+                                  children: `• خروجی‌ها:`,
+                                }),
+                                (0, H.jsx)(`span`, {
+                                  className: `font-medium`,
+                                  children: item.deliverables,
+                                }),
+                              ],
                             }),
                           ],
-                        }),
-                        (0, H.jsx)(`p`, {
-                          className: `text-xs sm:text-sm text-neutral-700 leading-relaxed font-normal`,
-                          children: selectedMember?.bio || ``,
-                        }),
-                        (0, H.jsx)(`div`, {
-                          className: `pt-1 text-xs`,
-                          children: (0, H.jsxs)(`div`, {
-                            className: `bg-white p-3.5 rounded-xl border border-neutral-200 shadow-2xs`,
+                        },
+                        item.code,
+                      ),
+                    ),
+                  }),
+                  (0, H.jsx)(`div`, {
+                    className: `p-4 sm:p-5 rounded-xl bg-amber-50/70 border-r-4 border-amber-500 border border-amber-200/80 text-xs sm:text-sm font-bold text-neutral-900 leading-relaxed`,
+                    children: `«شما مجبور نیستید بین یک آژانس مارکتینگ، یک استودیوی فیلم‌سازی و یک لیبل موسیقی یکی را انتخاب کنید؛ ما نقطه تلاقی هر سه هستیم.»`,
+                  }),
+                  (0, H.jsx)(`div`, {
+                    className: `overflow-x-auto rounded-xl border border-neutral-200`,
+                    children: (0, H.jsxs)(`table`, {
+                      className: `w-full text-right text-xs border-collapse`,
+                      children: [
+                        (0, H.jsx)(`thead`, {
+                          children: (0, H.jsxs)(`tr`, {
+                            className: `bg-[#F8F7F5] border-b border-neutral-200 text-neutral-900 font-bold`,
                             children: [
-                              (0, H.jsx)(`span`, {
-                                className: `text-neutral-500 block text-[10px] font-bold mb-1`,
-                                children: `فلسفه فردی در هنر:`,
-                              }),
-                              (0, H.jsx)(`p`, {
-                                className: `text-amber-800 font-semibold italic leading-relaxed`,
-                                children: selectedMember?.philosophy || `«وصل کردن ایده‌های خوب به همدیگه»`,
-                              }),
+                              (0, H.jsx)(`th`, { className: `p-3 border-l border-neutral-200`, children: `ستون تخصصی` }),
+                              (0, H.jsx)(`th`, { className: `p-3 border-l border-neutral-200`, children: `نقش ما برای شرکت‌ها و کسب‌وکارها` }),
+                              (0, H.jsx)(`th`, { className: `p-3 border-l border-neutral-200`, children: `نقش ما برای هنرمندان و کریتورها` }),
+                              (0, H.jsx)(`th`, { className: `p-3`, children: `نتیجه نهایی` }),
                             ],
                           }),
                         }),
-                        (0, H.jsxs)(`div`, {
-                          children: [
-                            (0, H.jsx)(`span`, {
-                              className: `text-[11px] font-bold text-neutral-600 block mb-2`,
-                              children: `مهارت‌ها و حوزه‌های تخصصی:`,
-                            }),
-                            (0, H.jsx)(`div`, {
-                              className: `flex flex-wrap gap-1.5`,
-                              children: (selectedMember?.specialties || []).map((e, t) =>
-                                (0, H.jsx)(
-                                  `span`,
-                                  {
-                                    className: `px-2.5 py-1 rounded-md bg-white text-xs text-neutral-800 border border-neutral-200 font-medium shadow-2xs`,
-                                    children: e,
-                                  },
-                                  t,
-                                ),
-                              ),
-                            }),
-                          ],
+                        (0, H.jsx)(`tbody`, {
+                          children: capabilitiesMatrix.map((row, idx) =>
+                            (0, H.jsxs)(
+                              `tr`,
+                              {
+                                className: `border-b last:border-b-0 border-neutral-200 ${idx % 2 === 0 ? `bg-white` : `bg-[#FAF9F7]`}`,
+                                children: [
+                                  (0, H.jsx)(`td`, { className: `p-3 font-bold text-neutral-900 border-l border-neutral-200 whitespace-nowrap`, children: row.pillar }),
+                                  (0, H.jsx)(`td`, { className: `p-3 text-neutral-700 border-l border-neutral-200 leading-relaxed`, children: row.forBrands }),
+                                  (0, H.jsx)(`td`, { className: `p-3 text-neutral-700 border-l border-neutral-200 leading-relaxed`, children: row.forArtists }),
+                                  (0, H.jsx)(`td`, { className: `p-3 font-bold text-amber-800 leading-relaxed`, children: row.outcome }),
+                                ],
+                              },
+                              idx,
+                            ),
+                          ),
                         }),
-                        (0, H.jsxs)(`div`, {
-                          className: `pt-4 border-t border-neutral-200/90 space-y-3`,
+                      ],
+                    }),
+                  }),
+                ],
+              }),
+
+              /* ۳. سیستم کار ما (۰۵ / Our Process) */
+              (0, H.jsxs)(`section`, {
+                "data-dossier-section": `process`,
+                className: `space-y-5 pt-4 border-t border-neutral-200 scroll-mt-4`,
+                children: [
+                  (0, H.jsxs)(`div`, {
+                    children: [
+                      (0, H.jsx)(`span`, {
+                        className: `text-[11px] font-mono bg-amber-50 text-amber-800 px-2.5 py-1 rounded border border-amber-200 font-bold inline-block`,
+                        children: `۰۵ / سیستم کار ما (Our Process)`,
+                      }),
+                      (0, H.jsx)(`h3`, {
+                        className: `text-xl sm:text-2xl font-black text-neutral-900 mt-2.5`,
+                        children: `چهار گام، از جرقه اولیه تا تسلط بر بازار.`,
+                      }),
+                    ],
+                  }),
+                  (0, H.jsx)(`div`, {
+                    className: `grid grid-cols-1 sm:grid-cols-2 gap-4`,
+                    children: processSteps.map((step) =>
+                      (0, H.jsxs)(
+                        `div`,
+                        {
+                          className: `p-5 rounded-xl bg-[#FAF9F7] border border-neutral-200 space-y-2.5`,
                           children: [
                             (0, H.jsxs)(`div`, {
-                              className: `flex items-center justify-between`,
+                              className: `flex items-center justify-between border-b border-neutral-200 pb-2`,
                               children: [
                                 (0, H.jsxs)(`div`, {
                                   className: `flex items-center gap-2`,
                                   children: [
                                     (0, H.jsx)(`span`, {
-                                      className: `w-2 h-2 rounded-full bg-amber-500 animate-pulse`,
+                                      className: `w-7 h-7 rounded-md bg-[#18181b] text-white font-mono font-black text-xs flex items-center justify-center shrink-0`,
+                                      children: step.code,
                                     }),
-                                    (0, H.jsxs)(`h5`, {
-                                      className: `text-xs sm:text-sm font-black text-neutral-900`,
-                                      children: [
-                                        `پروژه‌ها و نقش‌های اختصاصی در استودیو (`,
-                                        selectedMember?.projectRoles ? selectedMember.projectRoles.length : 0,
-                                        `)`,
-                                      ],
+                                    (0, H.jsx)(`h4`, {
+                                      className: `text-sm sm:text-base font-bold text-neutral-900`,
+                                      children: step.title,
                                     }),
                                   ],
                                 }),
                                 (0, H.jsx)(`span`, {
-                                  className: `text-[10px] font-mono text-neutral-400 font-bold`,
-                                  children: `PROJECT ROLES & CREDITS`,
+                                  className: `text-xs font-mono text-amber-700 font-bold`,
+                                  dir: `ltr`,
+                                  children: step.titleEn,
                                 }),
                               ],
                             }),
-                            selectedMember?.projectRoles && selectedMember.projectRoles.length > 0
-                              ? (0, H.jsx)(`div`, {
-                                  className: `grid grid-cols-1 md:grid-cols-2 gap-3`,
-                                  children: selectedMember.projectRoles.map((pr, pIdx) =>
-                                    (0, H.jsxs)(
-                                      `div`,
-                                      {
-                                        className: `p-3.5 rounded-xl bg-white border border-neutral-200 shadow-2xs hover:border-amber-400 hover:shadow-xs transition-all flex flex-col justify-between group`,
-                                        children: [
-                                          (0, H.jsxs)(`div`, {
-                                            className: `space-y-2.5`,
-                                            children: [
-                                              (0, H.jsxs)(`div`, {
-                                                className: `flex items-start gap-3`,
-                                                children: [
-                                                  pr.coverImage &&
-                                                    (0, H.jsx)(`div`, {
-                                                      className: `w-14 h-14 rounded-lg overflow-hidden border border-neutral-200 shrink-0 bg-neutral-100`,
-                                                      children: (0, H.jsx)(`img`, {
-                                                        src: pr.coverImage,
-                                                        alt: pr.projectTitle,
-                                                        className: `w-full h-full object-cover group-hover:scale-105 transition-transform duration-300`,
-                                                      }),
-                                                    }),
-                                                  (0, H.jsxs)(`div`, {
-                                                    className: `flex-1 min-w-0`,
-                                                    children: [
-                                                      (0, H.jsxs)(`div`, {
-                                                        className: `flex items-center justify-between gap-1`,
-                                                        children: [
-                                                          (0, H.jsx)(`h6`, {
-                                                            className: `text-xs sm:text-sm font-bold text-neutral-900 truncate group-hover:text-amber-800 transition-colors`,
-                                                            children: pr.projectTitle,
-                                                          }),
-                                                          pr.year &&
-                                                            (0, H.jsx)(`span`, {
-                                                              className: `text-[10px] font-mono text-neutral-400 shrink-0`,
-                                                              children: pr.year,
-                                                            }),
-                                                        ],
-                                                      }),
-                                                      pr.client &&
-                                                        (0, H.jsxs)(`p`, {
-                                                          className: `text-[11px] text-neutral-500 truncate mt-0.5`,
-                                                          children: [`کارفرما: `, pr.client],
-                                                        }),
-                                                      (0, H.jsx)(`div`, {
-                                                        className: `mt-1.5`,
-                                                        children: (0, H.jsx)(`span`, {
-                                                          className: `inline-block text-[11px] font-semibold text-amber-900 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-md`,
-                                                          children: pr.roleInProject,
-                                                        }),
-                                                      }),
-                                                    ],
-                                                  }),
-                                                ],
-                                              }),
-                                              pr.impact &&
-                                                (0, H.jsxs)(`div`, {
-                                                  className: `p-2 rounded-lg bg-neutral-50 border border-neutral-150 text-[11px] text-neutral-700 leading-relaxed`,
-                                                  children: [
-                                                    (0, H.jsx)(`span`, {
-                                                      className: `font-bold text-neutral-500 block text-[10px] mb-0.5`,
-                                                      children: `دستاورد و تأثیر:`,
-                                                    }),
-                                                    pr.impact,
-                                                  ],
-                                                }),
-                                              pr.keyDeliverables &&
-                                                pr.keyDeliverables.length > 0 &&
-                                                (0, H.jsx)(`div`, {
-                                                  className: `flex flex-wrap gap-1`,
-                                                  children: pr.keyDeliverables.map((del, dIdx) =>
-                                                    (0, H.jsx)(
-                                                      `span`,
-                                                      {
-                                                        className: `text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 font-medium`,
-                                                        children: del,
-                                                      },
-                                                      dIdx,
-                                                    ),
-                                                  ),
-                                                }),
-                                            ],
-                                          }),
-                                          pProj &&
-                                            (0, H.jsx)(`div`, {
-                                              className: `mt-3 pt-2.5 border-t border-neutral-100 flex justify-end`,
-                                              children: (0, H.jsxs)(`button`, {
-                                                type: `button`,
-                                                onClick: () => handleOpenCaseStudy(pr),
-                                                className: `inline-flex items-center gap-1.5 text-[11px] font-bold text-neutral-700 hover:text-amber-800 transition-colors cursor-pointer group-hover:translate-x-[-2px] duration-200`,
-                                                children: [
-                                                  (0, H.jsx)(`span`, { children: `مشاهده پرونده پروژه` }),
-                                                  (0, H.jsx)(`span`, { children: `←` }),
-                                                ],
-                                              }),
-                                            }),
-                                        ],
-                                      },
-                                      pIdx,
-                                    ),
-                                  ),
-                                })
-                              : (0, H.jsx)(`div`, {
-                                  className: `p-4 rounded-xl bg-neutral-50 border border-dashed border-neutral-200 text-center text-xs text-neutral-400`,
-                                  children: `هنوز پروژه‌ای به این عضو اختصاص نیافته است. در پنل مدیریت می‌توانید پروژه‌ها و نقش‌های همکار را تعیین کنید.`,
-                                }),
+                            (0, H.jsx)(`p`, {
+                              className: `text-xs sm:text-sm text-neutral-700 leading-relaxed`,
+                              children: step.description,
+                            }),
+                          ],
+                        },
+                        step.code,
+                      ),
+                    ),
+                  }),
+                ],
+              }),
+
+              /* ۴. معرفی اعضای تیم (Creative Team & Members) */
+              (0, H.jsxs)(`section`, {
+                "data-dossier-section": `team`,
+                className: `space-y-5 pt-4 border-t border-neutral-200 scroll-mt-4`,
+                children: [
+                  (0, H.jsxs)(`div`, {
+                    children: [
+                      (0, H.jsx)(`span`, {
+                        className: `text-[11px] font-mono uppercase bg-amber-50 text-amber-800 px-2 py-0.5 rounded border border-amber-200 font-bold`,
+                        children: `CREATIVE TEAM & MEMBERS`,
+                      }),
+                      (0, H.jsx)(`h3`, {
+                        className: `text-xl sm:text-2xl font-black text-neutral-900 mt-2`,
+                        children: `اعضا و تیم خلاقیت استودیو`,
+                      }),
+                      (0, H.jsx)(`p`, {
+                        className: `text-xs sm:text-sm text-neutral-500 mt-1`,
+                        children: `اعضای تیم استودیو مستقیماً بر تمام جزئیات ایده‌پردازی، طراحی و اجرای پروژه‌ها تمرکز دارند.`,
+                      }),
+                    ],
+                  }),
+                  (0, H.jsx)(`div`, {
+                    className: `grid grid-cols-2 sm:grid-cols-6 gap-2.5 pt-1`,
+                    children: currentTeam.map((e) => {
+                      let t = selectedMember && selectedMember.id === e.id;
+                      return (0, H.jsxs)(
+                        `div`,
+                        {
+                          onClick: () => {
+                            (W.playClick(), s(e));
+                          },
+                          className: `p-2.5 rounded-xl cursor-pointer border transition-all text-center ${t ? `bg-neutral-100 border-neutral-900 shadow-xs ring-1 ring-neutral-900` : `bg-[#FAF9F7] border-neutral-200 hover:border-neutral-400`}`,
+                          children: [
+                            (0, H.jsx)(`div`, {
+                              className: `w-14 h-14 rounded-full overflow-hidden mx-auto mb-2 border border-neutral-300`,
+                              children: (0, H.jsx)(`img`, {
+                                src: e.photo,
+                                alt: e.name,
+                                className: `w-full h-full object-cover`,
+                              }),
+                            }),
+                            (0, H.jsx)(`h4`, {
+                              className: `text-xs font-bold text-neutral-900 truncate`,
+                              children: e.name,
+                            }),
+                            (0, H.jsx)(`span`, {
+                              className: `text-[10px] text-neutral-500 block truncate font-medium`,
+                              children: (e.role || '').split(/[،,]/)[0] || e.role,
+                            }),
+                          ],
+                        },
+                        e.id,
+                      );
+                    }),
+                  }),
+                  (0, H.jsxs)(`div`, {
+                    className: `p-5 rounded-2xl bg-[#FAF9F7] border border-neutral-200 space-y-4`,
+                    children: [
+                      (0, H.jsxs)(`div`, {
+                        className: `flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-200 pb-3`,
+                        children: [
+                          (0, H.jsxs)(`div`, {
+                            children: [
+                              (0, H.jsx)(`span`, {
+                                className: `text-[10px] font-mono font-bold text-amber-700`,
+                                children: selectedMember?.trackCode || `STUDIO // CORE DOSSIER`,
+                              }),
+                              (0, H.jsx)(`h4`, {
+                                className: `text-xl font-black text-neutral-900`,
+                                children: selectedMember?.name || `همکار استودیو`,
+                              }),
+                              (0, H.jsxs)(`span`, {
+                                className: `text-xs text-neutral-500 font-medium`,
+                                children: [selectedMember?.role || ``, selectedMember?.roleEn ? ` (${selectedMember.roleEn})` : ``],
+                              }),
+                            ],
+                          }),
+                          (0, H.jsx)(`span`, {
+                            className: `text-xs font-mono text-neutral-400 font-bold`,
+                            dir: `ltr`,
+                            children: selectedMember?.department || ``,
+                          }),
+                        ],
+                      }),
+                      (0, H.jsx)(`p`, {
+                        className: `text-xs sm:text-sm text-neutral-700 leading-relaxed font-normal`,
+                        children: selectedMember?.bio || ``,
+                      }),
+                      (0, H.jsx)(`div`, {
+                        className: `pt-1 text-xs`,
+                        children: (0, H.jsxs)(`div`, {
+                          className: `bg-white p-3.5 rounded-xl border border-neutral-200 shadow-2xs`,
+                          children: [
+                            (0, H.jsx)(`span`, {
+                              className: `text-neutral-500 block text-[10px] font-bold mb-1`,
+                              children: `فلسفه فردی در هنر:`,
+                            }),
+                            (0, H.jsx)(`p`, {
+                              className: `text-amber-800 font-semibold italic leading-relaxed`,
+                              children: selectedMember?.philosophy || `«وصل کردن ایده‌های خوب به همدیگه»`,
+                            }),
                           ],
                         }),
-                      ],
-                    }),
-                  ],
-                }),
-              i === `models` &&
-                (0, H.jsxs)(`div`, {
-                  className: `space-y-6 animate-window-pop text-right`,
-                  children: [
-                    (0, H.jsxs)(`div`, {
-                      children: [
-                        (0, H.jsx)(`span`, {
-                          className: `text-[11px] font-mono uppercase bg-amber-50 text-amber-800 px-2 py-0.5 rounded border border-amber-200 font-bold`,
-                          children: `ENGAGEMENT FRAMEWORKS`,
-                        }),
-                        (0, H.jsx)(`h3`, {
-                          className: `text-2xl font-black text-neutral-900 mt-2`,
-                          children: `مدل‌های استاندارد همکاری با استودیو`,
-                        }),
-                        (0, H.jsx)(`p`, {
-                          className: `text-xs sm:text-sm text-neutral-500 mt-1 leading-relaxed`,
-                          children: `همکاری بر اساس نیاز کسب‌وکار شما ساختاربندی می‌شود؛ از اسپرینت‌های فشرده تا همراهی فصلی در هیئت‌مدیره.`,
-                        }),
-                      ],
-                    }),
-                    (0, H.jsx)(`div`, {
-                      className: `grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2`,
-                      children: Nu.map((e) =>
-                        (0, H.jsxs)(
-                          `div`,
-                          {
-                            className: `p-5 rounded-2xl bg-[#FAF9F7] border border-neutral-200 flex flex-col justify-between space-y-4 hover:border-neutral-400 transition-all shadow-2xs`,
+                      }),
+                      (0, H.jsxs)(`div`, {
+                        children: [
+                          (0, H.jsx)(`span`, {
+                            className: `text-[11px] font-bold text-neutral-600 block mb-2`,
+                            children: `مهارت‌ها و حوزه‌های تخصصی:`,
+                          }),
+                          (0, H.jsx)(`div`, {
+                            className: `flex flex-wrap gap-1.5`,
+                            children: (selectedMember?.specialties || []).map((e, t) =>
+                              (0, H.jsx)(
+                                `span`,
+                                {
+                                  className: `px-2.5 py-1 rounded-md bg-white text-xs text-neutral-800 border border-neutral-200 font-medium shadow-2xs`,
+                                  children: e,
+                                },
+                                t,
+                              ),
+                            ),
+                          }),
+                        ],
+                      }),
+                      (0, H.jsxs)(`div`, {
+                        className: `pt-4 border-t border-neutral-200/90 space-y-3`,
+                        children: [
+                          (0, H.jsxs)(`div`, {
+                            className: `flex items-center justify-between`,
                             children: [
                               (0, H.jsxs)(`div`, {
+                                className: `flex items-center gap-2`,
                                 children: [
                                   (0, H.jsx)(`span`, {
-                                    className: `text-[10px] font-mono text-amber-700 font-bold block mb-1`,
-                                    children: e.modelCode,
+                                    className: `w-2 h-2 rounded-full bg-amber-500 animate-pulse`,
                                   }),
-                                  (0, H.jsx)(`h4`, {
-                                    className: `text-base font-bold text-neutral-900 mb-0.5`,
-                                    children: e.name,
-                                  }),
-                                  (0, H.jsx)(`span`, {
-                                    className: `text-[10px] font-mono text-neutral-400 font-bold block mb-3`,
-                                    dir: `ltr`,
-                                    children: e.nameEn,
-                                  }),
-                                  (0, H.jsx)(`p`, {
-                                    className: `text-xs text-neutral-600 leading-relaxed mb-4 font-normal`,
-                                    children: e.description,
-                                  }),
-                                  (0, H.jsx)(`div`, {
-                                    className: `space-y-2 border-t border-neutral-200 pt-3`,
-                                    children: e.features.map((e, t) =>
-                                      (0, H.jsxs)(
-                                        `div`,
-                                        {
-                                          className: `flex items-start space-x-2 space-x-reverse text-xs text-neutral-800`,
-                                          children: [
-                                            (0, H.jsx)(`span`, {
-                                              className: `text-amber-600 font-bold text-xs`,
-                                              children: `✓`,
-                                            }),
-                                            (0, H.jsx)(`span`, {
-                                              className: `leading-relaxed font-normal`,
-                                              children: e,
-                                            }),
-                                          ],
-                                        },
-                                        t,
-                                      ),
-                                    ),
+                                  (0, H.jsxs)(`h5`, {
+                                    className: `text-xs sm:text-sm font-black text-neutral-900`,
+                                    children: [
+                                      `پروژه‌ها و نقش‌های اختصاصی در استودیو (`,
+                                      selectedMember?.projectRoles ? selectedMember.projectRoles.length : 0,
+                                      `)`,
+                                    ],
                                   }),
                                 ],
                               }),
-                              (0, H.jsx)(`div`, {
-                                className: `pt-3 border-t border-neutral-200 text-[11px] font-mono text-neutral-900 font-bold`,
-                                children: e.timeline,
+                              (0, H.jsx)(`span`, {
+                                className: `text-[10px] font-mono text-neutral-400 font-bold`,
+                                children: `PROJECT ROLES & CREDITS`,
                               }),
                             ],
-                          },
-                          e.id,
-                        ),
+                          }),
+                          selectedMember?.projectRoles && selectedMember.projectRoles.length > 0
+                            ? (0, H.jsx)(`div`, {
+                                className: `grid grid-cols-1 md:grid-cols-2 gap-3`,
+                                children: selectedMember.projectRoles.map((pr, pIdx) =>
+                                  (0, H.jsxs)(
+                                    `div`,
+                                    {
+                                      className: `p-3.5 rounded-xl bg-white border border-neutral-200 shadow-2xs hover:border-amber-400 hover:shadow-xs transition-all flex flex-col justify-between group`,
+                                      children: [
+                                        (0, H.jsxs)(`div`, {
+                                          className: `space-y-2.5`,
+                                          children: [
+                                            (0, H.jsxs)(`div`, {
+                                              className: `flex items-start gap-3`,
+                                              children: [
+                                                pr.coverImage &&
+                                                  (0, H.jsx)(`div`, {
+                                                    className: `w-14 h-14 rounded-lg overflow-hidden border border-neutral-200 shrink-0 bg-neutral-100`,
+                                                    children: (0, H.jsx)(`img`, {
+                                                      src: pr.coverImage,
+                                                      alt: pr.projectTitle,
+                                                      className: `w-full h-full object-cover group-hover:scale-105 transition-transform duration-300`,
+                                                    }),
+                                                  }),
+                                                (0, H.jsxs)(`div`, {
+                                                  className: `flex-1 min-w-0`,
+                                                  children: [
+                                                    (0, H.jsxs)(`div`, {
+                                                      className: `flex items-center justify-between gap-1`,
+                                                      children: [
+                                                        (0, H.jsx)(`h6`, {
+                                                          className: `text-xs sm:text-sm font-bold text-neutral-900 truncate group-hover:text-amber-800 transition-colors`,
+                                                          children: pr.projectTitle,
+                                                        }),
+                                                        pr.year &&
+                                                          (0, H.jsx)(`span`, {
+                                                            className: `text-[10px] font-mono text-neutral-400 shrink-0`,
+                                                            children: pr.year,
+                                                          }),
+                                                      ],
+                                                    }),
+                                                    pr.client &&
+                                                      (0, H.jsxs)(`p`, {
+                                                        className: `text-[11px] text-neutral-500 truncate mt-0.5`,
+                                                        children: [`کارفرما: `, pr.client],
+                                                      }),
+                                                    (0, H.jsx)(`div`, {
+                                                      className: `mt-1.5`,
+                                                      children: (0, H.jsx)(`span`, {
+                                                        className: `inline-block text-[11px] font-semibold text-amber-900 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-md`,
+                                                        children: pr.roleInProject,
+                                                      }),
+                                                    }),
+                                                  ],
+                                                }),
+                                              ],
+                                            }),
+                                            pr.impact &&
+                                              (0, H.jsxs)(`div`, {
+                                                className: `p-2 rounded-lg bg-neutral-50 border border-neutral-150 text-[11px] text-neutral-700 leading-relaxed`,
+                                                children: [
+                                                  (0, H.jsx)(`span`, {
+                                                    className: `font-bold text-neutral-500 block text-[10px] mb-0.5`,
+                                                    children: `دستاورد و تأثیر:`,
+                                                  }),
+                                                  pr.impact,
+                                                ],
+                                              }),
+                                            pr.keyDeliverables &&
+                                              pr.keyDeliverables.length > 0 &&
+                                              (0, H.jsx)(`div`, {
+                                                className: `flex flex-wrap gap-1`,
+                                                children: pr.keyDeliverables.map((del, dIdx) =>
+                                                  (0, H.jsx)(
+                                                    `span`,
+                                                    {
+                                                      className: `text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 font-medium`,
+                                                      children: del,
+                                                    },
+                                                    dIdx,
+                                                  ),
+                                                ),
+                                              }),
+                                          ],
+                                        }),
+                                        pProj &&
+                                          (0, H.jsx)(`div`, {
+                                            className: `mt-3 pt-2.5 border-t border-neutral-100 flex justify-end`,
+                                            children: (0, H.jsxs)(`button`, {
+                                              type: `button`,
+                                              onClick: () => handleOpenCaseStudy(pr),
+                                              className: `inline-flex items-center gap-1.5 text-[11px] font-bold text-neutral-700 hover:text-amber-800 transition-colors cursor-pointer group-hover:translate-x-[-2px] duration-200`,
+                                              children: [
+                                                (0, H.jsx)(`span`, { children: `مشاهده پرونده پروژه` }),
+                                                (0, H.jsx)(`span`, { children: `←` }),
+                                              ],
+                                            }),
+                                          }),
+                                      ],
+                                    },
+                                    pIdx,
+                                  ),
+                                ),
+                              })
+                            : (0, H.jsx)(`div`, {
+                                className: `p-4 rounded-xl bg-neutral-50 border border-dashed border-neutral-200 text-center text-xs text-neutral-400`,
+                                children: `هنوز پروژه‌ای به این عضو اختصاص نیافته است. در پنل مدیریت می‌توانید پروژه‌ها و نقش‌های همکار را تعیین کنید.`,
+                              }),
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+
+              /* ۵. نحوه همکاری (۰۷ / How We Work Together) */
+              (0, H.jsxs)(`section`, {
+                "data-dossier-section": `models`,
+                className: `space-y-5 pt-4 border-t border-neutral-200 scroll-mt-4`,
+                children: [
+                  (0, H.jsxs)(`div`, {
+                    children: [
+                      (0, H.jsx)(`span`, {
+                        className: `text-[11px] font-mono bg-amber-50 text-amber-800 px-2.5 py-1 rounded border border-amber-200 font-bold inline-block`,
+                        children: `۰۷ / نحوه همکاری (How We Work Together)`,
+                      }),
+                      (0, H.jsx)(`h3`, {
+                        className: `text-xl sm:text-2xl font-black text-neutral-900 mt-2.5`,
+                        children: `ساختار منعطف. تعهد ثابت به نتیجه.`,
+                      }),
+                    ],
+                  }),
+                  (0, H.jsx)(`div`, {
+                    className: `grid grid-cols-1 sm:grid-cols-3 gap-3.5`,
+                    children: Nu.map((e) =>
+                      (0, H.jsxs)(
+                        `div`,
+                        {
+                          className: `p-5 rounded-2xl bg-[#FAF9F7] border border-neutral-200 flex flex-col justify-between space-y-4 hover:border-neutral-400 transition-all shadow-2xs`,
+                          children: [
+                            (0, H.jsxs)(`div`, {
+                              children: [
+                                (0, H.jsx)(`span`, {
+                                  className: `text-[10px] font-mono text-amber-700 font-bold block mb-1`,
+                                  dir: `ltr`,
+                                  children: e.modelCode,
+                                }),
+                                (0, H.jsx)(`h4`, {
+                                  className: `text-sm sm:text-base font-bold text-neutral-900 mb-2`,
+                                  children: e.name,
+                                }),
+                                (0, H.jsx)(`p`, {
+                                  className: `text-xs text-neutral-700 leading-relaxed font-normal`,
+                                  children: e.description,
+                                }),
+                              ],
+                            }),
+                            (0, H.jsx)(`div`, {
+                              className: `pt-3 border-t border-neutral-200 text-[11px] font-mono text-neutral-900 font-bold`,
+                              children: `بازه زمانی: ${e.timeline}`,
+                            }),
+                          ],
+                        },
+                        e.id,
                       ),
-                    }),
-                  ],
-                }),
+                    ),
+                  }),
+                  (0, H.jsxs)(`div`, {
+                    className: `space-y-2.5`,
+                    children: [
+                      (0, H.jsx)(`h4`, {
+                        className: `text-xs sm:text-sm font-bold text-neutral-800`,
+                        children: `جدول مقایسه سریع مدل‌های همکاری`,
+                      }),
+                      (0, H.jsx)(`div`, {
+                        className: `overflow-x-auto rounded-xl border border-neutral-200`,
+                        children: (0, H.jsxs)(`table`, {
+                          className: `w-full text-right text-xs border-collapse`,
+                          children: [
+                            (0, H.jsx)(`thead`, {
+                              children: (0, H.jsxs)(`tr`, {
+                                className: `bg-[#F8F7F5] border-b border-neutral-200 text-neutral-900 font-bold`,
+                                children: [
+                                  (0, H.jsx)(`th`, { className: `p-3 border-l border-neutral-200`, children: `مدل همکاری` }),
+                                  (0, H.jsx)(`th`, { className: `p-3 border-l border-neutral-200`, children: `مخاطب اصلی` }),
+                                  (0, H.jsx)(`th`, { className: `p-3 border-l border-neutral-200`, children: `تمرکز کلیدی` }),
+                                  (0, H.jsx)(`th`, { className: `p-3 border-l border-neutral-200`, children: `بازه زمانی` }),
+                                  (0, H.jsx)(`th`, { className: `p-3`, children: `خروجی نهایی` }),
+                                ],
+                              }),
+                            }),
+                            (0, H.jsx)(`tbody`, {
+                              children: [
+                                {
+                                  model: `۰۱. پروژه‌محور`,
+                                  audience: `برندها و هنرمندان`,
+                                  focus: `کارگردانی و تولید تخصصی`,
+                                  timeline: `کوتاه‌مدت و مشخص`,
+                                  outcome: `اثر نهایی آماده انتشار`,
+                                },
+                                {
+                                  model: `۰۲. مشاوره مستمر`,
+                                  audience: `مدیران و تیم‌های فعال`,
+                                  focus: `استراتژی، هدایت و فروش`,
+                                  timeline: `قرارداد ماهانه`,
+                                  outcome: `رشد مستمر و ارتقای کیفیت`,
+                                },
+                                {
+                                  model: `۰۳. معماری ۳۶۰`,
+                                  audience: `کسب‌وکارها و آرتیست‌ها`,
+                                  focus: `خلق هویت، تولید و عرضه`,
+                                  timeline: `میان‌مدت تا بلندمدت`,
+                                  outcome: `اکوسیستم کامل برند و فروش`,
+                                },
+                              ].map((row, idx) =>
+                                (0, H.jsxs)(
+                                  `tr`,
+                                  {
+                                    className: `border-b last:border-b-0 border-neutral-200 ${idx % 2 === 0 ? `bg-white` : `bg-[#FAF9F7]`}`,
+                                    children: [
+                                      (0, H.jsx)(`td`, { className: `p-3 font-bold text-neutral-900 border-l border-neutral-200 whitespace-nowrap`, children: row.model }),
+                                      (0, H.jsx)(`td`, { className: `p-3 text-neutral-700 border-l border-neutral-200`, children: row.audience }),
+                                      (0, H.jsx)(`td`, { className: `p-3 text-neutral-700 border-l border-neutral-200`, children: row.focus }),
+                                      (0, H.jsx)(`td`, { className: `p-3 text-neutral-700 border-l border-neutral-200`, children: row.timeline }),
+                                      (0, H.jsx)(`td`, { className: `p-3 font-bold text-amber-800`, children: row.outcome }),
+                                    ],
+                                  },
+                                  idx,
+                                ),
+                              ),
+                            }),
+                          ],
+                        }),
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+
+              /* ۶. دعوت به اقدام پایانی (رفتن به بریف پروژه) */
+              renderBriefCtaBlock(),
             ],
           }),
         ],
@@ -11528,6 +11855,8 @@ var Au = [
                         onFocus: () => T(r.id),
                         containerRef: e,
                         onOpenProject: ne,
+                        onOpenBrief: () =>
+                          oe(`درخواست گفتگو و ثبت بریف پروژه`),
                       },
                       r.id,
                     )

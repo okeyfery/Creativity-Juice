@@ -280,16 +280,25 @@ html.dark .bg-neutral-100 {
 }
 
 html.dark .bg-neutral-200,
+html.dark .bg-neutral-200\/70,
 html.dark .bg-neutral-200\/80,
 html.dark .bg-neutral-200\/90 {
   background-color: #2d3240 !important;
   color: #f3f4f6 !important;
 }
 
+html.dark .bg-amber-50,
+html.dark .bg-amber-50\/70,
 html.dark .bg-\[\#FFF9EE\],
 html.dark .bg-\[\#FEF5D9\]\/85 {
-  background-color: rgba(245, 158, 11, 0.16) !important;
-  border-color: rgba(245, 158, 11, 0.45) !important;
+  background-color: rgba(245, 158, 11, 0.14) !important;
+  border-color: rgba(245, 158, 11, 0.4) !important;
+}
+
+html.dark .text-amber-800,
+html.dark .text-amber-900,
+html.dark .text-amber-700 {
+  color: #fbbf24 !important;
 }
 
 html.dark .bg-\[\#FDE68A\]\/75 {

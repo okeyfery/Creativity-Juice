@@ -145,7 +145,7 @@ const STORAGE_KEYS = {
   SETTINGS: 'cj_studio_settings_v3',
   SERVICES: 'cj_studio_services_v5',
   TEAM: 'cj_studio_team_v5',
-  MANIFESTO: 'cj_studio_manifesto_v5',
+  MANIFESTO: 'cj_studio_manifesto_v6',
 };
 
 // Initial Seed Media Items
@@ -1049,27 +1049,27 @@ export function deleteTeamMember(id: string): void {
 export const SEED_MANIFESTO: ManifestoItem[] = [
   {
     code: '01',
-    title: 'تقطیر زوائد و بازگشت به جوهره',
-    titleEn: 'Distillation Over Accumulation',
-    description: 'ما معتقدیم اضافه کردن المان‌های شلوغ، راهکار هویت نیست. هنر واقعی در حذف تمام اضافات و دستیابی به خالص‌ترین بیان هویتی است که هر مخاطبی با یک نگاه آن را به خاطر بسپارد.',
-    quote: '«Create like a child, edit like a scientist.» — کودکانه و بی‌مرز خلق کن، و همچون یک دانشمند با دقت ویرایش کن.',
-    author: 'Tyler, The Creator',
+    title: 'ذهن: استراتژی، برندینگ و فروش',
+    titleEn: 'The Mind',
+    description: 'ما زیرساخت فکری و تجاری پروژه شما را می‌سازیم. از کشف هویت برند و کپی‌رایتینگ تا طراحی کمپین‌های مارکتینگ و مهندسی قیف فروش برای شرکت‌ها و هنرمندان.',
+    quote: 'خروجی‌ها: استراتژی برند / مشاوره مارکتینگ و فروش / کپی‌رایتینگ و سناریو / هدایت خلاق تیم‌ها.',
+    author: 'Creativity juice',
   },
   {
     code: '02',
-    title: 'ادغام کیفیت هنری با کارآمدی تجاری',
-    titleEn: 'Artistic Mastery Meets Commercial Efficiency',
-    description: 'زیبایی‌شناسی بدون هدف تجاری، هنر محض است و بازاریابی بدون سلیقه، آلودگی بصری. استودیوی ما نقطه تلاقی وقار زیبایی‌شناختی و اثربخشی مالی در بازار است.',
-    quote: '«Less, but better.» — کمتر، اما باکیفیت‌تر؛ تمرکز بر جنبه‌های بنیادین و پالایش هر اثر از زوائد.',
-    author: 'Dieter Rams',
+    title: 'چشم: کارگردانی و تولیدات تصویری',
+    titleEn: 'The Eye',
+    description: 'ما به استراتژی‌های شما فرم بصری و روایت سینمایی می‌بخشیم. تولید محتوایی که استانداردهای زیبایی‌شناسی را با الگوریتم‌های توجه و فروش پیوند می‌زند.',
+    quote: 'خروجی‌ها: تیزر تبلیغاتی / موزیک‌ویدیو / فیلم کوتاه / استراتژی و پروداکشن یوتیوب / کارگردانی هنری.',
+    author: 'Creativity juice',
   },
   {
     code: '03',
-    title: 'خلق اثر اصیل و ماندگار',
-    titleEn: 'Authentic Craft & Timeless Vision',
-    description: 'هدف ما کپی‌برداری از ترندهای زودگذر نیست؛ بلکه ساختن جهان بصری و روایتی است که امضای اصیل برند را با استانداردهای دقیق اجرایی به نمایش بگذارد.',
-    quote: '«The goal of art isn’t to attain perfection. The goal is to share who we are and how we see the world.»',
-    author: 'Rick Rubin',
+    title: 'گوش: تولید موسیقی و مهندسی صدا',
+    titleEn: 'The Ear',
+    description: 'ما اتمسفر و امضای شنیداری خلق می‌کنیم. هدایت هنری و تولید آثار موسیقایی جریان‌ساز برای هنرمندان و خلق هویت صوتی متمایز برای پروژه‌های تصویری و تجاری.',
+    quote: 'خروجی‌ها: تولید صفر تا صد آلبوم و سینگل ترک / موسیقی متن و طراحی صدا / هویت شنیداری برند.',
+    author: 'Creativity juice',
   },
 ];
 
