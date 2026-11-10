@@ -339,10 +339,11 @@ var Au = [
   Nu = [
     {
       id: `model-production-partner`,
+      code: `۰۱`,
       modelCode: `01 // PRODUCTION PARTNER`,
-      name: `۰۱. شریک تولید (Production Partner)`,
+      name: `شریک تولید`,
       nameEn: `Production Partner`,
-      description: `اجرای صفر تا صد یک پروژه مشخص با بالاترین استاندارد کارگردانی. مناسب برای ساخت تیزر تبلیغاتی، موزیک‌ویدیو، آلبوم موسیقی، فیلم کوتاه یا راه‌اندازی کانال یوتیوب.`,
+      description: `اجرای صفر تا صد یک پروژه مشخص با بالاترین استاندارد کارگردانی؛ مناسب برای ساخت تیزر تبلیغاتی، موزیک‌ویدیو، آلبوم موسیقی، فیلم کوتاه یا راه‌اندازی کانال یوتیوب.`,
       audience: `برندها و هنرمندان`,
       focus: `کارگردانی و تولید تخصصی`,
       timeline: `کوتاه‌مدت و مشخص`,
@@ -355,8 +356,9 @@ var Au = [
     },
     {
       id: `model-strategic-retainer`,
+      code: `۰۲`,
       modelCode: `02 // STRATEGIC RETAINER`,
-      name: `۰۲. مشاور و کارگردان مستمر (Strategic Retainer)`,
+      name: `مشاور و کارگردان مستمر`,
       nameEn: `Strategic Retainer`,
       description: `حضور ماهانه در کنار مدیران و هنرمندان به عنوان کریتیو دایرکتور و مشاور فروش؛ برای هدایت تیم‌ها، طراحی کمپین‌ها و بهینه‌سازی مسیر درآمدزایی.`,
       audience: `مدیران و تیم‌های فعال`,
@@ -371,8 +373,9 @@ var Au = [
     },
     {
       id: `model-full-scale`,
+      code: `۰۳`,
       modelCode: `03 // FULL-SCALE ARCHITECTURE`,
-      name: `۰۳. معماری ۳۶۰ درجه (Full-Scale Architecture)`,
+      name: `معماری ۳۶۰ درجه`,
       nameEn: `Full-Scale Architecture`,
       description: `خلق کامل یک برند یا پروژه هنری از صفر تا بازار؛ ترکیب هم‌زمان استراتژی برند، تولیدات چندرسانه‌ای و مهندسی قیف فروش در یک پکیج واحد.`,
       audience: `کسب‌وکارها و آرتیست‌ها`,
@@ -3182,35 +3185,35 @@ var Au = [
       fileExt: `DOC`,
       fileSize: `4.8 MB`,
       dateModified: `Aug 15`,
-      title: `Creativity juice — معرفی و دایره توانمندی‌ها (The Capabilities)`,
-      subtitle: `فکر. تصویر. صدا. معماری کامل از ایده تا بازار.`,
+      title: `Creativity juice — معرفی استودیو و دایره توانمندی‌ها`,
+      subtitle: `فکر، تصویر و صدا؛ معماری کامل از ایده تا بازار`,
       author: `Creativity juice`,
       readTime: `زمان مطالعه: ۵ دقیقه`,
-      category: `02 // THE CAPABILITIES`,
+      category: `01 // THE CAPABILITIES`,
       glyph: `scroll`,
       badgeColor: `#007AFF`,
       sections: [
         {
-          heading: `Creativity juice`,
-          content: `مرز میان هنر، رسانه و تجارت دیگر وجود ندارد. امروز یک اثر هنری به استراتژی مارکتینگ نیاز دارد، و یک کسب‌وکار برای فروختن، نیازمند جسارت و ظرافت یک اثر هنری است.\nمن در همین نقطه مرزی کار می‌کنم. به عنوان کارگردان خلاق و مشاور برند، کار من اتصال ایده‌های ناب به اجرای استاندارد و نتایج تجاری است. از کارگردانی فیلم کوتاه، موزیک‌ویدیو و تولید آلبوم، تا ساخت تیزرهای تبلیغاتی، مدیریت استراتژیک یوتیوب؛ من به برندها و هنرمندان کمک می‌کنم جهان منحصربه‌فرد خودشان را بسازند، روایت کنند و به درآمد تبدیل سازند.`,
+          heading: `معرفی استودیو — Creativity juice`,
+          content: `مرز میان هنر، رسانه و تجارت دیگر وجود ندارد. امروز یک اثر هنری به استراتژی مارکتینگ نیاز دارد و یک کسب‌وکار برای فروختن، نیازمند جسارت و ظرافت یک اثر هنری است. من در همین نقطه مرزی کار می‌کنم. به عنوان کارگردان خلاق و مشاور برند، کار من اتصال ایده‌های ناب به اجرای استاندارد و نتایج تجاری است. از کارگردانی فیلم کوتاه، موزیک‌ویدیو و تولید آلبوم، تا ساخت تیزرهای تبلیغاتی و مدیریت استراتژیک یوتیوب؛ من به برندها و هنرمندان کمک می‌کنم جهان منحصربه‌فرد خودشان را بسازند، روایت کنند و به درآمد تبدیل سازند.`,
           callout: `«شما مجبور نیستید بین یک آژانس مارکتینگ، یک استودیوی فیلم‌سازی و یک لیبل موسیقی یکی را انتخاب کنید؛ ما نقطه تلاقی هر سه هستیم.»`,
         },
         {
-          heading: `۰۲ / دایره توانمندی‌ها (The Capabilities): فکر. تصویر. صدا. معماری کامل از ایده تا بازار.`,
+          heading: `بخش اول — دایره توانمندی‌ها: فکر، تصویر و صدا؛ معماری کامل از ایده تا بازار`,
           content: `سه ستون تخصصی استودیو از ایده تا بازار:`,
           bullets: [
-            `۰۱ / ذهن: استراتژی، برندینگ و فروش (The Mind) — ما زیرساخت فکری و تجاری پروژه شما را می‌سازیم. از کشف هویت برند و کپی‌رایتینگ تا طراحی کمپین‌های مارکتینگ و مهندسی قیف فروش برای شرکت‌ها و هنرمندان. • خروجی‌ها: استراتژی برند / مشاوره مارکتینگ و فروش / کپی‌رایتینگ و سناریو / هدایت خلاق تیم‌ها.`,
-            `۰۲ / چشم: کارگردانی و تولیدات تصویری (The Eye) — ما به استراتژی‌های شما فرم بصری و روایت سینمایی می‌بخشیم. تولید محتوایی که استانداردهای زیبایی‌شناسی را با الگوریتم‌های توجه و فروش پیوند می‌زند. • خروجی‌ها: تیزر تبلیغاتی / موزیک‌ویدیو / فیلم کوتاه / استراتژی و پروداکشن یوتیوب / کارگردانی هنری.`,
-            `۰۳ / گوش: تولید موسیقی و مهندسی صدا (The Ear) — ما اتمسفر و امضای شنیداری خلق می‌کنیم. هدایت هنری و تولید آثار موسیقایی جریان‌ساز برای هنرمندان و خلق هویت صوتی متمایز برای پروژه‌های تصویری و تجاری. • خروجی‌ها: تولید صفر تا صد آلبوم و سینگل ترک / موسیقی متن و طراحی صدا / هویت شنیداری برند.`,
+            `ستون اول — ذهن (استراتژی، برندینگ و فروش): ما زیرساخت فکری و تجاری پروژه شما را می‌سازیم؛ از کشف هویت برند و کپی‌رایتینگ تا طراحی کمپین‌های مارکتینگ و مهندسی قیف فروش برای شرکت‌ها و هنرمندان. خروجی‌ها: استراتژی برند، مشاوره مارکتینگ و فروش، کپی‌رایتینگ و سناریو، هدایت خلاق تیم‌ها.`,
+            `ستون دوم — چشم (کارگردانی و تولیدات تصویری): ما به استراتژی‌های شما فرم بصری و روایت سینمایی می‌بخشیم؛ تولید محتوایی که استانداردهای زیبایی‌شناسی را با الگوریتم‌های توجه و فروش پیوند می‌زند. خروجی‌ها: تیزر تبلیغاتی، موزیک‌ویدیو، فیلم کوتاه، استراتژی و پروداکشن یوتیوب، کارگردانی هنری.`,
+            `ستون سوم — گوش (تولید موسیقی و مهندسی صدا): ما اتمسفر و امضای شنیداری خلق می‌کنیم؛ هدایت هنری و تولید آثار موسیقایی جریان‌ساز برای هنرمندان و خلق هویت صوتی متمایز برای پروژه‌های تصویری و تجاری. خروجی‌ها: تولید صفر تا صد آلبوم و سینگل ترک، موسیقی متن و طراحی صدا، هویت شنیداری برند.`,
           ],
         },
         {
           heading: `جدول نقش ما برای شرکت‌ها، کسب‌وکارها و هنرمندان`,
           content: `تفکیک نقش استودیو در هر ستون تخصصی و نتیجه نهایی:`,
           bullets: [
-            `۰۱. استراتژی و فروش — شرکت‌ها و کسب‌وکارها: بازطراحی برند، اصلاح قیف فروش و افزایش نرخ تبدیل | هنرمندان و کریتورها: برندینگ شخصی، استراتژی انتشار اثر و جذب اسپانسر/مخاطب | نتیجه نهایی: رشد درآمد و سهم بازار`,
-            `۰۲. کارگردانی بصری — شرکت‌ها و کسب‌وکارها: ساخت تیزرهای متقاعدکننده و راه‌اندازی کانال یوتیوب برند | هنرمندان و کریتورها: ساخت موزیک‌ویدیو، فیلم کوتاه، کاور آرت و پروموهای بصری | نتیجه نهایی: پرستیژ بصری و تسخیر توجه`,
-            `۰۳. کارگردانی صوتی — شرکت‌ها و کسب‌وکارها: خلق هویت شنیداری، موسیقی اختصاصی تیزر و طراحی صدا | هنرمندان و کریتورها: کارگردانی هنری آلبوم، آهنگسازی، تنظیم و خلق امضای صوتی | نتیجه نهایی: ماندگاری در حافظه مخاطب`,
+            `۱. استراتژی و فروش — شرکت‌ها و کسب‌وکارها: بازطراحی برند، اصلاح قیف فروش و افزایش نرخ تبدیل | هنرمندان و کریتورها: برندینگ شخصی، استراتژی انتشار اثر و جذب اسپانسر یا مخاطب | نتیجه نهایی: رشد درآمد و سهم بازار`,
+            `۲. کارگردانی بصری — شرکت‌ها و کسب‌وکارها: ساخت تیزرهای متقاعدکننده و راه‌اندازی کانال یوتیوب برند | هنرمندان و کریتورها: ساخت موزیک‌ویدیو، فیلم کوتاه، کاور آرت و پروموهای بصری | نتیجه نهایی: پرستیژ بصری و تسخیر توجه`,
+            `۳. کارگردانی صوتی — شرکت‌ها و کسب‌وکارها: خلق هویت شنیداری، موسیقی اختصاصی تیزر و طراحی صدا | هنرمندان و کریتورها: کارگردانی هنری آلبوم، آهنگسازی، تنظیم و خلق امضای صوتی | نتیجه نهایی: ماندگاری در حافظه مخاطب`,
           ],
         },
       ],
@@ -3222,40 +3225,40 @@ var Au = [
       fileExt: `DOC`,
       fileSize: `4.2 MB`,
       dateModified: `Sep 05`,
-      title: `۰۵ / سیستم کار ما (Our Process) و ۰۷ / نحوه همکاری`,
-      subtitle: `چهار گام، از جرقه اولیه تا تسلط بر بازار • ساختار منعطف. تعهد ثابت به نتیجه.`,
+      title: `بخش دوم: سیستم کار ما و بخش چهارم: نحوه همکاری`,
+      subtitle: `چهار گام از جرقه اولیه تا تسلط بر بازار • ساختار منعطف و تعهد ثابت به نتیجه`,
       author: `Creativity juice`,
       readTime: `زمان مطالعه: ۴ دقیقه`,
-      category: `05 & 07 // PROCESS & MODELS`,
+      category: `02 & 04 // PROCESS & MODELS`,
       glyph: `scroll`,
       badgeColor: `#007AFF`,
       sections: [
         {
-          heading: `۰۵ / سیستم کار ما (Our Process): چهار گام، از جرقه اولیه تا تسلط بر بازار.`,
+          heading: `بخش دوم — سیستم کار ما: چهار گام، از جرقه اولیه تا تسلط بر بازار`,
           content: `مسیر چهارگانه پروژه از تحلیل اولیه تا مهندسی فروش:`,
           bullets: [
-            `۰۱. کاوش و استراتژی (Decode): تحلیل بازار، شناخت مخاطب و کشف هسته مرکزی برند یا اثر هنری. ما قبل از حرکت، مقصد و مسیر برنده را مشخص می‌کنیم.`,
-            `۰۲. جهان‌سازی و کارگردانی (Design): تبدیل استراتژی به کانسپت، داستان، کپی‌رایتینگ و فرم بصری یا شنیداری. خلقِ زبان اختصاصی پروژه.`,
-            `۰۳. پروداکشن و اجرا (Produce): کارگردانی و تولید بی‌نقص در استودیو و لوکیشن؛ از آلبوم موسیقی و فیلم کوتاه تا تیزرهای تبلیغاتی و محتوای اینستاگرام و یوتیوب.`,
-            `۰۴. عرضه و مهندسی فروش (Scale): اجرای کمپین مارکتینگ، مدیریت انتشار و چیدمان قیف فروش برای تبدیل توجه مخاطب به سهم بازار و درآمد پایدار.`,
+            `گام اول — کاوش و استراتژی: تحلیل بازار، شناخت مخاطب و کشف هسته مرکزی برند یا اثر هنری؛ ما قبل از حرکت، مقصد و مسیر برنده را مشخص می‌کنیم.`,
+            `گام دوم — جهان‌سازی و کارگردانی: تبدیل استراتژی به کانسپت، داستان، کپی‌رایتینگ و فرم بصری یا شنیداری و خلق زبان اختصاصی پروژه.`,
+            `گام سوم — پروداکشن و اجرا: کارگردانی و تولید بی‌نقص در استودیو و لوکیشن؛ از آلبوم موسیقی و فیلم کوتاه تا تیزرهای تبلیغاتی و محتوای اینستاگرام و یوتیوب.`,
+            `گام چهارم — عرضه و مهندسی فروش: اجرای کمپین مارکتینگ، مدیریت انتشار و چیدمان قیف فروش برای تبدیل توجه مخاطب به سهم بازار و درآمد پایدار.`,
           ],
         },
         {
-          heading: `۰۷ / نحوه همکاری (How We Work Together): ساختار منعطف. تعهد ثابت به نتیجه.`,
+          heading: `بخش چهارم — نحوه همکاری: ساختار منعطف، تعهد ثابت به نتیجه`,
           content: `سه مدل همکاری با استودیو بر اساس نیاز پروژه و سازمان شما:`,
           bullets: [
-            `۰۱. شریک تولید (Production Partner): اجرای صفر تا صد یک پروژه مشخص با بالاترین استاندارد کارگردانی. مناسب برای ساخت تیزر تبلیغاتی، موزیک‌ویدیو، آلبوم موسیقی، فیلم کوتاه یا راه‌اندازی کانال یوتیوب.`,
-            `۰۲. مشاور و کارگردان مستمر (Strategic Retainer): حضور ماهانه در کنار مدیران و هنرمندان به عنوان کریتیو دایرکتور و مشاور فروش؛ برای هدایت تیم‌ها، طراحی کمپین‌ها و بهینه‌سازی مسیر درآمدزایی.`,
-            `۰۳. معماری ۳۶۰ درجه (Full-Scale Architecture): خلق کامل یک برند یا پروژه هنری از صفر تا بازار؛ ترکیب هم‌زمان استراتژی برند، تولیدات چندرسانه‌ای و مهندسی قیف فروش در یک پکیج واحد.`,
+            `مدل اول — شریک تولید: اجرای صفر تا صد یک پروژه مشخص با بالاترین استاندارد کارگردانی؛ مناسب برای ساخت تیزر تبلیغاتی، موزیک‌ویدیو، آلبوم موسیقی، فیلم کوتاه یا راه‌اندازی کانال یوتیوب.`,
+            `مدل دوم — مشاور و کارگردان مستمر: حضور ماهانه در کنار مدیران و هنرمندان به عنوان کریتیو دایرکتور و مشاور فروش؛ برای هدایت تیم‌ها، طراحی کمپین‌ها و بهینه‌سازی مسیر درآمدزایی.`,
+            `مدل سوم — معماری ۳۶۰ درجه: خلق کامل یک برند یا پروژه هنری از صفر تا بازار؛ ترکیب هم‌زمان استراتژی برند، تولیدات چندرسانه‌ای و مهندسی قیف فروش در یک پکیج واحد.`,
           ],
         },
         {
           heading: `جدول مقایسه سریع مدل‌های همکاری`,
           content: `مقایسه مخاطب اصلی، تمرکز کلیدی، بازه زمانی و خروجی نهایی:`,
           bullets: [
-            `۰۱. پروژه‌محور — مخاطب اصلی: برندها و هنرمندان | تمرکز کلیدی: کارگردانی و تولید تخصصی | بازه زمانی: کوتاه‌مدت و مشخص | خروجی نهایی: اثر نهایی آماده انتشار`,
-            `۰۲. مشاوره مستمر — مخاطب اصلی: مدیران و تیم‌های فعال | تمرکز کلیدی: استراتژی، هدایت و فروش | بازه زمانی: قرارداد ماهانه | خروجی نهایی: رشد مستمر و ارتقای کیفیت`,
-            `۰۳. معماری ۳۶۰ — مخاطب اصلی: کسب‌وکارها و آرتیست‌ها | تمرکز کلیدی: خلق هویت، تولید و عرضه | بازه زمانی: میان‌مدت تا بلندمدت | خروجی نهایی: اکوسیستم کامل برند و فروش`,
+            `۱. پروژه‌محور — مخاطب اصلی: برندها و هنرمندان | تمرکز کلیدی: کارگردانی و تولید تخصصی | بازه زمانی: کوتاه‌مدت و مشخص | خروجی نهایی: اثر نهایی آماده انتشار`,
+            `۲. مشاوره مستمر — مخاطب اصلی: مدیران و تیم‌های فعال | تمرکز کلیدی: استراتژی، هدایت و فروش | بازه زمانی: قرارداد ماهانه | خروجی نهایی: رشد مستمر و ارتقای کیفیت`,
+            `۳. معماری ۳۶۰ درجه — مخاطب اصلی: کسب‌وکارها و آرتیست‌ها | تمرکز کلیدی: خلق هویت، تولید و عرضه | بازه زمانی: میان‌مدت تا بلندمدت | خروجی نهایی: اکوسیستم کامل برند و فروش`,
           ],
         },
       ],
@@ -3267,16 +3270,16 @@ var Au = [
       fileExt: `DOC`,
       fileSize: `3.6 MB`,
       dateModified: `Sep 10`,
-      title: `معرفی اعضای تیم و خلاقیت استودیو`,
+      title: `بخش سوم: معرفی اعضای تیم و خلاقیت استودیو`,
       subtitle: `تخصص‌ها، فلسفه فردی در هنر و پروژه‌های اعضای تیم استودیو`,
       author: `Creativity juice`,
       readTime: `زمان مطالعه: ۴ دقیقه`,
-      category: `TEAM DOSSIER`,
+      category: `03 // TEAM DOSSIER`,
       glyph: `team`,
       badgeColor: `#007AFF`,
       sections: [
         {
-          heading: `اعضا و تیم خلاقیت استودیو`,
+          heading: `بخش سوم — اعضا و تیم خلاقیت استودیو`,
           content: `اعضای تیم استودیو مستقیماً بر تمام جزئیات ایده‌پردازی، طراحی و اجرای پروژه‌ها تمرکز دارند و هر عضو با فلسفه فردی در هنر («وصل کردن ایده‌های خوب به همدیگه») در خلق آثار نقش‌آفرینی می‌کند.`,
         },
       ],
@@ -3288,8 +3291,8 @@ var Au = [
       fileExt: `BRIEF`,
       fileSize: `2.9 MB`,
       dateModified: `Sep 15`,
-      title: `پروژه بعدی شما به یک فایلِ جدید نیاز دارد، یا یک استانداردِ جدید؟`,
-      subtitle: `هر جریان بزرگی با یک گفتگوی دقیق شروع می‌شود.`,
+      title: `پروژه بعدی شما به یک فایل جدید نیاز دارد، یا یک استاندارد جدید؟`,
+      subtitle: `هر جریان بزرگی با یک گفتگوی دقیق شروع می‌شود`,
       author: `Creativity juice`,
       readTime: `زمان تکمیل: ۴ دقیقه`,
       category: `PROJECT BRIEF`,
@@ -3299,7 +3302,7 @@ var Au = [
       briefPrefill: `درخواست گفتگو و ثبت بریف پروژه در Creativity juice`,
       sections: [
         {
-          heading: `هر جریان بزرگی با یک گفتگوی دقیق شروع می‌شود.`,
+          heading: `هر جریان بزرگی با یک گفتگوی دقیق شروع می‌شود`,
           content: `چه در ابتدای مسیر خلق یک ایده باشید و چه به دنبال رشد فروش و دیده‌شدن آنچه ساخته‌اید؛ ما آماده‌ایم تا تصویر بزرگ‌تر را کنار هم ترسیم کنیم.`,
           callout: `رفتن به بریف پروژه`,
         },
@@ -5872,40 +5875,43 @@ var Au = [
         code: `۰۱`,
         title: `ذهن: استراتژی، برندینگ و فروش`,
         titleEn: `The Mind`,
-        description: `ما زیرساخت فکری و تجاری پروژه شما را می‌سازیم. از کشف هویت برند و کپی‌رایتینگ تا طراحی کمپین‌های مارکتینگ و مهندسی قیف فروش برای شرکت‌ها و هنرمندان.`,
-        deliverables: `استراتژی برند / مشاوره مارکتینگ و فروش / کپی‌رایتینگ و سناریو / هدایت خلاق تیم‌ها.`,
+        description: `ما زیرساخت فکری و تجاری پروژه شما را می‌سازیم؛ از کشف هویت برند و کپی‌رایتینگ تا طراحی کمپین‌های مارکتینگ و مهندسی قیف فروش برای شرکت‌ها و هنرمندان.`,
+        deliverables: `استراتژی برند • مشاوره مارکتینگ و فروش • کپی‌رایتینگ و سناریو • هدایت خلاق تیم‌ها`,
       },
       {
         code: `۰۲`,
         title: `چشم: کارگردانی و تولیدات تصویری`,
         titleEn: `The Eye`,
-        description: `ما به استراتژی‌های شما فرم بصری و روایت سینمایی می‌بخشیم. تولید محتوایی که استانداردهای زیبایی‌شناسی را با الگوریتم‌های توجه و فروش پیوند می‌زند.`,
-        deliverables: `تیزر تبلیغاتی / موزیک‌ویدیو / فیلم کوتاه / استراتژی و پروداکشن یوتیوب / کارگردانی هنری.`,
+        description: `ما به استراتژی‌های شما فرم بصری و روایت سینمایی می‌بخشیم؛ تولید محتوایی که استانداردهای زیبایی‌شناسی را با الگوریتم‌های توجه و فروش پیوند می‌زند.`,
+        deliverables: `تیزر تبلیغاتی • موزیک‌ویدیو • فیلم کوتاه • استراتژی و پروداکشن یوتیوب • کارگردانی هنری`,
       },
       {
         code: `۰۳`,
         title: `گوش: تولید موسیقی و مهندسی صدا`,
         titleEn: `The Ear`,
-        description: `ما اتمسفر و امضای شنیداری خلق می‌کنیم. هدایت هنری و تولید آثار موسیقایی جریان‌ساز برای هنرمندان و خلق هویت صوتی متمایز برای پروژه‌های تصویری و تجاری.`,
-        deliverables: `تولید صفر تا صد آلبوم و سینگل ترک / موسیقی متن و طراحی صدا / هویت شنیداری برند.`,
+        description: `ما اتمسفر و امضای شنیداری خلق می‌کنیم؛ هدایت هنری و تولید آثار موسیقایی جریان‌ساز برای هنرمندان و خلق هویت صوتی متمایز برای پروژه‌های تصویری و تجاری.`,
+        deliverables: `تولید صفر تا صد آلبوم و سینگل ترک • موسیقی متن و طراحی صدا • هویت شنیداری برند`,
       },
     ];
 
     let capabilitiesMatrix = [
       {
-        pillar: `۰۱. استراتژی و فروش`,
+        code: `۰۱`,
+        pillar: `استراتژی و فروش`,
         forBrands: `بازطراحی برند، اصلاح قیف فروش و افزایش نرخ تبدیل`,
-        forArtists: `برندینگ شخصی، استراتژی انتشار اثر و جذب اسپانسر/مخاطب`,
+        forArtists: `برندینگ شخصی، استراتژی انتشار اثر و جذب اسپانسر یا مخاطب`,
         outcome: `رشد درآمد و سهم بازار`,
       },
       {
-        pillar: `۰۲. کارگردانی بصری`,
+        code: `۰۲`,
+        pillar: `کارگردانی بصری`,
         forBrands: `ساخت تیزرهای متقاعدکننده و راه‌اندازی کانال یوتیوب برند`,
         forArtists: `ساخت موزیک‌ویدیو، فیلم کوتاه، کاور آرت و پروموهای بصری`,
         outcome: `پرستیژ بصری و تسخیر توجه`,
       },
       {
-        pillar: `۰۳. کارگردانی صوتی`,
+        code: `۰۳`,
+        pillar: `کارگردانی صوتی`,
         forBrands: `خلق هویت شنیداری، موسیقی اختصاصی تیزر و طراحی صدا`,
         forArtists: `کارگردانی هنری آلبوم، آهنگسازی، تنظیم و خلق امضای صوتی`,
         outcome: `ماندگاری در حافظه مخاطب`,
@@ -5917,13 +5923,13 @@ var Au = [
         code: `۰۱`,
         title: `کاوش و استراتژی`,
         titleEn: `Decode`,
-        description: `تحلیل بازار، شناخت مخاطب و کشف هسته مرکزی برند یا اثر هنری. ما قبل از حرکت، مقصد و مسیر برنده را مشخص می‌کنیم.`,
+        description: `تحلیل بازار، شناخت مخاطب و کشف هسته مرکزی برند یا اثر هنری؛ ما قبل از حرکت، مقصد و مسیر برنده را مشخص می‌کنیم.`,
       },
       {
         code: `۰۲`,
         title: `جهان‌سازی و کارگردانی`,
         titleEn: `Design`,
-        description: `تبدیل استراتژی به کانسپت، داستان، کپی‌رایتینگ و فرم بصری یا شنیداری. خلقِ زبان اختصاصی پروژه.`,
+        description: `تبدیل استراتژی به کانسپت، داستان، کپی‌رایتینگ و فرم بصری یا شنیداری و خلق زبان اختصاصی پروژه.`,
       },
       {
         code: `۰۳`,
@@ -5942,11 +5948,12 @@ var Au = [
     let renderBriefCtaBlock = () =>
       (0, H.jsxs)(`div`, {
         "data-dossier-section": `cta`,
+        dir: `rtl`,
         className: `p-6 sm:p-8 rounded-2xl bg-[#FAF9F7] border border-neutral-200 space-y-3.5 text-right scroll-mt-4`,
         children: [
           (0, H.jsx)(`h4`, {
             className: `text-xl sm:text-2xl font-black text-neutral-900 leading-snug`,
-            children: `پروژه بعدی شما به یک فایلِ جدید نیاز دارد، یا یک استانداردِ جدید؟`,
+            children: `پروژه بعدی شما به یک فایل جدید نیاز دارد، یا یک استاندارد جدید؟`,
           }),
           (0, H.jsx)(`p`, {
             className: `text-sm font-bold text-amber-800`,
@@ -6016,7 +6023,7 @@ var Au = [
     return (0, H.jsx)(Ud, {
       id: `manifesto-team-window`,
       title: `اسناد تیم و مانیفست • Creativity juice`,
-      subtitle: `فکر. تصویر. صدا. معماری کامل از ایده تا بازار.`,
+      subtitle: `فکر، تصویر و صدا؛ معماری کامل از ایده تا بازار`,
       onClose: e,
       zIndex: t,
       onFocus: n,
@@ -6024,7 +6031,8 @@ var Au = [
       width: `w-[96vw] sm:w-[90vw] md:w-[84vw] lg:w-[74vw]`,
       maxWidth: `max-w-5xl`,
       children: (0, H.jsxs)(`div`, {
-        className: `flex flex-col bg-white text-neutral-900 min-h-[520px] select-none font-sans`,
+        dir: `rtl`,
+        className: `flex flex-col bg-white text-neutral-900 min-h-[520px] select-none font-sans text-right`,
         children: [
           (0, H.jsxs)(`div`, {
             className: `p-3 bg-[#F8F7F5] border-b border-neutral-200 flex items-center justify-between gap-2 overflow-x-auto`,
@@ -6035,31 +6043,32 @@ var Au = [
                   (0, H.jsx)(`button`, {
                     onClick: () => c(`manifesto`),
                     className: `px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${i === `manifesto` ? `bg-white text-neutral-900 shadow-xs` : `text-neutral-600 hover:text-black`}`,
-                    children: `Creativity juice`,
+                    children: `معرفی استودیو`,
                   }),
                   (0, H.jsx)(`button`, {
                     onClick: () => c(`capabilities`),
                     className: `px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${i === `capabilities` ? `bg-white text-neutral-900 shadow-xs` : `text-neutral-600 hover:text-black`}`,
-                    children: `۰۲ / دایره توانمندی‌ها`,
+                    children: `۰۱ / دایره توانمندی‌ها`,
                   }),
                   (0, H.jsx)(`button`, {
                     onClick: () => c(`process`),
                     className: `px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${i === `process` ? `bg-white text-neutral-900 shadow-xs` : `text-neutral-600 hover:text-black`}`,
-                    children: `۰۵ / سیستم کار ما`,
+                    children: `۰۲ / سیستم کار ما`,
                   }),
                   (0, H.jsx)(`button`, {
                     onClick: () => c(`team`),
                     className: `px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${i === `team` ? `bg-white text-neutral-900 shadow-xs` : `text-neutral-600 hover:text-black`}`,
-                    children: `معرفی اعضای تیم`,
+                    children: `۰۳ / معرفی اعضای تیم`,
                   }),
                   (0, H.jsx)(`button`, {
                     onClick: () => c(`models`),
                     className: `px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${i === `models` ? `bg-white text-neutral-900 shadow-xs` : `text-neutral-600 hover:text-black`}`,
-                    children: `۰۷ / نحوه همکاری`,
+                    children: `۰۴ / نحوه همکاری`,
                   }),
                 ],
               }),
               (0, H.jsx)(`span`, {
+                dir: `ltr`,
                 className: `text-[11px] font-mono text-neutral-400 hidden lg:inline font-bold shrink-0`,
                 children: `CREATIVITY JUICE // FULL DOSSIER`,
               }),
@@ -6067,9 +6076,10 @@ var Au = [
           }),
           (0, H.jsxs)(`div`, {
             ref: scrollContainerRef,
+            dir: `rtl`,
             className: `p-5 sm:p-7 overflow-y-auto max-h-[68vh] flex-1 bg-white space-y-10 text-right`,
             children: [
-              /* ۱. معرفی و بیانیه بنیادین (Creativity juice) */
+              /* بخش معرفی و بیانیه بنیادین (Creativity juice) */
               (0, H.jsxs)(`section`, {
                 "data-dossier-section": `manifesto`,
                 className: `space-y-4 scroll-mt-4`,
@@ -6077,38 +6087,58 @@ var Au = [
                   (0, H.jsxs)(`div`, {
                     className: `p-6 sm:p-8 rounded-2xl bg-[#FAF9F7] border border-neutral-200 space-y-5`,
                     children: [
-                      (0, H.jsx)(`h3`, {
-                        className: `text-2xl sm:text-3xl font-black text-neutral-900 tracking-tight`,
-                        dir: `ltr`,
-                        children: `Creativity juice`,
+                      (0, H.jsxs)(`div`, {
+                        className: `flex items-center justify-between border-b border-neutral-200/80 pb-3 gap-2`,
+                        children: [
+                          (0, H.jsx)(`span`, {
+                            className: `text-xs font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200`,
+                            children: `معرفی و بیانیه استودیو`,
+                          }),
+                          (0, H.jsx)(`h3`, {
+                            className: `text-2xl sm:text-3xl font-black text-neutral-900 tracking-tight`,
+                            dir: `ltr`,
+                            children: `Creativity juice`,
+                          }),
+                        ],
                       }),
                       (0, H.jsx)(`p`, {
-                        className: `text-sm sm:text-base text-neutral-800 leading-8 font-medium`,
-                        children: `مرز میان هنر، رسانه و تجارت دیگر وجود ندارد. امروز یک اثر هنری به استراتژی مارکتینگ نیاز دارد، و یک کسب‌وکار برای فروختن، نیازمند جسارت و ظرافت یک اثر هنری است.`,
+                        className: `text-sm sm:text-base text-neutral-800 leading-8 font-medium text-right`,
+                        children: `مرز میان هنر، رسانه و تجارت دیگر وجود ندارد. امروز یک اثر هنری به استراتژی مارکتینگ نیاز دارد و یک کسب‌وکار برای فروختن، نیازمند جسارت و ظرافت یک اثر هنری است.`,
                       }),
                       (0, H.jsx)(`p`, {
-                        className: `text-sm sm:text-base text-neutral-700 leading-8`,
-                        children: `من در همین نقطه مرزی کار می‌کنم. به عنوان کارگردان خلاق و مشاور برند، کار من اتصال ایده‌های ناب به اجرای استاندارد و نتایج تجاری است. از کارگردانی فیلم کوتاه، موزیک‌ویدیو و تولید آلبوم، تا ساخت تیزرهای تبلیغاتی، مدیریت استراتژیک یوتیوب؛ من به برندها و هنرمندان کمک می‌کنم جهان منحصربه‌فرد خودشان را بسازند، روایت کنند و به درآمد تبدیل سازند.`,
+                        className: `text-sm sm:text-base text-neutral-700 leading-8 text-right`,
+                        children: `من در همین نقطه مرزی کار می‌کنم. به عنوان کارگردان خلاق و مشاور برند، کار من اتصال ایده‌های ناب به اجرای استاندارد و نتایج تجاری است. از کارگردانی فیلم کوتاه، موزیک‌ویدیو و تولید آلبوم، تا ساخت تیزرهای تبلیغاتی و مدیریت استراتژیک یوتیوب؛ من به برندها و هنرمندان کمک می‌کنم جهان منحصربه‌فرد خودشان را بسازند، روایت کنند و به درآمد تبدیل سازند.`,
                       }),
                     ],
                   }),
                 ],
               }),
 
-              /* ۲. دایره توانمندی‌ها (۰۲ / The Capabilities) */
+              /* ۰۱ / دایره توانمندی‌ها (The Capabilities) */
               (0, H.jsxs)(`section`, {
                 "data-dossier-section": `capabilities`,
                 className: `space-y-5 pt-4 border-t border-neutral-200 scroll-mt-4`,
                 children: [
                   (0, H.jsxs)(`div`, {
+                    className: `space-y-2`,
                     children: [
-                      (0, H.jsx)(`span`, {
-                        className: `text-[11px] font-mono bg-amber-50 text-amber-800 px-2.5 py-1 rounded border border-amber-200 font-bold inline-block`,
-                        children: `۰۲ / دایره توانمندی‌ها (The Capabilities)`,
+                      (0, H.jsxs)(`div`, {
+                        className: `flex flex-wrap items-center gap-2`,
+                        children: [
+                          (0, H.jsx)(`span`, {
+                            className: `text-xs font-bold bg-amber-50 text-amber-800 px-2.5 py-1 rounded-md border border-amber-200 inline-block`,
+                            children: `۰۱ / دایره توانمندی‌ها`,
+                          }),
+                          (0, H.jsx)(`span`, {
+                            dir: `ltr`,
+                            className: `text-[11px] font-mono text-neutral-400 font-bold`,
+                            children: `01 // THE CAPABILITIES`,
+                          }),
+                        ],
                       }),
                       (0, H.jsx)(`h3`, {
-                        className: `text-xl sm:text-2xl font-black text-neutral-900 mt-2.5`,
-                        children: `فکر. تصویر. صدا. معماری کامل از ایده تا بازار.`,
+                        className: `text-xl sm:text-2xl font-black text-neutral-900`,
+                        children: `فکر، تصویر و صدا؛ معماری کامل از ایده تا بازار`,
                       }),
                     ],
                   }),
@@ -6124,7 +6154,7 @@ var Au = [
                               className: `flex items-center justify-between border-b border-neutral-200 pb-2.5 gap-2`,
                               children: [
                                 (0, H.jsxs)(`div`, {
-                                  className: `flex items-center space-x-2.5 space-x-reverse`,
+                                  className: `flex items-center gap-2.5`,
                                   children: [
                                     (0, H.jsx)(`span`, {
                                       className: `w-7 h-7 rounded-md bg-[#18181b] text-white font-mono font-black text-xs flex items-center justify-center shrink-0`,
@@ -6144,15 +6174,15 @@ var Au = [
                               ],
                             }),
                             (0, H.jsx)(`p`, {
-                              className: `text-xs sm:text-sm text-neutral-700 leading-relaxed`,
+                              className: `text-xs sm:text-sm text-neutral-700 leading-relaxed text-right`,
                               children: item.description,
                             }),
                             (0, H.jsxs)(`div`, {
-                              className: `p-3 rounded-lg bg-white border border-neutral-200/80 text-xs text-neutral-800`,
+                              className: `p-3 rounded-lg bg-white border border-neutral-200/80 text-xs text-neutral-800 flex flex-wrap items-center gap-1.5`,
                               children: [
                                 (0, H.jsx)(`span`, {
-                                  className: `font-bold text-amber-800 ml-1.5`,
-                                  children: `• خروجی‌ها:`,
+                                  className: `font-bold text-amber-800`,
+                                  children: `خروجی‌ها:`,
                                 }),
                                 (0, H.jsx)(`span`, {
                                   className: `font-medium`,
@@ -6167,12 +6197,13 @@ var Au = [
                     ),
                   }),
                   (0, H.jsx)(`div`, {
-                    className: `p-4 sm:p-5 rounded-xl bg-amber-50/70 border-r-4 border-amber-500 border border-amber-200/80 text-xs sm:text-sm font-bold text-neutral-900 leading-relaxed`,
+                    className: `p-4 sm:p-5 rounded-xl bg-amber-50/70 border-r-4 border-amber-500 border border-amber-200/80 text-xs sm:text-sm font-bold text-neutral-900 leading-relaxed text-right`,
                     children: `«شما مجبور نیستید بین یک آژانس مارکتینگ، یک استودیوی فیلم‌سازی و یک لیبل موسیقی یکی را انتخاب کنید؛ ما نقطه تلاقی هر سه هستیم.»`,
                   }),
                   (0, H.jsx)(`div`, {
                     className: `overflow-x-auto rounded-xl border border-neutral-200`,
                     children: (0, H.jsxs)(`table`, {
+                      dir: `rtl`,
                       className: `w-full text-right text-xs border-collapse`,
                       children: [
                         (0, H.jsx)(`thead`, {
@@ -6193,7 +6224,19 @@ var Au = [
                               {
                                 className: `border-b last:border-b-0 border-neutral-200 ${idx % 2 === 0 ? `bg-white` : `bg-[#FAF9F7]`}`,
                                 children: [
-                                  (0, H.jsx)(`td`, { className: `p-3 font-bold text-neutral-900 border-l border-neutral-200 whitespace-nowrap`, children: row.pillar }),
+                                  (0, H.jsx)(`td`, {
+                                    className: `p-3 font-bold text-neutral-900 border-l border-neutral-200 whitespace-nowrap`,
+                                    children: (0, H.jsxs)(`div`, {
+                                      className: `inline-flex items-center gap-2`,
+                                      children: [
+                                        (0, H.jsx)(`span`, {
+                                          className: `w-5 h-5 rounded bg-neutral-900 text-white font-mono text-[10px] font-bold inline-flex items-center justify-center shrink-0`,
+                                          children: row.code,
+                                        }),
+                                        (0, H.jsx)(`span`, { children: row.pillar }),
+                                      ],
+                                    }),
+                                  }),
                                   (0, H.jsx)(`td`, { className: `p-3 text-neutral-700 border-l border-neutral-200 leading-relaxed`, children: row.forBrands }),
                                   (0, H.jsx)(`td`, { className: `p-3 text-neutral-700 border-l border-neutral-200 leading-relaxed`, children: row.forArtists }),
                                   (0, H.jsx)(`td`, { className: `p-3 font-bold text-amber-800 leading-relaxed`, children: row.outcome }),
@@ -6209,20 +6252,31 @@ var Au = [
                 ],
               }),
 
-              /* ۳. سیستم کار ما (۰۵ / Our Process) */
+              /* ۰۲ / سیستم کار ما (Our Process) */
               (0, H.jsxs)(`section`, {
                 "data-dossier-section": `process`,
                 className: `space-y-5 pt-4 border-t border-neutral-200 scroll-mt-4`,
                 children: [
                   (0, H.jsxs)(`div`, {
+                    className: `space-y-2`,
                     children: [
-                      (0, H.jsx)(`span`, {
-                        className: `text-[11px] font-mono bg-amber-50 text-amber-800 px-2.5 py-1 rounded border border-amber-200 font-bold inline-block`,
-                        children: `۰۵ / سیستم کار ما (Our Process)`,
+                      (0, H.jsxs)(`div`, {
+                        className: `flex flex-wrap items-center gap-2`,
+                        children: [
+                          (0, H.jsx)(`span`, {
+                            className: `text-xs font-bold bg-amber-50 text-amber-800 px-2.5 py-1 rounded-md border border-amber-200 inline-block`,
+                            children: `۰۲ / سیستم کار ما`,
+                          }),
+                          (0, H.jsx)(`span`, {
+                            dir: `ltr`,
+                            className: `text-[11px] font-mono text-neutral-400 font-bold`,
+                            children: `02 // OUR PROCESS`,
+                          }),
+                        ],
                       }),
                       (0, H.jsx)(`h3`, {
-                        className: `text-xl sm:text-2xl font-black text-neutral-900 mt-2.5`,
-                        children: `چهار گام، از جرقه اولیه تا تسلط بر بازار.`,
+                        className: `text-xl sm:text-2xl font-black text-neutral-900`,
+                        children: `چهار گام، از جرقه اولیه تا تسلط بر بازار`,
                       }),
                     ],
                   }),
@@ -6238,7 +6292,7 @@ var Au = [
                               className: `flex items-center justify-between border-b border-neutral-200 pb-2`,
                               children: [
                                 (0, H.jsxs)(`div`, {
-                                  className: `flex items-center gap-2`,
+                                  className: `flex items-center gap-2.5`,
                                   children: [
                                     (0, H.jsx)(`span`, {
                                       className: `w-7 h-7 rounded-md bg-[#18181b] text-white font-mono font-black text-xs flex items-center justify-center shrink-0`,
@@ -6258,7 +6312,7 @@ var Au = [
                               ],
                             }),
                             (0, H.jsx)(`p`, {
-                              className: `text-xs sm:text-sm text-neutral-700 leading-relaxed`,
+                              className: `text-xs sm:text-sm text-neutral-700 leading-relaxed text-right`,
                               children: step.description,
                             }),
                           ],
@@ -6270,23 +6324,34 @@ var Au = [
                 ],
               }),
 
-              /* ۴. معرفی اعضای تیم (Creative Team & Members) */
+              /* ۰۳ / معرفی اعضای تیم (Creative Team & Members) */
               (0, H.jsxs)(`section`, {
                 "data-dossier-section": `team`,
                 className: `space-y-5 pt-4 border-t border-neutral-200 scroll-mt-4`,
                 children: [
                   (0, H.jsxs)(`div`, {
+                    className: `space-y-2`,
                     children: [
-                      (0, H.jsx)(`span`, {
-                        className: `text-[11px] font-mono uppercase bg-amber-50 text-amber-800 px-2 py-0.5 rounded border border-amber-200 font-bold`,
-                        children: `CREATIVE TEAM & MEMBERS`,
+                      (0, H.jsxs)(`div`, {
+                        className: `flex flex-wrap items-center gap-2`,
+                        children: [
+                          (0, H.jsx)(`span`, {
+                            className: `text-xs font-bold bg-amber-50 text-amber-800 px-2.5 py-1 rounded-md border border-amber-200 inline-block`,
+                            children: `۰۳ / معرفی اعضای تیم`,
+                          }),
+                          (0, H.jsx)(`span`, {
+                            dir: `ltr`,
+                            className: `text-[11px] font-mono text-neutral-400 font-bold`,
+                            children: `03 // CREATIVE TEAM & MEMBERS`,
+                          }),
+                        ],
                       }),
                       (0, H.jsx)(`h3`, {
-                        className: `text-xl sm:text-2xl font-black text-neutral-900 mt-2`,
+                        className: `text-xl sm:text-2xl font-black text-neutral-900`,
                         children: `اعضا و تیم خلاقیت استودیو`,
                       }),
                       (0, H.jsx)(`p`, {
-                        className: `text-xs sm:text-sm text-neutral-500 mt-1`,
+                        className: `text-xs sm:text-sm text-neutral-500`,
                         children: `اعضای تیم استودیو مستقیماً بر تمام جزئیات ایده‌پردازی، طراحی و اجرای پروژه‌ها تمرکز دارند.`,
                       }),
                     ],
@@ -6334,16 +6399,28 @@ var Au = [
                           (0, H.jsxs)(`div`, {
                             children: [
                               (0, H.jsx)(`span`, {
-                                className: `text-[10px] font-mono font-bold text-amber-700`,
+                                dir: `ltr`,
+                                className: `text-[10px] font-mono font-bold text-amber-700 inline-block`,
                                 children: selectedMember?.trackCode || `STUDIO // CORE DOSSIER`,
                               }),
                               (0, H.jsx)(`h4`, {
                                 className: `text-xl font-black text-neutral-900`,
                                 children: selectedMember?.name || `همکار استودیو`,
                               }),
-                              (0, H.jsxs)(`span`, {
-                                className: `text-xs text-neutral-500 font-medium`,
-                                children: [selectedMember?.role || ``, selectedMember?.roleEn ? ` (${selectedMember.roleEn})` : ``],
+                              (0, H.jsxs)(`div`, {
+                                className: `flex flex-wrap items-center gap-2 mt-0.5`,
+                                children: [
+                                  (0, H.jsx)(`span`, {
+                                    className: `text-xs text-neutral-600 font-medium`,
+                                    children: selectedMember?.role || ``,
+                                  }),
+                                  selectedMember?.roleEn &&
+                                    (0, H.jsx)(`span`, {
+                                      dir: `ltr`,
+                                      className: `text-[11px] font-mono text-neutral-400`,
+                                      children: selectedMember.roleEn,
+                                    }),
+                                ],
                               }),
                             ],
                           }),
@@ -6355,7 +6432,7 @@ var Au = [
                         ],
                       }),
                       (0, H.jsx)(`p`, {
-                        className: `text-xs sm:text-sm text-neutral-700 leading-relaxed font-normal`,
+                        className: `text-xs sm:text-sm text-neutral-700 leading-relaxed font-normal text-right`,
                         children: selectedMember?.bio || ``,
                       }),
                       (0, H.jsx)(`div`, {
@@ -6418,6 +6495,7 @@ var Au = [
                                 ],
                               }),
                               (0, H.jsx)(`span`, {
+                                dir: `ltr`,
                                 className: `text-[10px] font-mono text-neutral-400 font-bold`,
                                 children: `PROJECT ROLES & CREDITS`,
                               }),
@@ -6538,51 +6616,80 @@ var Au = [
                 ],
               }),
 
-              /* ۵. نحوه همکاری (۰۷ / How We Work Together) */
+              /* ۰۴ / نحوه همکاری (How We Work Together) */
               (0, H.jsxs)(`section`, {
                 "data-dossier-section": `models`,
                 className: `space-y-5 pt-4 border-t border-neutral-200 scroll-mt-4`,
                 children: [
                   (0, H.jsxs)(`div`, {
+                    className: `space-y-2`,
                     children: [
-                      (0, H.jsx)(`span`, {
-                        className: `text-[11px] font-mono bg-amber-50 text-amber-800 px-2.5 py-1 rounded border border-amber-200 font-bold inline-block`,
-                        children: `۰۷ / نحوه همکاری (How We Work Together)`,
+                      (0, H.jsxs)(`div`, {
+                        className: `flex flex-wrap items-center gap-2`,
+                        children: [
+                          (0, H.jsx)(`span`, {
+                            className: `text-xs font-bold bg-amber-50 text-amber-800 px-2.5 py-1 rounded-md border border-amber-200 inline-block`,
+                            children: `۰۴ / نحوه همکاری`,
+                          }),
+                          (0, H.jsx)(`span`, {
+                            dir: `ltr`,
+                            className: `text-[11px] font-mono text-neutral-400 font-bold`,
+                            children: `04 // HOW WE WORK TOGETHER`,
+                          }),
+                        ],
                       }),
                       (0, H.jsx)(`h3`, {
-                        className: `text-xl sm:text-2xl font-black text-neutral-900 mt-2.5`,
-                        children: `ساختار منعطف. تعهد ثابت به نتیجه.`,
+                        className: `text-xl sm:text-2xl font-black text-neutral-900`,
+                        children: `ساختار منعطف، تعهد ثابت به نتیجه`,
                       }),
                     ],
                   }),
                   (0, H.jsx)(`div`, {
                     className: `grid grid-cols-1 sm:grid-cols-3 gap-3.5`,
-                    children: Nu.map((e) =>
+                    children: Nu.map((e, mIdx) =>
                       (0, H.jsxs)(
                         `div`,
                         {
                           className: `p-5 rounded-2xl bg-[#FAF9F7] border border-neutral-200 flex flex-col justify-between space-y-4 hover:border-neutral-400 transition-all shadow-2xs`,
                           children: [
                             (0, H.jsxs)(`div`, {
+                              className: `space-y-2.5`,
                               children: [
-                                (0, H.jsx)(`span`, {
-                                  className: `text-[10px] font-mono text-amber-700 font-bold block mb-1`,
-                                  dir: `ltr`,
-                                  children: e.modelCode,
-                                }),
-                                (0, H.jsx)(`h4`, {
-                                  className: `text-sm sm:text-base font-bold text-neutral-900 mb-2`,
-                                  children: e.name,
+                                (0, H.jsxs)(`div`, {
+                                  className: `flex items-center justify-between border-b border-neutral-200 pb-2 gap-2`,
+                                  children: [
+                                    (0, H.jsxs)(`div`, {
+                                      className: `flex items-center gap-2`,
+                                      children: [
+                                        (0, H.jsx)(`span`, {
+                                          className: `w-6 h-6 rounded-md bg-[#18181b] text-white font-mono font-black text-xs flex items-center justify-center shrink-0`,
+                                          children: e.code || [`۰۱`, `۰۲`, `۰۳`][mIdx],
+                                        }),
+                                        (0, H.jsx)(`h4`, {
+                                          className: `text-sm sm:text-base font-bold text-neutral-900`,
+                                          children: e.name,
+                                        }),
+                                      ],
+                                    }),
+                                    (0, H.jsx)(`span`, {
+                                      className: `text-[10px] font-mono text-amber-700 font-bold shrink-0`,
+                                      dir: `ltr`,
+                                      children: e.nameEn,
+                                    }),
+                                  ],
                                 }),
                                 (0, H.jsx)(`p`, {
-                                  className: `text-xs text-neutral-700 leading-relaxed font-normal`,
+                                  className: `text-xs text-neutral-700 leading-relaxed font-normal text-right`,
                                   children: e.description,
                                 }),
                               ],
                             }),
-                            (0, H.jsx)(`div`, {
-                              className: `pt-3 border-t border-neutral-200 text-[11px] font-mono text-neutral-900 font-bold`,
-                              children: `بازه زمانی: ${e.timeline}`,
+                            (0, H.jsxs)(`div`, {
+                              className: `pt-3 border-t border-neutral-200 text-[11px] text-neutral-900 font-bold flex items-center justify-between`,
+                              children: [
+                                (0, H.jsx)(`span`, { className: `text-neutral-500`, children: `بازه زمانی:` }),
+                                (0, H.jsx)(`span`, { children: e.timeline }),
+                              ],
                             }),
                           ],
                         },
@@ -6600,6 +6707,7 @@ var Au = [
                       (0, H.jsx)(`div`, {
                         className: `overflow-x-auto rounded-xl border border-neutral-200`,
                         children: (0, H.jsxs)(`table`, {
+                          dir: `rtl`,
                           className: `w-full text-right text-xs border-collapse`,
                           children: [
                             (0, H.jsx)(`thead`, {
@@ -6617,21 +6725,24 @@ var Au = [
                             (0, H.jsx)(`tbody`, {
                               children: [
                                 {
-                                  model: `۰۱. پروژه‌محور`,
+                                  code: `۰۱`,
+                                  model: `پروژه‌محور`,
                                   audience: `برندها و هنرمندان`,
                                   focus: `کارگردانی و تولید تخصصی`,
                                   timeline: `کوتاه‌مدت و مشخص`,
                                   outcome: `اثر نهایی آماده انتشار`,
                                 },
                                 {
-                                  model: `۰۲. مشاوره مستمر`,
+                                  code: `۰۲`,
+                                  model: `مشاوره مستمر`,
                                   audience: `مدیران و تیم‌های فعال`,
                                   focus: `استراتژی، هدایت و فروش`,
                                   timeline: `قرارداد ماهانه`,
                                   outcome: `رشد مستمر و ارتقای کیفیت`,
                                 },
                                 {
-                                  model: `۰۳. معماری ۳۶۰`,
+                                  code: `۰۳`,
+                                  model: `معماری ۳۶۰ درجه`,
                                   audience: `کسب‌وکارها و آرتیست‌ها`,
                                   focus: `خلق هویت، تولید و عرضه`,
                                   timeline: `میان‌مدت تا بلندمدت`,
@@ -6643,7 +6754,19 @@ var Au = [
                                   {
                                     className: `border-b last:border-b-0 border-neutral-200 ${idx % 2 === 0 ? `bg-white` : `bg-[#FAF9F7]`}`,
                                     children: [
-                                      (0, H.jsx)(`td`, { className: `p-3 font-bold text-neutral-900 border-l border-neutral-200 whitespace-nowrap`, children: row.model }),
+                                      (0, H.jsx)(`td`, {
+                                        className: `p-3 font-bold text-neutral-900 border-l border-neutral-200 whitespace-nowrap`,
+                                        children: (0, H.jsxs)(`div`, {
+                                          className: `inline-flex items-center gap-2`,
+                                          children: [
+                                            (0, H.jsx)(`span`, {
+                                              className: `w-5 h-5 rounded bg-neutral-900 text-white font-mono text-[10px] font-bold inline-flex items-center justify-center shrink-0`,
+                                              children: row.code,
+                                            }),
+                                            (0, H.jsx)(`span`, { children: row.model }),
+                                          ],
+                                        }),
+                                      }),
                                       (0, H.jsx)(`td`, { className: `p-3 text-neutral-700 border-l border-neutral-200`, children: row.audience }),
                                       (0, H.jsx)(`td`, { className: `p-3 text-neutral-700 border-l border-neutral-200`, children: row.focus }),
                                       (0, H.jsx)(`td`, { className: `p-3 text-neutral-700 border-l border-neutral-200`, children: row.timeline }),
@@ -6662,7 +6785,7 @@ var Au = [
                 ],
               }),
 
-              /* ۶. دعوت به اقدام پایانی (رفتن به بریف پروژه) */
+              /* دعوت به اقدام پایانی (رفتن به بریف پروژه) */
               renderBriefCtaBlock(),
             ],
           }),
