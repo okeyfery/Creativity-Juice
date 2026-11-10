@@ -2994,46 +2994,133 @@ var Au = [
     {
       id: `doc-brand-01`,
       folderId: `folder-track-1`,
-      fileName: `01_سند_جامع_دکترین_و_اهمیت_برندسازی.doc`,
+      fileName: `01_سند_جامع_معماری_و_هویت_برند.doc`,
       fileExt: `DOC`,
       fileSize: `4.8 MB`,
-      dateModified: `Aug 15`,
-      title: `چرا برندسازی حیاتی‌ترین سرمایه‌گذاری یک بیزنس است؟`,
-      subtitle: `دکترین، چرایی و متدولوژی ۴ مرحله‌ای هویت در Creativity Juice`,
+      dateModified: `Nov 10`,
+      title: `ما دلیل انتخاب شدن شما را می‌سازیم.`,
+      subtitle: `وقتی تفاوت معناداری در هویت و پرستیژ شما دیده نشود، قیمت ارزان تنها ملاک قضاوت مشتری خواهد بود. ما برند شما را از جنگ فرسایشی قیمت بیرون می‌کشیم.`,
       author: `دپارتمان معماری و هویت برند // استودیو Creativity Juice`,
       readTime: `زمان مطالعه: ۵ دقیقه`,
-      category: `BRAND STRATEGY & IDENTITY`,
+      category: `BRAND ARCHITECTURE & IDENTITY`,
       glyph: `brand`,
       badgeColor: `#007AFF`,
+      isBriefTrigger: !0,
+      briefPrefill: `آغاز فرآیند تدوین هویت و جایگاه‌یابی (معماری و هویت برند)`,
+      ctaTitle: `«آماده‌اید جهان حسی و ارزش تجاری برندتان را مهندسی کنیم؟»`,
+      ctaSubtitle: `تدوین استراتژی جایگاه‌یابی، سیستم کلامی، جهان بصری و یکپارچگی فروش برند شما.`,
+      ctaButtonText: `آغاز فرآیند تدوین هویت و جایگاه‌یابی`,
       sections: [
         {
-          heading: `۱. کالبدشکافی مفهوم برند: فراتر از لوگو و کارت ویزیت`,
-          content: `بزرگ‌ترین خطای رایج در بازار، تقلیل دادن «برند» به یک نشان گرافیکی یا لوگوتایپ است. لوگو صرفاً یک امضاست؛ اما برند، ادراک، پرستیژ و اعتباری است که در غیاب شما در ذهن مخاطب، سرمایه‌گذار و بازار طنین‌انداز می‌شود. برند یک قرارداد روانی نانوشته با مشتری است که تعیین می‌کند آیا او حاضر است برای محصول شما احترام و ارزش قائل شود یا شما را با کالاهای دست‌چندم بازار مقایسه کند.`,
-          callout: `«برند شما آن چیزی نیست که خودتان در تبلیغات می‌گویید؛ برند شما قضاوتی است که مخاطبان در خلوت خود درباره شما دارند.»`,
+          heading: `۰۱. مانیفست و منطق معماری برند`,
+          enHeading: `Brand Architecture Manifesto`,
+          content: `در بازارهای اشباع، ارائه محصول کم‌نقص دیگر مزیت رقابتی نیست؛ حداقل استاندارد ورود به بازی است. معماری برند، نقطه صفر تمام فرآیندهای تجاری و تولید خلاق است. ماموریت ما کشف مزیت یکتای شما و فرم‌دهی به زبانی است که در ۳ ثانیه، مقاومت روانی مشتری را خنثی کند، اعتماد بسازد و خرید با قیمت بالاتر را توجیه‌پذیر نماید.`,
+          callout: `«لوگو تصویر شماست؛ معماری برند، منطق ترجیح داده شدن شماست.»`,
         },
         {
-          heading: `۲. بیماری ترندزدگی: چرا ۹۰٪ برندها فراموش می‌شوند؟`,
-          content: `در بازار امروز، اکثر کسب‌وکارها در تله‌ای مرگبار به نام «تقلید از ترندهای موقت» گرفتار می‌شوند. فونت‌های یک‌شکل، رنگ‌های تکراری و شعارهای بی‌معنی باعث شده که مخاطب نتواند برندها را از یکدیگر تشخیص دهد. وقتی تمایزی وجود نداشته باشد، مشتری تنها بر سر تخفیف بیشتر چانه می‌زند. برندسازی قدرتمند تنها ابزاری است که بیزنس را از تله رقابت فرسایشی خارج کرده و جایگاه رهبری به آن می‌بخشد.`,
+          heading: `۰۲. سه ستون متقاعدسازی`,
+          enHeading: `The 3 Strategic Pillars`,
+          content: `معماری اصولی برند بر سه ستون استراتژیک استوار است که جایگاه تجاری، اعتماد مخاطب و قدرت سودآوری کسب‌وکار شما را تضمین می‌کنند:`,
+          items: [
+            {
+              num: `۰۱`,
+              title: `دستیابی به قدرت قیمت‌گذاری`,
+              enTitle: `Pricing Power`,
+              desc: `نبود هویت تمایزیافته، محصول شما را با پایین‌ترین رده‌های بازار مقایسه می‌کند. معماری برند سقف ادراک ارزشی مخاطب را ارتقا می‌دهد تا سودآوری بر حراج و تخفیف متکی نماند.`,
+            },
+            {
+              num: `۰۲`,
+              title: `بهینه‌سازی هزینه جذب و سرعت پذیرش`,
+              enTitle: `CAC Efficiency & Trust`,
+              desc: `تزریق بودجه به قیف فروش بدون هویت معتبر، اتلاف محض منابع است. یکپارچگی سیگنال‌های بصری و کلامی، اصطکاک تردید مشتری را از میان برمی‌دارد و مسیر پذیرش پیشنهاد را پیش از تماس تیم فروش هموار می‌کند.`,
+            },
+            {
+              num: `۰۳`,
+              title: `ارزش‌افزایی هم‌افزا برای تولید محتوا`,
+              enTitle: `Content Synergy`,
+              desc: `بدون خط‌مشی برند، کمپین‌ها و مدیاهای مختلف یکدیگر را خنثی می‌کنند. تدوین دی‌ان‌ای برند تضمین می‌کند که هر فریم ویدیو، هر قطعه صوتی و هر متن تبلیغاتی، به دارایی سرمایه‌ای برند افزوده شود.`,
+            },
+          ],
           bullets: [
-            `خروج دائمی از تله رقابت بر سر تخفیف و کاهش حاشیه سود`,
-            `ایجاد پرستیژ و جایگاه ذهنی تسخیرناپذیر در میان رقبا`,
-            `افزایش نرخ بقا و تبدیل خریداران عادی به مبلغان وفادار برند`,
+            `۰۱ / دستیابی به قدرت قیمت‌گذاری: ارتقای سقف ادراک ارزشی مخاطب تا سودآوری بر حراج و تخفیف متکی نماند.`,
+            `۰۲ / بهینه‌سازی هزینه جذب و سرعت پذیرش: رفع اصطکاک تردید مشتری و هموارسازی مسیر پذیرش پیشنهاد پیش از تماس تیم فروش.`,
+            `۰۳ / ارزش‌افزایی هم‌افزا برای تولید محتوا: تضمین اینکه هر فریم ویدیو، قطعه صوتی و متن تبلیغاتی به دارایی سرمایه‌ای برند افزوده شود.`,
           ],
         },
         {
-          heading: `۳. روش‌شناسی ۴ مرحله‌ای هویت در Creativity Juice`,
-          content: `در استودیوی ما هیچ هویتی بر اساس حدس، گمان یا سلیقه زودگذر خلق نمی‌شود. ما از یک فرآیند مهندسی‌شده و چندلایه ادیتوریال پیروی می‌کنیم:`,
+          heading: `۰۳. مهندسی ۴ لایه خروجی‌های استودیو`,
+          enHeading: `Studio Deliverables`,
+          content: `خروجی‌های دپارتمان معماری و هویت برند در چهار لایه مکمل مهندسی می‌شوند تا از فونداسیون استراتژیک تا خط مقدم فروش را به صورت یکپارچه پوشش دهند:`,
+          items: [
+            {
+              num: `۰۱`,
+              title: `لایه اول: استراتژی جایگاه‌یابی و معماری برند`,
+              enTitle: `Brand Strategy & Positioning`,
+              desc: `تحلیل روانشناسی مخاطب و استخراج مزیت رقابتی پایدار برای تسلط بر گوشه بازار مدنظر.`,
+              deliverables: `سند جایگاه‌یابی، تحلیل آرکتایپ، ارزش بنیادین و معماری پورتفولیوی محصولات.`,
+            },
+            {
+              num: `۰۲`,
+              title: `لایه دوم: سیستم کلامی و مهندسی روایت`,
+              enTitle: `Verbal Identity & Messaging`,
+              desc: `استخراج چارچوب لحن و ادبیات منحصربه‌فرد برای ایجاد ارتباط نافذ در تمام کانال‌های گفت‌وگو.`,
+              deliverables: `نام‌گذاری تجاری، شعار محوری، مانیفست بیانی، کتابچه لحن و کلیدواژه‌های اثرگذار فروش.`,
+            },
+            {
+              num: `۰۳`,
+              title: `لایه سوم: جهان بصری و هویت شنیداری`,
+              enTitle: `Visual & Sonic World-Building`,
+              desc: `بازآفرینی استراتژی در اتمسفر حسی مخاطب با تکیه بر کارگردانی تصویر و مهندسی صدا.`,
+              deliverables: `سیستم یکپارچه هویت بصری، گایدلاین تایپوگرافی و فرم، دستورالعمل کارگردانی تصویر و امضای هویت شنیداری برند.`,
+            },
+            {
+              num: `۰۴`,
+              title: `لایه چهارم: پیاده‌سازی در بازار و یکپارچگی فروش`,
+              enTitle: `Brand-to-Market Integration`,
+              desc: `تزریق مستقیم پرستیژ برند در خط مقدم مبادلات تجاری و قیف‌های درآمدزایی.`,
+              deliverables: `انطباق سناریوهای تیزر و لندینگ‌پیج با هویت برند، نقشه مسیر ورود به بازار و زبان مشترک جلسات فروش.`,
+            },
+          ],
           bullets: [
-            `فاز اول // کشف DNA و کالبدشکافی کهن‌الگو (Discovery & Archetype): مصاحبه عمیق با بنیان‌گذاران، تعیین استعاره محوری و دشمن مشترک در صنف.`,
-            `فاز دوم // مانیفست لحن و جهت‌گیری مفهومی (Tone of Voice & Narrative): تدوین مرام‌نامه کلمات مجاز، سبک بیان و شخصیت مستقل بیزنس.`,
-            `فاز سوم // مهندسی سیستم جامع بصری (Visual Identity Architecture): طراحی لوگوتایپ اختصاصی، پالت متریال مهندسی‌شده، گریدبندی ادیتوریال و هندسه حروف.`,
-            `فاز چهارم // کتابچه جامع مرجع و پاسداری از هویت (Brand Guidelines): بیش از ۱۲۰ صفحه مستندات فنی چاپی و دیجیتال برای هدایت تیم‌های آینده.`,
+            `لایه ۰۱ — استراتژی جایگاه‌یابی و معماری برند: سند جایگاه‌یابی، تحلیل آرکتایپ، ارزش بنیادین و معماری پورتفولیوی محصولات.`,
+            `لایه ۰۲ — سیستم کلامی و مهندسی روایت: نام‌گذاری تجاری، شعار محوری، مانیفست بیانی، کتابچه لحن و کلیدواژه‌های اثرگذار فروش.`,
+            `لایه ۰۳ — جهان بصری و هویت شنیداری: سیستم یکپارچه هویت بصری، گایدلاین تایپوگرافی و فرم، دستورالعمل کارگردانی تصویر و امضای هویت شنیداری برند.`,
+            `لایه ۰۴ — پیاده‌سازی در بازار و یکپارچگی فروش: انطباق سناریوهای تیزر و لندینگ‌پیج با هویت برند، نقشه مسیر ورود به بازار و زبان مشترک جلسات فروش.`,
           ],
         },
         {
-          heading: `۴. دستاورد نهایی برای کارفرما`,
-          content: `با تکمیل فرآیند برندسازی، کسب‌وکار شما دارای یک ستون فقرات استوار می‌شود؛ سیستمی مستقل از افراد که در تمام نقاط تماس (از بسته‌بندی و وب‌سایت تا قراردادهای کلان تجاری) زبان یکپارچه وقار، اصالت و برتری را جاری می‌سازد.`,
-          callout: `خروجی نهایی این دپارتمان یک دیزاین پایدار است؛ چیزی که ۱۰ سال بعد نیز همچنان فاخر، جسورانه و متمایز باقی خواهد ماند.`,
+          heading: `۰۴. ماتریس مقایسه‌ای جایگاه برند`,
+          enHeading: `Comparative Matrix`,
+          content: `مقایسه عملکرد تجاری، بازدهی محتوا و جایگاه بازار میان کسب‌وکارهای فاقد معماری و برندهای دارای معماری یکپارچه:`,
+          table: {
+            headers: [
+              `شاخص ارزیابی`,
+              `کسب‌وکار فاقد معماری`,
+              `کسب‌وکار دارای معماری برند`,
+            ],
+            rows: [
+              [
+                `مبنای تصمیم خریدار`,
+                `جست‌وجوی پایین‌ترین بها و چانه‌زنی مداوم`,
+                `اعتبار متمایز، اطمینان فکری و ادراک ارزش بالا`,
+              ],
+              [
+                `بازدهی دارایی‌های تولیدی`,
+                `هیجان‌های زودگذر با محو سریع در بازار`,
+                `انباشت مستمر اعتبار و ساخت هویت رسوخ‌ناپذیر`,
+              ],
+              [
+                `فرآیند بستن قرارداد`,
+                `توجیه‌گری فرسایشی در خصوص هزینه‌ها`,
+                `هموار و قطعی؛ ارزش پیش از ورود اثبات شده است`,
+              ],
+              [
+                `جایگاه در اکوسیستم`,
+                `یک مجری معمولی در انبوه رقبا`,
+                `نماد شاخص و جهت‌دهنده استانداردهای صنعت`,
+              ],
+            ],
+          },
         },
       ],
     },
@@ -3805,40 +3892,128 @@ var Au = [
                     }),
                     (0, H.jsx)(`div`, {
                       className: `space-y-8 text-neutral-800 text-sm sm:text-[15px] leading-loose`,
+                      dir: `rtl`,
                       children: e.sections.map((e, t) =>
                         (0, H.jsxs)(
                           `section`,
                           {
-                            className: `space-y-3.5`,
+                            className: `space-y-4`,
+                            dir: `rtl`,
                             children: [
-                              (0, H.jsx)(`h2`, {
-                                className: `text-base sm:text-lg font-black text-neutral-900 tracking-tight border-r-4 border-r-amber-500 pr-3`,
-                                children: e.heading,
+                              (0, H.jsxs)(`div`, {
+                                className: `flex flex-wrap items-center justify-between gap-2 border-r-4 border-r-amber-500 pr-3`,
+                                dir: `rtl`,
+                                children: [
+                                  (0, H.jsx)(`h2`, {
+                                    className: `text-base sm:text-lg font-black text-neutral-900 tracking-tight`,
+                                    dir: `rtl`,
+                                    children: e.heading,
+                                  }),
+                                  e.enHeading &&
+                                    (0, H.jsx)(`span`, {
+                                      className: `text-[11px] font-mono text-neutral-400 uppercase tracking-wider`,
+                                      dir: `ltr`,
+                                      children: e.enHeading,
+                                    }),
+                                ],
                               }),
-                              (0, H.jsx)(`p`, {
-                                className: `text-neutral-700 leading-relaxed font-normal text-justify`,
-                                children: e.content,
-                              }),
+                              e.content &&
+                                (0, H.jsx)(`p`, {
+                                  className: `text-neutral-700 leading-relaxed font-normal text-justify`,
+                                  dir: `rtl`,
+                                  children: e.content,
+                                }),
                               e.callout &&
                                 (0, H.jsx)(`div`, {
-                                  className: `p-4 rounded-xl bg-amber-500/10 border-r-4 border-r-amber-500 text-amber-950 font-medium text-xs sm:text-sm leading-relaxed my-3`,
+                                  className: `p-4 rounded-xl bg-amber-500/10 border-r-4 border-r-amber-500 text-amber-950 font-bold text-xs sm:text-sm leading-relaxed my-3`,
+                                  dir: `rtl`,
                                   children: e.callout,
                                 }),
-                              e.bullets &&
+                              e.items &&
+                                e.items.length > 0 &&
+                                (0, H.jsx)(`div`, {
+                                  className: `grid grid-cols-1 gap-3.5 pt-1`,
+                                  dir: `rtl`,
+                                  children: e.items.map((item, idx) =>
+                                    (0, H.jsxs)(
+                                      `div`,
+                                      {
+                                        className: `p-4 sm:p-5 rounded-2xl bg-[#FAF9F7] border border-neutral-200/90 space-y-2.5 shadow-2xs`,
+                                        dir: `rtl`,
+                                        children: [
+                                          (0, H.jsxs)(`div`, {
+                                            className: `flex flex-wrap items-center justify-between gap-2 border-b border-neutral-200/70 pb-2.5`,
+                                            dir: `rtl`,
+                                            children: [
+                                              (0, H.jsxs)(`div`, {
+                                                className: `flex items-center gap-2.5`,
+                                                dir: `rtl`,
+                                                children: [
+                                                  item.num &&
+                                                    (0, H.jsx)(`span`, {
+                                                      className: `w-7 h-7 rounded-lg bg-neutral-900 text-amber-300 font-mono text-xs font-black flex items-center justify-center shrink-0`,
+                                                      children: item.num,
+                                                    }),
+                                                  (0, H.jsx)(`h3`, {
+                                                    className: `text-sm sm:text-base font-black text-neutral-900`,
+                                                    dir: `rtl`,
+                                                    children: item.title,
+                                                  }),
+                                                ],
+                                              }),
+                                              item.enTitle &&
+                                                (0, H.jsx)(`span`, {
+                                                  className: `text-[11px] font-mono text-neutral-400 font-medium`,
+                                                  dir: `ltr`,
+                                                  children: item.enTitle,
+                                                }),
+                                            ],
+                                          }),
+                                          (0, H.jsx)(`p`, {
+                                            className: `text-xs sm:text-sm text-neutral-700 leading-relaxed text-right`,
+                                            dir: `rtl`,
+                                            children: item.desc,
+                                          }),
+                                          item.deliverables &&
+                                            (0, H.jsxs)(`div`, {
+                                              className: `pt-2 px-3 py-2 rounded-xl bg-white border border-neutral-200/80 text-xs text-neutral-800 flex flex-wrap items-center gap-1.5`,
+                                              dir: `rtl`,
+                                              children: [
+                                                (0, H.jsx)(`span`, {
+                                                  className: `font-black text-amber-700 shrink-0`,
+                                                  children: `خروجی‌ها:`,
+                                                }),
+                                                (0, H.jsx)(`span`, {
+                                                  className: `text-neutral-700 font-medium`,
+                                                  children: item.deliverables,
+                                                }),
+                                              ],
+                                            }),
+                                        ],
+                                      },
+                                      idx,
+                                    ),
+                                  ),
+                                }),
+                              !e.items &&
+                                e.bullets &&
                                 e.bullets.length > 0 &&
                                 (0, H.jsx)(`div`, {
                                   className: `space-y-2 pr-2 pt-1`,
+                                  dir: `rtl`,
                                   children: e.bullets.map((e, t) =>
                                     (0, H.jsxs)(
                                       `div`,
                                       {
                                         className: `flex items-start gap-2.5 text-xs sm:text-sm text-neutral-800`,
+                                        dir: `rtl`,
                                         children: [
                                           (0, H.jsx)(`span`, {
                                             className: `w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 shrink-0`,
                                           }),
                                           (0, H.jsx)(`span`, {
                                             className: `leading-relaxed`,
+                                            dir: `rtl`,
                                             children: e,
                                           }),
                                         ],
@@ -3846,6 +4021,57 @@ var Au = [
                                       t,
                                     ),
                                   ),
+                                }),
+                              e.table &&
+                                (0, H.jsx)(`div`, {
+                                  className: `overflow-x-auto rounded-2xl border border-neutral-200 shadow-xs my-3`,
+                                  dir: `rtl`,
+                                  children: (0, H.jsxs)(`table`, {
+                                    className: `w-full text-right border-collapse text-xs sm:text-sm`,
+                                    dir: `rtl`,
+                                    children: [
+                                      (0, H.jsx)(`thead`, {
+                                        children: (0, H.jsx)(`tr`, {
+                                          className: `bg-neutral-900 text-white`,
+                                          children: e.table.headers.map(
+                                            (h, hi) =>
+                                              (0, H.jsx)(
+                                                `th`,
+                                                {
+                                                  className: `py-3.5 px-4 font-black text-right border-l border-neutral-800 last:border-l-0 ${hi === 2 ? `text-amber-300 bg-neutral-950` : ``}`,
+                                                  dir: `rtl`,
+                                                  children: h,
+                                                },
+                                                hi,
+                                              ),
+                                          ),
+                                        }),
+                                      }),
+                                      (0, H.jsx)(`tbody`, {
+                                        className: `divide-y divide-neutral-200 bg-white`,
+                                        children: e.table.rows.map((row, ri) =>
+                                          (0, H.jsx)(
+                                            `tr`,
+                                            {
+                                              className: `hover:bg-neutral-50/80 transition-colors`,
+                                              children: row.map((cell, ci) =>
+                                                (0, H.jsx)(
+                                                  `td`,
+                                                  {
+                                                    className: `py-3.5 px-4 leading-relaxed text-right border-l border-neutral-100 last:border-l-0 ${ci === 0 ? `font-black text-neutral-900 bg-neutral-50/60 whitespace-nowrap` : ci === 1 ? `text-neutral-500` : `font-bold text-neutral-900 bg-amber-50/40`}`,
+                                                    dir: `rtl`,
+                                                    children: cell,
+                                                  },
+                                                  ci,
+                                                ),
+                                              ),
+                                            },
+                                            ri,
+                                          ),
+                                        ),
+                                      }),
+                                    ],
+                                  }),
                                 }),
                             ],
                           },
@@ -3856,23 +4082,32 @@ var Au = [
                     e.isBriefTrigger &&
                       (0, H.jsxs)(`div`, {
                         className: `p-6 rounded-2xl bg-neutral-900 text-white space-y-3 text-center sm:text-right flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl my-6`,
+                        dir: `rtl`,
                         children: [
                           (0, H.jsxs)(`div`, {
+                            dir: `rtl`,
                             children: [
                               (0, H.jsxs)(`h3`, {
                                 className: `font-black text-base flex items-center justify-center sm:justify-start gap-2`,
+                                dir: `rtl`,
                                 children: [
                                   (0, H.jsx)(Pd, {
-                                    className: `w-4 h-4 text-amber-400`,
+                                    className: `w-4 h-4 text-amber-400 shrink-0`,
                                   }),
                                   (0, H.jsx)(`span`, {
-                                    children: `آماده ثبت پروژه و هماهنگی جلسه کشف هستید؟`,
+                                    dir: `rtl`,
+                                    children:
+                                      e.ctaTitle ||
+                                      `آماده ثبت پروژه و هماهنگی جلسه کشف هستید؟`,
                                   }),
                                 ],
                               }),
                               (0, H.jsx)(`p`, {
                                 className: `text-xs text-neutral-400 mt-1`,
-                                children: `پرسشنامه کشف پروژه و تدوین بریف را با تمرکز بر اولویت‌های تجاری پر کنید.`,
+                                dir: `rtl`,
+                                children:
+                                  e.ctaSubtitle ||
+                                  `پرسشنامه کشف پروژه و تدوین بریف را با تمرکز بر اولویت‌های تجاری پر کنید.`,
                               }),
                             ],
                           }),
@@ -3883,10 +4118,13 @@ var Au = [
                                 a && a(e.briefPrefill || e.title));
                             },
                             className: `px-6 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-neutral-950 font-black text-xs transition-all flex items-center gap-2 cursor-pointer shadow-md shrink-0 active:scale-95`,
+                            dir: `rtl`,
                             children: [
                               (0, H.jsx)(jd, { className: `w-3.5 h-3.5` }),
                               (0, H.jsx)(`span`, {
-                                children: `تکمیل و ثبت بریف آنلاین 🚀`,
+                                children:
+                                  e.ctaButtonText ||
+                                  `تکمیل و ثبت بریف آنلاین 🚀`,
                               }),
                             ],
                           }),
@@ -3924,7 +4162,7 @@ var Au = [
       }),
     });
   },
-  Kd = `cj_studio_documents_v2`,
+  Kd = `cj_studio_documents_v3`,
   qd = ({
     initialFolderId: e,
     onClose: t,
