@@ -45,7 +45,10 @@ export const JuiceCursorTrail: React.FC = () => {
 
   useEffect(() => {
     // Only enable on pointer-fine devices (desktop mice/trackpads)
-    const isFinePointer = window.matchMedia('(pointer: fine)').matches;
+    const isFinePointer =
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(pointer: fine)').matches;
     if (!isFinePointer) return;
 
     const canvas = canvasRef.current;

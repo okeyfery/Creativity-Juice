@@ -9,16 +9,55 @@
     <meta property="og:description" content="کاتالوگ جامع خدمات، مهندسی هویت برند، سینما و تولید محتوای شاخص استودیو خلاقیت CREATIVITY JUICE" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" type="image/png" href="https://framerusercontent.com/images/es0axIAu0guUZSRBu6xvsteey8w.png" />
+    <link rel="icon" type="image/png" href="/mac-folder.png" />
     
     <!-- Preload primary Yekan Bakh font weights for instant, crisp rendering -->
     <link rel="preload" href="/fonts/yekan/YekanBakh-Regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/yekan/YekanBakh-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/yekan/YekanBakh-Bold.woff2" as="font" type="font/woff2" crossorigin />
 
+    <!-- Non-blocking fallback web fonts so slow/restricted networks never block page load -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <script>
+      // Ensure restricted WebViews / Safari Private Mode / blocked storage never throw SecurityError or QuotaExceededError
+      (function () {
+        function createMemoryStorage() {
+          var store = {};
+          return {
+            getItem: function (k) { return Object.prototype.hasOwnProperty.call(store, k) ? store[k] : null; },
+            setItem: function (k, v) { store[k] = String(v); },
+            removeItem: function (k) { delete store[k]; },
+            clear: function () { store = {}; },
+            key: function (i) { return Object.keys(store)[i] || null; },
+            get length() { return Object.keys(store).length; }
+          };
+        }
+        ['localStorage', 'sessionStorage'].forEach(function (prop) {
+          try {
+            var s = window[prop];
+            var testKey = '__cj_storage_test__';
+            s.setItem(testKey, '1');
+            s.removeItem(testKey);
+          } catch (e) {
+            try {
+              var mem = createMemoryStorage();
+              Object.defineProperty(window, prop, {
+                value: mem,
+                configurable: true,
+                writable: true
+              });
+            } catch (_) {}
+          }
+        });
+      })();
+    </script>
   </head>
   <body class="bg-[#F5F4F0] text-[#18181b] overflow-hidden select-none antialiased">
     <div id="root"></div>

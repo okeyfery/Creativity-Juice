@@ -11,6 +11,10 @@ export default defineConfig(() => {
         '@': path.resolve(__dirname, '.'),
       },
     },
+    build: {
+      target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+      cssTarget: ['safari14', 'chrome87', 'edge88', 'firefox78'],
+    },
     server: {
       // HMR is disabled in AI Studio to prevent flickering and reload loops.
       hmr: false,

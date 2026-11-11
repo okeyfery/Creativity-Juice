@@ -3018,7 +3018,7 @@ var Au = [
           callout: `«لوگو تصویر شماست؛ معماری برند، منطق ترجیح داده شدن شماست.»`,
         },
         {
-          heading: `۰۲. سه ستون متقاعدسازی`,
+          heading: `۰۲. سه ستون استراتژیک دستاورد برند`,
           enHeading: `The 3 Strategic Pillars`,
           content: `معماری اصولی برند بر سه ستون استراتژیک استوار است که جایگاه تجاری، اعتماد مخاطب و قدرت سودآوری کسب‌وکار شما را تضمین می‌کنند:`,
           items: [
@@ -3893,7 +3893,7 @@ var Au = [
                     (0, H.jsx)(`div`, {
                       className: `space-y-8 text-neutral-800 text-sm sm:text-[15px] leading-loose`,
                       dir: `rtl`,
-                      children: e.sections.map((e, t) =>
+                      children: (e.sections || []).map((e, t) =>
                         (0, H.jsxs)(
                           `section`,
                           {
@@ -4162,7 +4162,7 @@ var Au = [
       }),
     });
   },
-  Kd = `cj_studio_documents_v3`,
+  Kd = `cj_studio_documents_v4`,
   qd = ({
     initialFolderId: e,
     onClose: t,
@@ -4188,8 +4188,13 @@ var Au = [
           let e = localStorage.getItem(Kd);
           if (e) {
             let parsed = JSON.parse(e);
-            if (Array.isArray(parsed))
-              return parsed.filter((doc) => doc && doc.id !== `doc-brand-03`);
+            if (Array.isArray(parsed) && parsed.length > 0)
+              return parsed.filter(
+                (doc) =>
+                  doc &&
+                  doc.id !== `doc-brand-03` &&
+                  Array.isArray(doc.sections),
+              );
           }
         } catch {}
         return Wd;
@@ -11626,7 +11631,10 @@ var Au = [
       [a, o] = (0, S.useState)(() => {
         try {
           let saved = localStorage.getItem(`cj_desktop_widget_positions_v1`);
-          return saved ? JSON.parse(saved) : {};
+          let parsed = saved ? JSON.parse(saved) : {};
+          return parsed && typeof parsed === `object` && !Array.isArray(parsed)
+            ? parsed
+            : {};
         } catch {
           return {};
         }
@@ -11634,7 +11642,10 @@ var Au = [
       [s, c] = (0, S.useState)(() => {
         try {
           let saved = localStorage.getItem(`cj_desktop_folder_positions_v1`);
-          return saved ? JSON.parse(saved) : {};
+          let parsed = saved ? JSON.parse(saved) : {};
+          return parsed && typeof parsed === `object` && !Array.isArray(parsed)
+            ? parsed
+            : {};
         } catch {
           return {};
         }

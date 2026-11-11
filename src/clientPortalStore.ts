@@ -21,6 +21,14 @@ function notifyChange() {
   }
 }
 
+function safeFormatFaDate(date: Date, options?: Intl.DateTimeFormatOptions): string {
+  try {
+    return new Intl.DateTimeFormat('fa-IR', options).format(date);
+  } catch {
+    return date.toISOString().split('T')[0];
+  }
+}
+
 export function getClientWorkspaces(): ClientWorkspace[] {
   if (typeof window === 'undefined') return INITIAL_CLIENT_WORKSPACES;
   try {
@@ -49,15 +57,23 @@ export function saveClientWorkspaces(workspaces: ClientWorkspace[]) {
 
 export function getActiveClientId(): string | null {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem(STORAGE_KEY_ACTIVE_CLIENT);
+  try {
+    return localStorage.getItem(STORAGE_KEY_ACTIVE_CLIENT);
+  } catch {
+    return null;
+  }
 }
 
 export function setActiveClientId(id: string | null) {
   if (typeof window === 'undefined') return;
-  if (id) {
-    localStorage.setItem(STORAGE_KEY_ACTIVE_CLIENT, id);
-  } else {
-    localStorage.removeItem(STORAGE_KEY_ACTIVE_CLIENT);
+  try {
+    if (id) {
+      localStorage.setItem(STORAGE_KEY_ACTIVE_CLIENT, id);
+    } else {
+      localStorage.removeItem(STORAGE_KEY_ACTIVE_CLIENT);
+    }
+  } catch {
+    // ignore storage errors on restricted browsers
   }
   notifyChange();
 }
@@ -92,13 +108,13 @@ export function updateDeliverableApproval(
   const list = getClientWorkspaces();
   const updated = list.map((c) => {
     if (c.id !== clientId) return c;
-    const nowFa = new Intl.DateTimeFormat('fa-IR', {
+    const nowFa = safeFormatFaDate(new Date(), {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    }).format(new Date());
+    });
 
     const newDeliverables = c.deliverables.map((d) => {
       if (d.id !== deliverableId) return d;
@@ -135,12 +151,12 @@ export function updateDeliverableApproval(
 
 export function addClientMessage(clientId: string, author: string, message: string, role: 'client' | 'lead' = 'client') {
   const list = getClientWorkspaces();
-  const nowFa = new Intl.DateTimeFormat('fa-IR', {
+  const nowFa = safeFormatFaDate(new Date(), {
     hour: '2-digit',
     minute: '2-digit',
     month: 'short',
     day: 'numeric',
-  }).format(new Date());
+  });
 
   const updated = list.map((c) => {
     if (c.id !== clientId) return c;
@@ -247,11 +263,11 @@ export function createPersonalBrandWorkspace(params: CreatePersonalBrandParams):
 
   const pinCode = params.pinCode?.trim() || Math.floor(1000 + Math.random() * 9000).toString();
   const now = new Date();
-  const dateFa = new Intl.DateTimeFormat('fa-IR', {
+  const dateFa = safeFormatFaDate(now, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  }).format(now);
+  });
 
   const newWorkspace: ClientWorkspace = {
     id: `pb-${timestamp}`,
@@ -396,13 +412,13 @@ export function createPersonalBrandWorkspace(params: CreatePersonalBrandParams):
 
 export function getClientInitialNotes(client: ClientWorkspace) {
   const now = new Date();
-  const nowFa = new Intl.DateTimeFormat('fa-IR', {
+  const nowFa = safeFormatFaDate(now, {
     month: 'long',
     day: 'numeric',
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-  }).format(now);
+  });
 
   if (client.isPersonalBrand) {
     return [
