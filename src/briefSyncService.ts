@@ -253,29 +253,18 @@ function applyIncomingServerPayload(payload: {
   let changed = false;
   const incomingBriefsList = payload.docs || payload.archivedBriefs;
 
-  if (Array.isArray(incomingBriefsList) && incomingBriefsList.length > 0) {
+  if (Array.isArray(incomingBriefsList)) {
     const rawLocal = localStorage.getItem(STORAGE_KEY_ARCHIVED_BRIEFS);
-    const localList: ProjectBriefSubmission[] = rawLocal ? JSON.parse(rawLocal) : [];
-
-    const map = new Map<string, ProjectBriefSubmission>();
-    localList.forEach((b) => {
-      if (b && b.id) map.set(b.id, b);
-    });
-    incomingBriefsList.forEach((sb) => {
-      if (sb && sb.id) {
-        const existing = map.get(sb.id);
-        map.set(sb.id, existing ? { ...existing, ...sb } : sb);
-      }
-    });
-
-    const sorted = sortBriefsNewestFirst(Array.from(map.values()));
+    const sorted = sortBriefsNewestFirst(
+      incomingBriefsList.filter((b) => b && b.id && !String(b.id).startsWith('brief-init-'))
+    );
     const nextJson = JSON.stringify(sorted);
     if (nextJson !== rawLocal) {
       localStorage.setItem(STORAGE_KEY_ARCHIVED_BRIEFS, nextJson);
       changed = true;
     }
     telemetryState.totalServerBriefs = sorted.length;
-    markBriefIdsAsSynced(incomingBriefsList.map((b) => b.id));
+    markBriefIdsAsSynced(sorted.map((b) => b.id));
     notifyCollectionSubscribers(sorted);
   }
 
@@ -331,7 +320,10 @@ function applyIncomingServerPayload(payload: {
     changed ||
     payload.type === 'brief:created' ||
     payload.type === 'brief:updated' ||
-    payload.type === 'brief:reconciled'
+    payload.type === 'brief:reconciled' ||
+    payload.type === 'db:project:created' ||
+    payload.type === 'db:project:updated' ||
+    payload.type === 'db:project:deleted'
   ) {
     window.dispatchEvent(new CustomEvent('CJ_CLIENT_PORTAL_CHANGED'));
   }

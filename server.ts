@@ -376,8 +376,94 @@ async function startServer() {
     });
   }
 
+  function pgRowToBriefSubmission(row: any) {
+    const createdAtDate = row.created_at ? new Date(row.created_at) : new Date();
+    const createdAtMs = !isNaN(createdAtDate.getTime()) ? createdAtDate.getTime() : Date.now();
+    let submittedAtFa = '۱۴۰۵/۰۱/۰۱';
+    try {
+      submittedAtFa = new Intl.DateTimeFormat('fa-IR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(createdAtDate);
+    } catch {
+      submittedAtFa = createdAtDate.toISOString().slice(0, 16);
+    }
+
+    const tracking = row.tracking_code || `CJ-DB-${row.id}`;
+    return {
+      id: `db-proj-${row.id}`,
+      dbId: row.id,
+      trackingCode: tracking,
+      clientId: `client-db-${row.id}`,
+      brandName: row.project_title || row.client_name || 'پروژه جدید',
+      ownerName: row.client_name || 'کارفرما',
+      contactInfo: row.contact_info || '-',
+      submittedAt: submittedAtFa,
+      selectedTrack: 'ثبت‌شده در دیتابیس (جدول projects)',
+      marketTier: row.budget || 'استاندارد استودیو',
+      problem: row.description || '-',
+      productionScale: row.budget || '-',
+      fullSummaryText:
+        row.full_summary_text ||
+        `نام کارفرما: ${row.client_name}\nاطلاعات تماس: ${row.contact_info}\nعنوان پروژه: ${row.project_title}\nبودجه / مقیاس: ${row.budget}\nتوضیحات پروژه:\n${row.description}`,
+      status: (row.status as 'new' | 'reviewed' | 'in-production') || 'new',
+      isRead: Boolean(row.is_read),
+      createdAtMs,
+    };
+  }
+
+  async function getAuthoritativeBriefsFromPostgres() {
+    try {
+      const rows = await listDbProjects();
+      return rows.map(pgRowToBriefSubmission);
+    } catch (err) {
+      console.error('Fallback to local JSON for briefs:', err);
+      const db = readServerDb();
+      return sortBriefsNewestFirst(db.archivedBriefs || []);
+    }
+  }
+
+  let isPortfoliosSeeded = false;
+  async function getAuthoritativePortfoliosFromPostgres() {
+    let rows = await listDbPortfolios();
+    if (rows.length === 0 && !isPortfoliosSeeded) {
+      isPortfoliosSeeded = true;
+      const db = readServerDb();
+      const seedItems = Array.isArray(db.projects) ? db.projects.slice(0, 12) : [];
+      for (const item of seedItems) {
+        try {
+          await insertDbPortfolio({
+            title: item.title || 'نمونه‌کار استودیو',
+            category: item.categoryLabel || item.category || 'branding',
+            image_url:
+              item.coverImage ||
+              item.image_url ||
+              'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85',
+            project_link: item.project_link || item.highResImage || item.coverImage || '#',
+            description:
+              item.description ||
+              item.challenge ||
+              item.subtitle ||
+              'پروژه منتخب استودیو Creativity Juice',
+            title_en: item.titleEn || item.title,
+            client: item.client || item.title,
+            year: item.year || '۱۴۰۴',
+            extra_json: JSON.stringify(item),
+          });
+        } catch {
+          // ignore individual seed error
+        }
+      }
+      rows = await listDbPortfolios();
+    }
+    return rows;
+  }
+
   // 0. GET Real-Time Stream (SSE) for instant Admin Panel brief synchronization (/api/studio-state/stream & /api/briefs/stream)
-  const handleRealtimeStream = (req: express.Request, res: express.Response) => {
+  const handleRealtimeStream = async (req: express.Request, res: express.Response) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache, no-transform');
@@ -386,14 +472,14 @@ async function startServer() {
     res.flushHeaders?.();
 
     const db = readServerDb();
-    const sortedBriefs = sortBriefsNewestFirst(db.archivedBriefs || []);
+    const pgBriefs = await getAuthoritativeBriefsFromPostgres();
     const initPayload = JSON.stringify({
       type: 'stream:init',
       collection: 'briefs',
       revision: serverRevision,
       timestamp: new Date().toISOString(),
-      docs: sortedBriefs,
-      archivedBriefs: sortedBriefs,
+      docs: pgBriefs,
+      archivedBriefs: pgBriefs,
       clientWorkspaces: db.clientWorkspaces || [],
       notificationLogs: db.notificationLogs || [],
     });
@@ -419,10 +505,9 @@ async function startServer() {
   app.get('/api/studio-state/stream', handleRealtimeStream);
   app.get('/api/briefs/stream', handleRealtimeStream);
 
-  // Dedicated 'briefs' Collection Endpoints (GET /api/briefs, POST /api/briefs, PATCH /api/briefs/:id)
-  app.get('/api/briefs', (_req, res) => {
-    const db = readServerDb();
-    const docs = sortBriefsNewestFirst(db.archivedBriefs || []);
+  // Dedicated 'briefs' Collection Endpoints backed by PostgreSQL `projects` table
+  app.get('/api/briefs', async (_req, res) => {
+    const docs = await getAuthoritativeBriefsFromPostgres();
     res.json({
       ok: true,
       collection: 'briefs',
@@ -438,17 +523,27 @@ async function startServer() {
       const workspace = req.body?.workspace;
       const db = readServerDb();
 
-      const docId = incoming.id || `brief-${Date.now()}`;
-      const enrichedBrief = {
-        ...incoming,
-        id: docId,
-        isRead: incoming.isRead ?? false,
-        createdAtMs: incoming.createdAtMs || Date.now(),
+      const insertedPg = await insertDbProject({
+        client_name: incoming.ownerName || incoming.client_name || incoming.brandName || 'کارفرما',
+        contact_info: incoming.contactInfo || incoming.contact_info || '-',
+        project_title: incoming.brandName || incoming.project_title || 'پروژه جدید',
+        description: incoming.problem || incoming.description || '-',
+        budget:
+          incoming.productionScale
+            ? `${incoming.marketTier || ''} • ${incoming.productionScale}`.trim()
+            : incoming.marketTier || incoming.budget || 'استاندارد استودیو',
+        tracking_code:
+          incoming.trackingCode ||
+          incoming.tracking_code ||
+          `CJ-${Math.floor(1000 + Math.random() * 9000)}`,
         status: incoming.status || 'new',
-      };
+        is_read: incoming.isRead ?? false,
+        full_summary_text: incoming.fullSummaryText || incoming.full_summary_text || incoming.problem || '-',
+      });
 
-      const filteredBriefs = (db.archivedBriefs || []).filter((b: any) => b.id !== docId);
-      db.archivedBriefs = sortBriefsNewestFirst([enrichedBrief, ...filteredBriefs]);
+      const enrichedBrief = pgRowToBriefSubmission(insertedPg);
+      const pgBriefs = await getAuthoritativeBriefsFromPostgres();
+      db.archivedBriefs = pgBriefs;
 
       if (workspace && workspace.id) {
         const existingIdx = (db.clientWorkspaces || []).findIndex((w: any) => w.id === workspace.id);
@@ -480,8 +575,8 @@ async function startServer() {
         brief: enrichedBrief,
         workspace,
         notification: notificationLog,
-        docs: saved.archivedBriefs,
-        archivedBriefs: saved.archivedBriefs,
+        docs: pgBriefs,
+        archivedBriefs: pgBriefs,
         clientWorkspaces: saved.clientWorkspaces,
         notificationLogs: saved.notificationLogs,
       });
@@ -491,7 +586,7 @@ async function startServer() {
         collection: 'briefs',
         revision: serverRevision,
         doc: enrichedBrief,
-        docs: saved.archivedBriefs,
+        docs: pgBriefs,
         notification: notificationLog,
       });
     } catch (err) {
@@ -500,38 +595,29 @@ async function startServer() {
     }
   });
 
-  app.patch('/api/briefs/:id', (req, res) => {
+  app.patch('/api/briefs/:id', async (req, res) => {
     try {
       const targetId = req.params.id;
       const updates = req.body || {};
-      const db = readServerDb();
-
-      let updatedDoc: any = null;
-      db.archivedBriefs = sortBriefsNewestFirst(
-        (db.archivedBriefs || []).map((b: any) => {
-          if (b && b.id === targetId) {
-            updatedDoc = { ...b, ...updates, id: targetId };
-            return updatedDoc;
-          }
-          return b;
-        })
-      );
-
-      db.clientWorkspaces = (db.clientWorkspaces || []).map((w: any) => {
-        if (!Array.isArray(w.archivedBriefs)) return w;
-        return {
-          ...w,
-          archivedBriefs: w.archivedBriefs.map((b: any) =>
-            b && b.id === targetId ? { ...b, ...updates, id: targetId } : b
-          ),
-        };
+      await updateDbProject(targetId, {
+        ...(updates.status !== undefined ? { status: updates.status } : {}),
+        ...(updates.isRead !== undefined ? { is_read: Boolean(updates.isRead) } : {}),
+        ...(updates.is_read !== undefined ? { is_read: Boolean(updates.is_read) } : {}),
       });
 
+      const pgBriefs = await getAuthoritativeBriefsFromPostgres();
+      const updatedDoc = pgBriefs.find(
+        (b: any) => b.id === targetId || b.trackingCode === targetId || String(b.dbId) === targetId
+      );
+
+      const db = readServerDb();
+      db.archivedBriefs = pgBriefs;
       const saved = writeServerDb(db);
+
       broadcastRealtimeEvent('brief:updated', {
         doc: updatedDoc,
-        docs: saved.archivedBriefs,
-        archivedBriefs: saved.archivedBriefs,
+        docs: pgBriefs,
+        archivedBriefs: pgBriefs,
         clientWorkspaces: saved.clientWorkspaces,
       });
 
@@ -540,7 +626,7 @@ async function startServer() {
         collection: 'briefs',
         revision: serverRevision,
         doc: updatedDoc,
-        docs: saved.archivedBriefs,
+        docs: pgBriefs,
       });
     } catch (err) {
       console.error('Error in PATCH /api/briefs/:id:', err);
@@ -584,8 +670,13 @@ async function startServer() {
         full_summary_text: body.full_summary_text || body.fullSummaryText || body.description || '-',
       });
 
-      broadcastRealtimeEvent('db:project:created', { project: inserted });
-      res.json({ ok: true, project: inserted });
+      const pgBriefs = await getAuthoritativeBriefsFromPostgres();
+      broadcastRealtimeEvent('db:project:created', {
+        project: inserted,
+        docs: pgBriefs,
+        archivedBriefs: pgBriefs,
+      });
+      res.json({ ok: true, project: inserted, docs: pgBriefs });
     } catch (error: any) {
       console.error('Error in POST /api/db/projects:', error);
       res.status(500).json({ ok: false, error: error.message || 'Failed to insert project' });
@@ -594,14 +685,14 @@ async function startServer() {
 
   app.patch('/api/db/projects/:id', async (req, res) => {
     try {
-      const id = Number(req.params.id);
-      if (!Number.isFinite(id)) {
-        res.status(400).json({ ok: false, error: 'Invalid project ID' });
-        return;
-      }
-      const updated = await updateDbProject(id, req.body || {});
-      broadcastRealtimeEvent('db:project:updated', { project: updated });
-      res.json({ ok: true, project: updated });
+      const updated = await updateDbProject(req.params.id, req.body || {});
+      const pgBriefs = await getAuthoritativeBriefsFromPostgres();
+      broadcastRealtimeEvent('db:project:updated', {
+        project: updated,
+        docs: pgBriefs,
+        archivedBriefs: pgBriefs,
+      });
+      res.json({ ok: true, project: updated, docs: pgBriefs });
     } catch (error: any) {
       console.error('Error in PATCH /api/db/projects/:id:', error);
       res.status(500).json({ ok: false, error: error.message || 'Failed to update project' });
@@ -610,54 +701,26 @@ async function startServer() {
 
   app.delete('/api/db/projects/:id', async (req, res) => {
     try {
-      const id = Number(req.params.id);
-      if (Number.isFinite(id)) {
-        await deleteDbProject(id);
-      }
-      // Also remove from JSON archivedBriefs if matching ID or tracking code exists
+      await deleteDbProject(req.params.id);
+      const pgBriefs = await getAuthoritativeBriefsFromPostgres();
       const db = readServerDb();
-      db.archivedBriefs = (db.archivedBriefs || []).filter(
-        (b: any) => String(b.id) !== String(req.params.id) && String(b.dbId) !== String(req.params.id)
-      );
+      db.archivedBriefs = pgBriefs;
       writeServerDb(db);
-      broadcastRealtimeEvent('db:project:deleted', { id: req.params.id });
-      res.json({ ok: true, deletedId: req.params.id });
+      broadcastRealtimeEvent('db:project:deleted', {
+        id: req.params.id,
+        docs: pgBriefs,
+        archivedBriefs: pgBriefs,
+      });
+      res.json({ ok: true, deletedId: req.params.id, docs: pgBriefs });
     } catch (error: any) {
       console.error('Error in DELETE /api/db/projects/:id:', error);
       res.status(500).json({ ok: false, error: error.message || 'Failed to delete project' });
     }
   });
 
-  let isPortfoliosSeeded = false;
   app.get('/api/db/portfolios', async (_req, res) => {
     try {
-      let rows = await listDbPortfolios();
-      if (rows.length === 0 && !isPortfoliosSeeded) {
-        isPortfoliosSeeded = true;
-        const db = readServerDb();
-        const seedItems = Array.isArray(db.projects) ? db.projects.slice(0, 12) : [];
-        for (const item of seedItems) {
-          try {
-            await insertDbPortfolio({
-              title: item.title || 'نمونه‌کار استودیو',
-              category: item.category || 'branding',
-              image_url:
-                item.coverImage ||
-                item.image_url ||
-                'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85',
-              project_link: item.project_link || item.videoUrl || '#',
-              description: item.challenge || item.subtitle || item.description || 'پروژه منتخب استودیو Creativity Juice',
-              title_en: item.titleEn || item.title,
-              client: item.client || item.title,
-              year: item.year || '۱۴۰۴',
-              extra_json: JSON.stringify(item),
-            });
-          } catch {
-            // ignore individual seed error
-          }
-        }
-        rows = await listDbPortfolios();
-      }
+      const rows = await getAuthoritativePortfoliosFromPostgres();
       res.json({ ok: true, portfolios: rows });
     } catch (error: any) {
       console.error('Error in GET /api/db/portfolios:', error);
@@ -693,10 +756,7 @@ async function startServer() {
 
   app.delete('/api/db/portfolios/:id', async (req, res) => {
     try {
-      const id = Number(req.params.id);
-      if (Number.isFinite(id)) {
-        await deleteDbPortfolio(id);
-      }
+      await deleteDbPortfolio(req.params.id);
       broadcastRealtimeEvent('db:portfolio:deleted', { id: req.params.id });
       res.json({ ok: true, deletedId: req.params.id });
     } catch (error: any) {
@@ -705,10 +765,11 @@ async function startServer() {
     }
   });
 
-  // 1. GET full shared studio & client portal state + notification logs
-  app.get('/api/studio-state', (_req, res) => {
+  // 1. GET full shared studio & client portal state + notification logs (backed by PostgreSQL)
+  app.get('/api/studio-state', async (_req, res) => {
     const db = readServerDb();
-    db.archivedBriefs = sortBriefsNewestFirst(db.archivedBriefs || []);
+    const pgBriefs = await getAuthoritativeBriefsFromPostgres();
+    db.archivedBriefs = pgBriefs;
     res.json({ ok: true, revision: serverRevision, state: db });
   });
 
@@ -719,15 +780,29 @@ async function startServer() {
       const db = readServerDb();
 
       let enrichedBrief = brief;
-      if (brief && brief.id) {
-        enrichedBrief = {
-          ...brief,
-          isRead: brief.isRead ?? false,
-          createdAtMs: brief.createdAtMs || Date.now(),
-        };
-        const filteredBriefs = (db.archivedBriefs || []).filter((b: any) => b.id !== enrichedBrief.id);
-        db.archivedBriefs = sortBriefsNewestFirst([enrichedBrief, ...filteredBriefs]);
+      if (brief) {
+        const insertedPg = await insertDbProject({
+          client_name: brief.ownerName || brief.client_name || brief.brandName || 'کارفرما',
+          contact_info: brief.contactInfo || brief.contact_info || '-',
+          project_title: brief.brandName || brief.project_title || 'پروژه جدید',
+          description: brief.problem || brief.description || '-',
+          budget:
+            brief.productionScale
+              ? `${brief.marketTier || ''} • ${brief.productionScale}`.trim()
+              : brief.marketTier || brief.budget || 'استاندارد استودیو',
+          tracking_code:
+            brief.trackingCode ||
+            brief.tracking_code ||
+            `CJ-${Math.floor(1000 + Math.random() * 9000)}`,
+          status: brief.status || 'new',
+          is_read: brief.isRead ?? false,
+          full_summary_text: brief.fullSummaryText || brief.full_summary_text || brief.problem || '-',
+        });
+        enrichedBrief = pgRowToBriefSubmission(insertedPg);
       }
+
+      const pgBriefs = await getAuthoritativeBriefsFromPostgres();
+      db.archivedBriefs = pgBriefs;
 
       if (workspace && workspace.id) {
         const existingIdx = (db.clientWorkspaces || []).findIndex((w: any) => w.id === workspace.id);
@@ -752,7 +827,6 @@ async function startServer() {
         }
       }
 
-      // Trigger instant notification for Admin (Email + WhatsApp + Live Notification Log)
       let notificationLog: ServerBriefNotificationLog | null = null;
       if (enrichedBrief) {
         notificationLog = await dispatchInstantBriefNotifications(
@@ -766,12 +840,12 @@ async function startServer() {
 
       const saved = writeServerDb(db);
 
-      // Broadcast real-time event to all connected Admin Panels
       broadcastRealtimeEvent('brief:created', {
         brief: enrichedBrief,
         workspace,
         notification: notificationLog,
-        archivedBriefs: saved.archivedBriefs,
+        docs: pgBriefs,
+        archivedBriefs: pgBriefs,
         clientWorkspaces: saved.clientWorkspaces,
         notificationLogs: saved.notificationLogs,
       });
@@ -783,31 +857,42 @@ async function startServer() {
     }
   });
 
-  // 2b. POST bidirectional client-to-server brief reconciliation
+  // 2b. POST bidirectional client-to-server brief reconciliation (backed by PostgreSQL)
   app.post('/api/studio-state/briefs/reconcile', async (req, res) => {
     try {
       const { clientBriefs = [], clientWorkspaces = [] } = req.body || {};
       const db = readServerDb();
-      const existingIds = new Set((db.archivedBriefs || []).map((b: any) => b?.id).filter(Boolean));
+      const currentPgBriefs = await getAuthoritativeBriefsFromPostgres();
+      const existingCodes = new Set(currentPgBriefs.map((b: any) => b?.trackingCode).filter(Boolean));
 
       const newlyDiscoveredBriefs: any[] = [];
       if (Array.isArray(clientBriefs)) {
-        clientBriefs.forEach((cb: any) => {
-          if (cb && cb.id && !existingIds.has(cb.id) && !String(cb.id).startsWith('brief-init-')) {
-            newlyDiscoveredBriefs.push({
-              ...cb,
-              isRead: cb.isRead ?? false,
-              createdAtMs: cb.createdAtMs || Date.now(),
+        for (const cb of clientBriefs) {
+          if (
+            cb &&
+            cb.trackingCode &&
+            !existingCodes.has(cb.trackingCode) &&
+            !String(cb.id || '').startsWith('brief-init-') &&
+            !String(cb.id || '').startsWith('db-proj-')
+          ) {
+            const insertedPg = await insertDbProject({
+              client_name: cb.ownerName || cb.brandName || 'کارفرما',
+              contact_info: cb.contactInfo || '-',
+              project_title: cb.brandName || 'پروژه جدید',
+              description: cb.problem || '-',
+              budget: cb.marketTier || 'استاندارد استودیو',
+              tracking_code: cb.trackingCode,
+              status: cb.status || 'new',
+              is_read: cb.isRead ?? false,
+              full_summary_text: cb.fullSummaryText || cb.problem || '-',
             });
+            newlyDiscoveredBriefs.push(pgRowToBriefSubmission(insertedPg));
           }
-        });
+        }
       }
 
-      if (Array.isArray(clientBriefs) && clientBriefs.length > 0) {
-        db.archivedBriefs = sortBriefsNewestFirst(
-          mergeById(db.archivedBriefs || [], clientBriefs, true)
-        );
-      }
+      const pgBriefs = await getAuthoritativeBriefsFromPostgres();
+      db.archivedBriefs = pgBriefs;
 
       if (Array.isArray(clientWorkspaces) && clientWorkspaces.length > 0) {
         db.clientWorkspaces = mergeById(db.clientWorkspaces || [], clientWorkspaces, true);
@@ -817,7 +902,7 @@ async function startServer() {
       for (const newBrief of newlyDiscoveredBriefs) {
         const notif = await dispatchInstantBriefNotifications(
           newBrief,
-           undefined,
+          undefined,
           db.notificationConfig || DEFAULT_NOTIFICATION_CONFIG,
           false
         );
@@ -830,21 +915,12 @@ async function startServer() {
 
       const saved = writeServerDb(db);
 
-      if (newlyDiscoveredBriefs.length > 0 || Array.isArray(clientBriefs)) {
-        broadcastRealtimeEvent('brief:reconciled', {
-          newBriefsCount: newlyDiscoveredBriefs.length,
-          archivedBriefs: saved.archivedBriefs,
-          clientWorkspaces: saved.clientWorkspaces,
-          notificationLogs: saved.notificationLogs,
-        });
-      }
-
       res.json({
         ok: true,
         revision: serverRevision,
-        syncedCount: (saved.archivedBriefs || []).length,
+        syncedCount: pgBriefs.length,
         newlyAddedCount: newlyDiscoveredBriefs.length,
-        archivedBriefs: saved.archivedBriefs,
+        archivedBriefs: pgBriefs,
         clientWorkspaces: saved.clientWorkspaces,
         notificationLogs: saved.notificationLogs,
       });

@@ -294,11 +294,12 @@ export async function pullStateFromServer(forceDispatch = false): Promise<boolea
     let portalChanged = false;
     let studioChanged = false;
 
-    // 1. Merge Archived Briefs (always sort real submitted briefs newest-first)
-    if (Array.isArray(st.archivedBriefs) && st.archivedBriefs.length > 0) {
+    // 1. Authoritative Archived Briefs from PostgreSQL `projects` table
+    if (Array.isArray(st.archivedBriefs)) {
       const rawLocalBriefs = localStorage.getItem(STORAGE_KEY_ARCHIVED_BRIEFS);
-      const localBriefs: ProjectBriefSubmission[] = rawLocalBriefs ? JSON.parse(rawLocalBriefs) : [];
-      const mergedBriefs = sortBriefsNewestFirst(mergeArrayById(localBriefs, st.archivedBriefs));
+      const mergedBriefs = sortBriefsNewestFirst(
+        st.archivedBriefs.filter((b: any) => b && b.id && !String(b.id).startsWith('brief-init-'))
+      );
       const mergedJson = JSON.stringify(mergedBriefs);
       if (mergedJson !== rawLocalBriefs) {
         localStorage.setItem(STORAGE_KEY_ARCHIVED_BRIEFS, mergedJson);
@@ -354,17 +355,6 @@ export async function pullStateFromServer(forceDispatch = false): Promise<boolea
         }
       }
       (st.notificationLogs as BriefNotificationRecord[]).forEach((l) => seenNotificationIds.add(l.id));
-    }
-
-    // 4. Sync Projects & Credits
-    if (Array.isArray(st.projects) && st.projects.length > 0) {
-      const rawLocalProj = localStorage.getItem(STORAGE_KEY_PROJECTS);
-      const serverProjJson = JSON.stringify(st.projects);
-      if (serverProjJson !== rawLocalProj) {
-        localStorage.setItem(STORAGE_KEY_PROJECTS, serverProjJson);
-        localStorage.setItem('creativity_juice_projects_v2', serverProjJson);
-        studioChanged = true;
-      }
     }
 
     // 5. Sync Team Members

@@ -67,51 +67,13 @@ function normalizeWorkspace(c: ClientWorkspace, idx = 0): ClientWorkspace {
       }))
     : [];
 
-  if (archivedBriefs.length === 0 && c.scopeSummary) {
-    archivedBriefs = [
-      {
-        id: `brief-init-${c.id}`,
-        trackingCode,
-        clientId: c.id,
-        brandName: c.brandName,
-        ownerName: c.ownerName,
-        contactInfo: `@${username}`,
-        submittedAt: c.contractDate || '۱۴۰۵/۰۱/۲۰',
-        selectedTrack: c.category || 'معماری هویت برند و تولید محتوا',
-        marketTier: 'لوکس و پرمیوم / دارایی‌محور (High-Ticket)',
-        problem: c.scopeSummary,
-        brandingDeliverables: (c.deliverables || []).map((d) => d.title),
-        deadline: c.deliveryDate,
-        productionScale: 'پروداکشن استاندارد استودیو (پکیج جامع با تست و نظارت کامل)',
-        fullSummaryText: [
-          `=== پرونده و بریف آرشیوشده پروژه (${trackingCode}) ===`,
-          `• نام برند / پروژه: ${c.brandName}`,
-          `• کارفرما: ${c.ownerName}`,
-          `• کد رهگیری یکتا: ${trackingCode}`,
-          `• نام کاربری پورتال: ${username}`,
-          `• مدیر پروژه در استودیو: ${c.projectLead} (${c.projectLeadRole})`,
-          `• تاریخ ثبت قرارداد: ${c.contractDate}`,
-          `• زمان‌بندی تحویل: ${c.deliveryDate}`,
-          `• حوزه و دپارتمان: ${c.category}`,
-          ``,
-          `[خلاصه بریف و دامنه خدمات پروژه]`,
-          c.scopeSummary,
-        ].join('\n'),
-        status: c.progressPercent >= 80 ? 'in-production' : 'reviewed',
-        isRead: true,
-        createdAtMs: 1000,
-        adminNotes: `پرونده فعال در استودیو به سرپرستی ${c.projectLead}.`,
-      },
-    ];
-  }
-
   return {
     ...c,
     pinCode: pin,
     trackingCode,
     username,
     password,
-    archivedBriefs,
+    archivedBriefs: archivedBriefs.filter((b) => !String(b.id || '').startsWith('brief-init-')),
   };
 }
 
@@ -651,7 +613,6 @@ function normalizeBriefItem(b: ProjectBriefSubmission): ProjectBriefSubmission {
 }
 
 export function getAllArchivedBriefs(): ProjectBriefSubmission[] {
-  const workspaces = getClientWorkspaces();
   const map = new Map<string, ProjectBriefSubmission>();
 
   if (typeof window !== 'undefined') {
@@ -661,7 +622,9 @@ export function getAllArchivedBriefs(): ProjectBriefSubmission[] {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) {
           parsed.forEach((b: ProjectBriefSubmission) => {
-            if (b && b.id) map.set(b.id, normalizeBriefItem(b));
+            if (b && b.id && !String(b.id).startsWith('brief-init-')) {
+              map.set(b.id, normalizeBriefItem(b));
+            }
           });
         }
       }
@@ -670,20 +633,7 @@ export function getAllArchivedBriefs(): ProjectBriefSubmission[] {
     }
   }
 
-  workspaces.forEach((ws) => {
-    if (Array.isArray(ws.archivedBriefs)) {
-      ws.archivedBriefs.forEach((b) => {
-        if (b && b.id && !map.has(b.id)) {
-          map.set(b.id, normalizeBriefItem(b));
-        }
-      });
-    }
-  });
-
   return Array.from(map.values()).sort((a, b) => {
-    const aIsSeed = typeof a.id === 'string' && a.id.startsWith('brief-init-');
-    const bIsSeed = typeof b.id === 'string' && b.id.startsWith('brief-init-');
-    if (aIsSeed !== bIsSeed) return aIsSeed ? 1 : -1;
     const aTime = a.createdAtMs || 0;
     const bTime = b.createdAtMs || 0;
     if (bTime !== aTime) return bTime - aTime;
@@ -948,23 +898,14 @@ export async function deleteSubmittedBrief(briefId: string, dbProjectId?: number
 export async function syncProjectsTableIntoBriefs(): Promise<SupabaseProjectRow[]> {
   try {
     const rows = await fetchProjectsFromDatabase();
-    if (!Array.isArray(rows) || rows.length === 0) return [];
+    if (!Array.isArray(rows)) return [];
 
-    const existingBriefs = getAllArchivedBriefs();
-    const byTracking = new Set(existingBriefs.map((b) => b.trackingCode).filter(Boolean));
-    const byId = new Set(existingBriefs.map((b) => b.id));
-    let changed = false;
-    const merged = [...existingBriefs];
-
-    rows.forEach((row) => {
+    const mappedBriefs: ProjectBriefSubmission[] = rows.map((row) => {
       const syntheticId = `db-proj-${row.id}`;
       const tracking = row.tracking_code || `CJ-DB-${row.id}`;
-      if (byId.has(syntheticId) || (row.tracking_code && byTracking.has(row.tracking_code))) {
-        return;
-      }
       const createdAtDate = row.created_at ? new Date(row.created_at) : new Date();
       const createdAtMs = !isNaN(createdAtDate.getTime()) ? createdAtDate.getTime() : Date.now();
-      const newBrief: ProjectBriefSubmission = {
+      return {
         id: syntheticId,
         trackingCode: tracking,
         clientId: `client-db-${row.id}`,
@@ -989,18 +930,20 @@ export async function syncProjectsTableIntoBriefs(): Promise<SupabaseProjectRow[
         isRead: Boolean(row.is_read),
         createdAtMs,
       };
-      merged.unshift(newBrief);
-      changed = true;
     });
 
-    if (changed) {
-      saveGlobalArchivedBriefs(merged, false, true);
-    }
+    saveGlobalArchivedBriefs(mappedBriefs, false, true);
     return rows;
   } catch (err) {
     console.warn('Error syncing projects table into briefs:', err);
     return [];
   }
+}
+
+if (typeof window !== 'undefined') {
+  setTimeout(() => {
+    void syncProjectsTableIntoBriefs();
+  }, 150);
 }
 
 export function updateBriefStatus(

@@ -1,4 +1,4 @@
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, or } from 'drizzle-orm';
 import { db } from './index.ts';
 import { projects, portfolios } from './schema.ts';
 
@@ -38,6 +38,17 @@ export async function listDbProjects() {
 
 export async function insertDbProject(input: DbProjectInsert) {
   try {
+    // Prevent duplicate rows if the same tracking_code was already inserted within the same submission flow
+    if (input.tracking_code) {
+      const existing = await db
+        .select()
+        .from(projects)
+        .where(eq(projects.tracking_code, input.tracking_code));
+      if (existing.length > 0) {
+        return existing[0];
+      }
+    }
+
     const rows = await db
       .insert(projects)
       .values({
@@ -61,14 +72,20 @@ export async function insertDbProject(input: DbProjectInsert) {
 }
 
 export async function updateDbProject(
-  id: number,
+  idOrCode: number | string,
   updates: Partial<{ status: string; is_read: boolean; description: string }>
 ) {
   try {
+    const cleanStr = String(idOrCode).replace(/^db-proj-/, '');
+    const numericId = Number(cleanStr);
+    const condition = Number.isFinite(numericId)
+      ? or(eq(projects.id, numericId), eq(projects.tracking_code, String(idOrCode)))
+      : eq(projects.tracking_code, String(idOrCode));
+
     const rows = await db
       .update(projects)
       .set(updates)
-      .where(eq(projects.id, id))
+      .where(condition)
       .returning();
     return rows[0];
   } catch (error) {
@@ -77,11 +94,17 @@ export async function updateDbProject(
   }
 }
 
-export async function deleteDbProject(id: number) {
+export async function deleteDbProject(idOrCode: number | string) {
   try {
+    const cleanStr = String(idOrCode).replace(/^db-proj-/, '');
+    const numericId = Number(cleanStr);
+    const condition = Number.isFinite(numericId)
+      ? or(eq(projects.id, numericId), eq(projects.tracking_code, String(idOrCode)))
+      : or(eq(projects.tracking_code, String(idOrCode)), eq(projects.project_title, String(idOrCode)));
+
     const rows = await db
       .delete(projects)
-      .where(eq(projects.id, id))
+      .where(condition)
       .returning();
     return rows[0];
   } catch (error) {
@@ -122,13 +145,41 @@ export async function insertDbPortfolio(input: DbPortfolioInsert) {
   }
 }
 
-export async function deleteDbPortfolio(id: number) {
+export async function deleteDbPortfolio(idOrSlug: number | string) {
   try {
-    const rows = await db
-      .delete(portfolios)
-      .where(eq(portfolios.id, id))
-      .returning();
-    return rows[0];
+    const cleanStr = String(idOrSlug).replace(/^portfolio-db-/, '');
+    const numericId = Number(cleanStr);
+    if (Number.isFinite(numericId)) {
+      const rows = await db
+        .delete(portfolios)
+        .where(eq(portfolios.id, numericId))
+        .returning();
+      if (rows.length > 0) return rows[0];
+    }
+
+    // If deleting by string slug/id stored in extra_json or title
+    const all = await listDbPortfolios();
+    const match = all.find((row) => {
+      if (row.title === idOrSlug) return true;
+      if (row.extra_json) {
+        try {
+          const parsed = JSON.parse(row.extra_json);
+          if (parsed && String(parsed.id) === String(idOrSlug)) return true;
+        } catch {
+          // ignore
+        }
+      }
+      return false;
+    });
+
+    if (match) {
+      const rows = await db
+        .delete(portfolios)
+        .where(eq(portfolios.id, match.id))
+        .returning();
+      return rows[0];
+    }
+    return null;
   } catch (error) {
     console.error('Failed to delete portfolio from database:', error);
     throw new Error('Failed to delete portfolio from database.', { cause: error });
