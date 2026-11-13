@@ -18,8 +18,7 @@ import {
   X,
   PlusCircle,
   ArrowUpRight,
-  Radio,
-  CloudCheck,
+  Trash2,
 } from 'lucide-react';
 import { ProjectBriefSubmission } from '../data/clientPortalData';
 import {
@@ -28,6 +27,8 @@ import {
   markAllBriefsAsRead,
   updateBriefStatus,
   submitAndArchiveProjectBrief,
+  deleteSubmittedBrief,
+  syncProjectsTableIntoBriefs,
   CLIENT_PORTAL_EVENT,
 } from '../clientPortalStore';
 import {
@@ -62,13 +63,6 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
   const [isSyncing, setIsSyncing] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
-  const [syncTelemetry, setSyncTelemetry] = useState<BriefSyncTelemetry>(() =>
-    getBriefSyncTelemetry()
-  );
-  const [syncedIds, setSyncedIds] = useState<Set<string>>(() => getSyncedBriefIds());
-  const [pendingIds, setPendingIds] = useState<Set<string>>(
-    () => new Set(getPendingOutbox().map((x) => x.brief.id))
-  );
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
@@ -78,9 +72,6 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
   const refreshBriefs = () => {
     const latest = getAllArchivedBriefs();
     setBriefs(latest);
-    setSyncTelemetry(getBriefSyncTelemetry());
-    setSyncedIds(getSyncedBriefIds());
-    setPendingIds(new Set(getPendingOutbox().map((x) => x.brief.id)));
     if (selectedBrief) {
       const updatedSelected = latest.find((b) => b.id === selectedBrief.id);
       if (updatedSelected) setSelectedBrief(updatedSelected);
@@ -92,7 +83,7 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
     const unsubscribeSnapshot = BriefsCollection.onSnapshot(() => {
       refreshBriefs();
     });
-    void pullStateFromServer(true).then(() => {
+    void Promise.all([pullStateFromServer(true), syncProjectsTableIntoBriefs()]).then(() => {
       refreshBriefs();
     });
 
@@ -100,40 +91,40 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
       refreshBriefs();
     };
 
-    const handleTelemetryUpdate = () => {
-      refreshBriefs();
-    };
-
     window.addEventListener(CLIENT_PORTAL_EVENT, handlePortalUpdate);
     window.addEventListener(NEW_BRIEF_NOTIFICATION_EVENT, handlePortalUpdate);
-    window.addEventListener(BRIEF_REALTIME_SYNC_EVENT, handleTelemetryUpdate);
+    window.addEventListener(BRIEF_REALTIME_SYNC_EVENT, handlePortalUpdate);
     window.addEventListener('storage', handlePortalUpdate);
 
     return () => {
       unsubscribeSnapshot();
       window.removeEventListener(CLIENT_PORTAL_EVENT, handlePortalUpdate);
       window.removeEventListener(NEW_BRIEF_NOTIFICATION_EVENT, handlePortalUpdate);
-      window.removeEventListener(BRIEF_REALTIME_SYNC_EVENT, handleTelemetryUpdate);
+      window.removeEventListener(BRIEF_REALTIME_SYNC_EVENT, handlePortalUpdate);
       window.removeEventListener('storage', handlePortalUpdate);
     };
   }, []);
 
   const handleManualSync = async () => {
     setIsSyncing(true);
-    const result = await reconcileClientBriefsWithServer();
-    await pullStateFromServer(true);
+    await Promise.all([
+      reconcileClientBriefsWithServer(),
+      pullStateFromServer(true),
+      syncProjectsTableIntoBriefs(),
+    ]);
     refreshBriefs();
     setIsSyncing(false);
+    showToast('لیست پروژه‌ها و بریف‌های ثبت‌شده کارفرمایان از دیتابیس به‌روزرسانی شد.');
+  };
 
-    if (result.ok) {
-      showToast(
-        result.newlyAddedCount > 0
-          ? `همگام‌سازی بلادرنگ انجام شد: ${result.newlyAddedCount} بریف جدید از کلاینت به سرور منتقل گردید.`
-          : `همگام‌سازی کامل کلاینت و سرور انجام شد (${result.syncedCount} بریف همگام).`
-      );
-    } else {
-      showToast('بریف‌های دریافتی از حافظه و سرور به‌روزرسانی شدند.');
+  const handleDeleteBriefProject = async (brief: ProjectBriefSubmission, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    await deleteSubmittedBrief(brief.id);
+    if (selectedBrief?.id === brief.id) {
+      setSelectedBrief(null);
     }
+    refreshBriefs();
+    showToast(`پروژه «${brief.brandName}» از جدول projects دیتابیس حذف شد.`);
   };
 
   const handleToggleRead = (brief: ProjectBriefSubmission, e?: React.MouseEvent) => {
@@ -265,47 +256,6 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
           </button>
         </div>
       )}
-
-      {/* Real-Time Client-to-Server Sync Status Bar */}
-      <div className="mb-4 px-3.5 py-2.5 rounded-xl bg-black/45 border border-emerald-500/25 flex flex-wrap items-center justify-between gap-2 text-xs">
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <span
-            className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1.5 border ${
-              syncTelemetry.streamConnected
-                ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/35'
-                : 'bg-amber-500/15 text-amber-300 border-amber-500/35'
-            }`}
-          >
-            <Radio
-              className={`w-3.5 h-3.5 ${
-                syncTelemetry.streamConnected ? 'text-emerald-400 animate-pulse' : 'text-amber-400'
-              }`}
-            />
-            {syncTelemetry.streamConnected
-              ? 'متصل به مجموعه داده ابری (Collection: briefs • Vercel ⇄ Cloud)'
-              : 'همگام‌سازی خودکار مجموعه داده briefs'}
-          </span>
-
-          <span className="px-2 py-0.5 rounded bg-sky-500/15 border border-sky-500/30 text-sky-300 font-mono text-[10px] font-bold">
-            DB Collection: /briefs ({stats.total} docs)
-          </span>
-
-          {syncTelemetry.pendingOutboxCount > 0 && (
-            <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[11px] font-bold">
-              {syncTelemetry.pendingOutboxCount} بریف در صف ارسال به سرور
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center gap-3 text-[11px] text-slate-400">
-          {syncTelemetry.lastSyncedAt && (
-            <span>
-              آخرین دریافت بلادرنگ:{' '}
-              <strong className="text-emerald-300 font-mono">{syncTelemetry.lastSyncedAt}</strong>
-            </span>
-          )}
-        </div>
-      </div>
 
       {/* Widget Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-white/10">
@@ -447,8 +397,6 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
           {displayedBriefs.map((brief) => {
             const isUnread = !brief.isRead;
             const isUserSubmitted = !brief.id.startsWith('brief-init-');
-            const isPendingSync = pendingIds.has(brief.id);
-            const isSynced = !isPendingSync && (syncedIds.has(brief.id) || !isUserSubmitted);
             const forwardLinks = buildBriefForwardLinks({
               brandName: brief.brandName,
               trackingCode: brief.trackingCode,
@@ -509,16 +457,11 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
                         </span>
                       )}
 
-                      <span
-                        className={`px-2 py-0.5 rounded-md text-[10px] font-bold flex items-center gap-1 border ${
-                          isSynced
-                            ? 'bg-sky-500/15 text-sky-300 border-sky-500/30'
-                            : 'bg-amber-500/15 text-amber-300 border-amber-500/30'
-                        }`}
-                      >
-                        <CloudCheck className="w-2.5 h-2.5" />
-                        {isSynced ? 'همگام با سرور' : 'در حال سینک...'}
-                      </span>
+                      {brief.marketTier && (
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                          بودجه / مقیاس: {brief.marketTier}
+                        </span>
+                      )}
 
                       <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-white/5 text-amber-300 border border-white/10 flex items-center gap-1">
                         <KeyRound className="w-2.5 h-2.5" />
@@ -614,6 +557,16 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
                   >
                     <Send className="w-3.5 h-3.5" />
                   </a>
+
+                  <button
+                    type="button"
+                    onClick={(e) => void handleDeleteBriefProject(brief, e)}
+                    className="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-rose-500/15 hover:bg-rose-500/30 text-rose-300 border border-rose-500/35 flex items-center gap-1 transition-all"
+                    title="حذف پروژه از جدول projects"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    حذف پروژه
+                  </button>
                 </div>
               </div>
             );
@@ -742,7 +695,7 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
             </div>
 
             <div className="p-4 border-t border-white/10 bg-black/40 flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <button
                   onClick={() => handleCopyBrief(selectedBrief)}
                   className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-bold flex items-center gap-1.5"
@@ -756,6 +709,13 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
                 >
                   <Download className="w-3.5 h-3.5" />
                   دانلود فایل بریف (.TXT)
+                </button>
+                <button
+                  onClick={() => void handleDeleteBriefProject(selectedBrief)}
+                  className="px-3 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/35 text-rose-300 border border-rose-500/40 text-xs font-bold flex items-center gap-1.5"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  حذف پروژه
                 </button>
               </div>
 

@@ -13,6 +13,12 @@ import {
 } from './data/clientPortalData';
 import { pushBriefToServer, pushServerSyncPayload } from './serverSync';
 import { syncSubmittedBriefRealtime, updateBriefInCollection } from './briefSyncService';
+import {
+  insertProjectToDatabase,
+  deleteProjectFromDatabase,
+  fetchProjectsFromDatabase,
+  SupabaseProjectRow,
+} from './supabaseClient';
 
 const STORAGE_KEY_WORKSPACES = 'cj_client_workspaces_v1';
 const STORAGE_KEY_ACTIVE_CLIENT = 'cj_client_portal_active_id';
@@ -892,11 +898,109 @@ export function submitAndArchiveProjectBrief(payload: SubmitBriefPayload): {
   // Atomically enqueue, broadcast across tabs, and push the new brief & workspace to the central server in real time
   void syncSubmittedBriefRealtime(briefRecord, targetWorkspace!);
 
+  // Save directly to the `projects` table in Supabase & Cloud SQL PostgreSQL
+  // Columns: client_name, contact_info, project_title, description, budget
+  void insertProjectToDatabase({
+    client_name: briefRecord.ownerName || briefRecord.brandName,
+    contact_info: briefRecord.contactInfo || '-',
+    project_title: briefRecord.brandName,
+    description: briefRecord.problem,
+    budget:
+      briefRecord.productionScale
+        ? `${briefRecord.marketTier} • ${briefRecord.productionScale}`
+        : briefRecord.marketTier || 'استاندارد استودیو',
+    tracking_code: briefRecord.trackingCode,
+    status: briefRecord.status,
+    is_read: false,
+    full_summary_text: briefRecord.fullSummaryText,
+  });
+
   return {
     workspace: targetWorkspace!,
     brief: briefRecord,
     isNewWorkspace,
   };
+}
+
+export async function deleteSubmittedBrief(briefId: string, dbProjectId?: number | string): Promise<void> {
+  const allBriefs = getAllArchivedBriefs();
+  const targetBrief = allBriefs.find((b) => b.id === briefId);
+  const filteredBriefs = allBriefs.filter((b) => b.id !== briefId);
+  saveGlobalArchivedBriefs(filteredBriefs, true);
+
+  const workspaces = getClientWorkspaces().map((w) => {
+    if (!Array.isArray(w.archivedBriefs)) return w;
+    return {
+      ...w,
+      archivedBriefs: w.archivedBriefs.filter((b) => b.id !== briefId),
+    };
+  });
+  saveClientWorkspaces(workspaces, true);
+
+  const idToDelete =
+    dbProjectId ??
+    (briefId.startsWith('db-proj-') ? briefId.replace('db-proj-', '') : targetBrief?.trackingCode || briefId);
+
+  await deleteProjectFromDatabase(idToDelete);
+  notifyChange();
+}
+
+export async function syncProjectsTableIntoBriefs(): Promise<SupabaseProjectRow[]> {
+  try {
+    const rows = await fetchProjectsFromDatabase();
+    if (!Array.isArray(rows) || rows.length === 0) return [];
+
+    const existingBriefs = getAllArchivedBriefs();
+    const byTracking = new Set(existingBriefs.map((b) => b.trackingCode).filter(Boolean));
+    const byId = new Set(existingBriefs.map((b) => b.id));
+    let changed = false;
+    const merged = [...existingBriefs];
+
+    rows.forEach((row) => {
+      const syntheticId = `db-proj-${row.id}`;
+      const tracking = row.tracking_code || `CJ-DB-${row.id}`;
+      if (byId.has(syntheticId) || (row.tracking_code && byTracking.has(row.tracking_code))) {
+        return;
+      }
+      const createdAtDate = row.created_at ? new Date(row.created_at) : new Date();
+      const createdAtMs = !isNaN(createdAtDate.getTime()) ? createdAtDate.getTime() : Date.now();
+      const newBrief: ProjectBriefSubmission = {
+        id: syntheticId,
+        trackingCode: tracking,
+        clientId: `client-db-${row.id}`,
+        brandName: row.project_title || row.client_name || 'پروژه جدید',
+        ownerName: row.client_name || 'کارفرما',
+        contactInfo: row.contact_info || '-',
+        submittedAt: safeFormatFaDate(createdAtDate, {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        selectedTrack: 'ثبت‌شده در دیتابیس (جدول projects)',
+        marketTier: row.budget || 'استاندارد استودیو',
+        problem: row.description || '-',
+        productionScale: row.budget || '-',
+        fullSummaryText:
+          row.full_summary_text ||
+          `نام کارفرما: ${row.client_name}\nاطلاعات تماس: ${row.contact_info}\nعنوان پروژه: ${row.project_title}\nبودجه / مقیاس: ${row.budget}\nتوضیحات پروژه:\n${row.description}`,
+        status: (row.status as 'new' | 'reviewed' | 'in-production') || 'new',
+        isRead: Boolean(row.is_read),
+        createdAtMs,
+      };
+      merged.unshift(newBrief);
+      changed = true;
+    });
+
+    if (changed) {
+      saveGlobalArchivedBriefs(merged, false, true);
+    }
+    return rows;
+  } catch (err) {
+    console.warn('Error syncing projects table into briefs:', err);
+    return [];
+  }
 }
 
 export function updateBriefStatus(

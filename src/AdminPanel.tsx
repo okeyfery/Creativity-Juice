@@ -27,6 +27,8 @@ import {
   isAdminAuthenticated,
   setAdminAuthenticated,
   verifyAdminPin,
+  syncPortfoliosFromDatabase,
+  addPortfolioItemToTable,
   CJ_STUDIO_DATA_EVENT,
 } from './adminStore';
 import {
@@ -158,6 +160,41 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [deliverableInput, setDeliverableInput] = useState('');
   const [galleryUrlInput, setGalleryUrlInput] = useState('');
 
+  // Quick Form State for `portfolios` Database Table (title, category, image_url, project_link, description)
+  const [dbPortfolioTitle, setDbPortfolioTitle] = useState('');
+  const [dbPortfolioCategory, setDbPortfolioCategory] = useState('معماری و هویت برند');
+  const [dbPortfolioImageUrl, setDbPortfolioImageUrl] = useState('');
+  const [dbPortfolioLink, setDbPortfolioLink] = useState('');
+  const [dbPortfolioDescription, setDbPortfolioDescription] = useState('');
+  const [isSavingDbPortfolio, setIsSavingDbPortfolio] = useState(false);
+
+  const handleAddDbPortfolioSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!dbPortfolioTitle.trim()) {
+      showToast('لطفاً عنوان نمونه‌کار (title) را وارد کنید.');
+      return;
+    }
+    setIsSavingDbPortfolio(true);
+    const created = await addPortfolioItemToTable({
+      title: dbPortfolioTitle,
+      category: dbPortfolioCategory,
+      image_url: dbPortfolioImageUrl,
+      project_link: dbPortfolioLink,
+      description: dbPortfolioDescription,
+    });
+    setIsSavingDbPortfolio(false);
+    if (created) {
+      setDbPortfolioTitle('');
+      setDbPortfolioImageUrl('');
+      setDbPortfolioLink('');
+      setDbPortfolioDescription('');
+      refreshData();
+      showToast(`نمونه‌کار «${created.title}» در جدول portfolios دیتابیس ذخیره شد.`);
+    } else {
+      showToast('خطا در ذخیره نمونه‌کار در دیتابیس.');
+    }
+  };
+
   // Photo / Media Form State
   const [photoForm, setPhotoForm] = useState<{
     title: string;
@@ -281,6 +318,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
   useEffect(() => {
     refreshData();
+    void syncPortfoliosFromDatabase().then(() => refreshData());
     const handleStoreChange = () => refreshData();
     window.addEventListener(CJ_STUDIO_DATA_EVENT, handleStoreChange);
     window.addEventListener(CLIENT_PORTAL_EVENT, handleStoreChange);
@@ -1152,9 +1190,109 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-neutral-950 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition cursor-pointer shadow-lg shadow-amber-500/20 active:scale-95"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>افزودن پروژه جدید</span>
+                  <span>افزودن پرونده کامل نمونه‌کار</span>
                 </button>
               </div>
+
+              {/* Quick Form to Add Portfolio Item Directly to `portfolios` Table */}
+              <form
+                onSubmit={handleAddDbPortfolioSubmit}
+                className="bg-[#141417] border border-amber-500/30 rounded-2xl p-5 space-y-4 shadow-xl"
+              >
+                <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+                  <div>
+                    <h2 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                      <Plus className="w-4 h-4 text-amber-400" />
+                      <span>افزودن نمونه‌کار جدید به جدول portfolios</span>
+                    </h2>
+                    <p className="text-xs text-neutral-400 mt-0.5">
+                      ذخیره مستقیم در دیتابیس (ستون‌ها: title, category, image_url, project_link, description) و نمایش فوری در صفحه اصلی سایت
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-300 mb-1">
+                      عنوان نمونه‌کار (title) *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={dbPortfolioTitle}
+                      onChange={(e) => setDbPortfolioTitle(e.target.value)}
+                      placeholder="مثلاً: هویت بصری گالری سولای"
+                      className="w-full bg-neutral-900 border border-neutral-800 focus:border-amber-500 rounded-lg px-3 py-2 text-xs text-white outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-300 mb-1">
+                      دسته‌بندی (category)
+                    </label>
+                    <select
+                      value={dbPortfolioCategory}
+                      onChange={(e) => setDbPortfolioCategory(e.target.value)}
+                      className="w-full bg-neutral-900 border border-neutral-800 focus:border-amber-500 rounded-lg px-3 py-2 text-xs text-white outline-none"
+                    >
+                      <option value="معماری و هویت برند">معماری و هویت برند (Branding)</option>
+                      <option value="سینمای تجاری و تیزر">سینمای تجاری و تیزر (Cinema)</option>
+                      <option value="بسته‌بندی لوکس">بسته‌بندی لوکس (Packaging)</option>
+                      <option value="ادیتوریال و دیجیتال">ادیتوریال و دیجیتال (Editorial)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-300 mb-1">
+                      آدرس تصویر کاور (image_url)
+                    </label>
+                    <input
+                      type="url"
+                      value={dbPortfolioImageUrl}
+                      onChange={(e) => setDbPortfolioImageUrl(e.target.value)}
+                      placeholder="https://images.unsplash.com/..."
+                      className="w-full bg-neutral-900 border border-neutral-800 focus:border-amber-500 rounded-lg px-3 py-2 text-xs text-white outline-none font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-300 mb-1">
+                      لینک پروژه یا ویدیو (project_link)
+                    </label>
+                    <input
+                      type="text"
+                      value={dbPortfolioLink}
+                      onChange={(e) => setDbPortfolioLink(e.target.value)}
+                      placeholder="https://..."
+                      className="w-full bg-neutral-900 border border-neutral-800 focus:border-amber-500 rounded-lg px-3 py-2 text-xs text-white outline-none font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3">
+                  <div className="flex-1">
+                    <label className="block text-[11px] font-semibold text-neutral-300 mb-1">
+                      توضیحات نمونه‌کار (description)
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={dbPortfolioDescription}
+                      onChange={(e) => setDbPortfolioDescription(e.target.value)}
+                      placeholder="شرح چالش، استراتژی و خروجی‌های انجام‌شده در این پروژه..."
+                      className="w-full bg-neutral-900 border border-neutral-800 focus:border-amber-500 rounded-lg px-3 py-2 text-xs text-white outline-none resize-none"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSavingDbPortfolio}
+                    className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-neutral-950 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shrink-0 cursor-pointer transition"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>{isSavingDbPortfolio ? 'در حال ثبت...' : 'ثبت نمونه‌کار در جدول portfolios'}</span>
+                  </button>
+                </div>
+              </form>
 
               {/* Filters & Search */}
               <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-[#141417] p-3 rounded-xl border border-[#27272A]">
@@ -1321,15 +1459,24 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         </button>
                         <button
                           onClick={() => handleDeleteProjectEntry(p.id, p.title)}
-                          className="p-1 bg-neutral-800 hover:bg-red-950 text-neutral-400 hover:text-red-400 rounded transition cursor-pointer"
-                          title="انتقال به سطل زباله"
+                          className="flex items-center gap-1 px-2.5 py-1 bg-rose-500/15 hover:bg-rose-500/30 border border-rose-500/35 text-rose-300 rounded text-xs font-bold transition cursor-pointer"
+                          title="حذف نمونه‌کار از جدول portfolios"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
+                          <span>حذف نمونه‌کار</span>
                         </button>
                       </div>
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Client-Submitted Projects from `projects` Table */}
+              <div className="pt-4">
+                <ReceivedBriefsWidget
+                  compact
+                  onOpenBriefInPortalTab={() => setActiveTab('client-portal')}
+                />
               </div>
 
               {filteredProjects.length === 0 && (

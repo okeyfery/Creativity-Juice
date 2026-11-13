@@ -10,6 +10,12 @@ import { PORTFOLIO_CASE_STUDIES, CaseStudy } from './PortfolioGallery';
 import { INITIAL_PROJECTS, MasterProjectItem } from './data/projectsData';
 import { INITIAL_TEAM } from './data/teamData';
 import { pushServerSyncPayload } from './serverSync';
+import {
+  fetchPortfoliosFromDatabase,
+  insertPortfolioToDatabase,
+  deletePortfolioFromDatabase,
+  SupabasePortfolioRow,
+} from './supabaseClient';
 
 export interface ProjectCreditItem {
   id: string;
@@ -557,6 +563,17 @@ export function saveProject(project: ProjectItem): ProjectItem {
   saveProjects(nextProjects);
   syncTeamRolesFromProject(updatedItem);
 
+  // Sync to `portfolios` table in Supabase / PostgreSQL
+  // Columns: title, category, image_url, project_link, description
+  void insertPortfolioToDatabase({
+    title: updatedItem.title,
+    category: updatedItem.categoryLabel || updatedItem.category || 'branding',
+    image_url: updatedItem.coverImage,
+    project_link: (updatedItem as any).projectLink || updatedItem.highResImage || updatedItem.coverImage || '#',
+    description: updatedItem.description || updatedItem.challenge || updatedItem.subtitle || '',
+    extra_json: JSON.stringify(updatedItem),
+  });
+
   return updatedItem;
 }
 
@@ -588,6 +605,181 @@ export function deleteProject(id: string): void {
   }
   const nextProjects = current.filter((p) => p.id !== id);
   saveProjects(nextProjects);
+
+  const dbId = (target as any)?.dbPortfolioId ?? (id.startsWith('portfolio-db-') ? id.replace('portfolio-db-', '') : id);
+  void deletePortfolioFromDatabase(dbId);
+}
+
+export function portfolioRowToProjectItem(row: SupabasePortfolioRow, index = 0): ProjectItem {
+  if (row.extra_json) {
+    try {
+      const parsed = JSON.parse(row.extra_json) as ProjectItem;
+      if (parsed && parsed.title) {
+        return {
+          ...parsed,
+          id: parsed.id || `portfolio-db-${row.id}`,
+          title: row.title || parsed.title,
+          category: row.category || parsed.category || 'branding',
+          categoryLabel: row.category || parsed.categoryLabel || 'پروژه استودیو',
+          coverImage: row.image_url || parsed.coverImage,
+          highResImage: row.image_url || parsed.highResImage || parsed.coverImage,
+          description: row.description || parsed.description || parsed.challenge,
+          challenge: row.description || parsed.challenge || '',
+          ...(row.id ? { dbPortfolioId: row.id } : {}),
+          ...(row.project_link ? { projectLink: row.project_link } : {}),
+        } as ProjectItem;
+      }
+    } catch {
+      // fall through to standard mapping
+    }
+  }
+
+  const catRaw = (row.category || 'branding').toLowerCase();
+  const mappedCategory =
+    catRaw.includes('cinema') || catRaw.includes('فیلم') || catRaw.includes('تیزر') || catRaw.includes('ویدیو')
+      ? 'cinema'
+      : catRaw.includes('pack') || catRaw.includes('بسته')
+      ? 'packaging'
+      : catRaw.includes('edit') || catRaw.includes('ادیتوریال')
+      ? 'editorial'
+      : catRaw.includes('digit') || catRaw.includes('وب') || catRaw.includes('دیجیتال')
+      ? 'digital'
+      : 'branding';
+
+  return {
+    id: `portfolio-db-${row.id}`,
+    title: row.title || 'نمونه‌کار استودیو',
+    titleEn: row.project_link && row.project_link !== '#' ? row.project_link : `PORTFOLIO // 0${index + 1}`,
+    subtitle: row.category || 'پروژه منتخب استودیو',
+    category: mappedCategory,
+    categoryLabel: row.category || 'هویت بصری و پروداکشن',
+    client: row.title || 'کارفرمای استودیو',
+    year: '۱۴۰۴',
+    trackCode: `PORTFOLIO // 0${index + 1}`,
+    deptTrack: 'TRACK 01 // BRAND IDENTITY',
+    role: 'کارگردانی هنری و اجرای کامل پروژه',
+    description: row.description || '',
+    coverImage:
+      row.image_url ||
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85',
+    highResImage:
+      row.image_url ||
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85',
+    galleryImages: [
+      row.image_url ||
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85',
+    ],
+    cinemaRatio: mappedCategory === 'cinema',
+    badge: row.category || 'منتخب استودیو',
+    challenge: row.description || 'طراحی و اجرای استانداردهای بصری و استراتژیک برند.',
+    solution: row.project_link && row.project_link !== '#' ? `لینک پروژه: ${row.project_link}` : 'خلق هویت متمایز و ماندگار در بازار هدف.',
+    metrics: row.project_link && row.project_link !== '#' ? row.project_link : 'اجرای موفق در استودیو Creativity Juice',
+    deliverables: [row.category || 'هویت بصری و محتوا', 'طراحی و کارگردانی هنری'],
+    tags: [row.category || 'برندینگ', row.title || 'پروژه'],
+    colorAccent: '#D9FF00',
+    featured: true,
+    isPublished: true,
+    assignedTeamIds: [],
+    projectCredits: [],
+    desktopPos: {
+      top: 18 + ((index * 14) % 58),
+      left: 16 + ((index * 19) % 62),
+      mobileTop: 22 + ((index * 12) % 50),
+      mobileLeft: 20 + ((index * 18) % 55),
+    },
+    createdAt: '۱۴۰۴/۰۱/۰۱',
+    updatedAt: '۱۴۰۴/۰۱/۰۱',
+    ...(row.id ? { dbPortfolioId: row.id } : {}),
+    ...(row.project_link ? { projectLink: row.project_link } : {}),
+  } as ProjectItem;
+}
+
+let isSyncingPortfolios = false;
+
+export async function syncPortfoliosFromDatabase(): Promise<ProjectItem[]> {
+  if (typeof window === 'undefined' || isSyncingPortfolios) return getProjects();
+  isSyncingPortfolios = true;
+  try {
+    const rows = await fetchPortfoliosFromDatabase();
+    if (Array.isArray(rows) && rows.length > 0) {
+      const mapped = rows.map((r, idx) => portfolioRowToProjectItem(r, idx));
+      const json = JSON.stringify(mapped);
+      localStorage.setItem(STORAGE_KEYS.PROJECTS, json);
+      localStorage.setItem('creativity_juice_projects_v2', json);
+      window.dispatchEvent(
+        new CustomEvent(CJ_STUDIO_DATA_EVENT, { detail: { type: 'projects', count: mapped.length } })
+      );
+      window.dispatchEvent(new CustomEvent('projects-updated', { detail: mapped }));
+      return mapped;
+    } else if (Array.isArray(rows) && rows.length === 0) {
+      // Seed the initial studio portfolios into the `portfolios` table once so the database holds all existing portfolios
+      const seededFlag = localStorage.getItem('cj_portfolios_db_seeded_v1');
+      if (!seededFlag) {
+        localStorage.setItem('cj_portfolios_db_seeded_v1', 'true');
+        const seeds = getSeedProjects();
+        for (const item of seeds) {
+          await insertPortfolioToDatabase({
+            title: item.title,
+            category: item.categoryLabel || item.category || 'branding',
+            image_url: item.coverImage,
+            project_link: item.highResImage || item.coverImage || '#',
+            description: item.description || item.challenge || item.subtitle || '',
+            extra_json: JSON.stringify(item),
+          });
+        }
+        const freshRows = await fetchPortfoliosFromDatabase();
+        if (freshRows.length > 0) {
+          const mapped = freshRows.map((r, idx) => portfolioRowToProjectItem(r, idx));
+          const json = JSON.stringify(mapped);
+          localStorage.setItem(STORAGE_KEYS.PROJECTS, json);
+          localStorage.setItem('creativity_juice_projects_v2', json);
+          window.dispatchEvent(
+            new CustomEvent(CJ_STUDIO_DATA_EVENT, { detail: { type: 'projects', count: mapped.length } })
+          );
+          window.dispatchEvent(new CustomEvent('projects-updated', { detail: mapped }));
+          return mapped;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Failed syncing portfolios from database:', err);
+  } finally {
+    isSyncingPortfolios = false;
+  }
+  return getProjects();
+}
+
+export async function addPortfolioItemToTable(input: {
+  title: string;
+  category: string;
+  image_url: string;
+  project_link: string;
+  description: string;
+}): Promise<ProjectItem | null> {
+  const createdRow = await insertPortfolioToDatabase({
+    title: input.title.trim(),
+    category: input.category.trim() || 'برندینگ و هویت بصری',
+    image_url:
+      input.image_url.trim() ||
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85',
+    project_link: input.project_link.trim() || '#',
+    description: input.description.trim(),
+  });
+
+  if (createdRow) {
+    const newItem = portfolioRowToProjectItem(createdRow, 0);
+    const current = getProjects().filter((p) => p.id !== newItem.id);
+    const next = [newItem, ...current];
+    saveProjects(next, true);
+    return newItem;
+  }
+  return null;
+}
+
+if (typeof window !== 'undefined') {
+  setTimeout(() => {
+    void syncPortfoliosFromDatabase();
+  }, 150);
 }
 
 // -------------------------------------------------------------

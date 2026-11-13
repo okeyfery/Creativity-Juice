@@ -3,6 +3,16 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
+import {
+  listDbProjects,
+  insertDbProject,
+  updateDbProject,
+  deleteDbProject,
+  listDbPortfolios,
+  insertDbPortfolio,
+  deleteDbPortfolio,
+} from './src/db/queries.ts';
+import { requireAuth, AuthRequest } from './src/middleware/auth.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -535,6 +545,163 @@ async function startServer() {
     } catch (err) {
       console.error('Error in PATCH /api/briefs/:id:', err);
       res.status(500).json({ ok: false });
+    }
+  });
+
+  // ============================================================================
+  // SQL RELATIONAL DATABASE ENDPOINTS (Cloud SQL PostgreSQL + Supabase Schema)
+  // Tables:
+  //   1. 'projects' (client_name, contact_info, project_title, description, budget)
+  //   2. 'portfolios' (title, category, image_url, project_link, description)
+  // ============================================================================
+
+  app.get('/api/auth/me', requireAuth, (req: AuthRequest, res) => {
+    res.json({ ok: true, user: req.user });
+  });
+
+  app.get('/api/db/projects', async (_req, res) => {
+    try {
+      const rows = await listDbProjects();
+      res.json({ ok: true, projects: rows });
+    } catch (error: any) {
+      console.error('Error in GET /api/db/projects:', error);
+      res.status(500).json({ ok: false, error: error.message || 'Failed to fetch projects' });
+    }
+  });
+
+  app.post('/api/db/projects', async (req, res) => {
+    try {
+      const body = req.body || {};
+      const inserted = await insertDbProject({
+        client_name: body.client_name || body.ownerName || 'کارفرما',
+        contact_info: body.contact_info || body.contactInfo || '-',
+        project_title: body.project_title || body.brandName || 'پروژه جدید',
+        description: body.description || body.problem || '-',
+        budget: body.budget || body.marketTier || 'استاندارد استودیو',
+        tracking_code: body.tracking_code || body.trackingCode || `CJ-${Math.floor(1000 + Math.random() * 9000)}`,
+        status: body.status || 'new',
+        is_read: body.is_read ?? false,
+        full_summary_text: body.full_summary_text || body.fullSummaryText || body.description || '-',
+      });
+
+      broadcastRealtimeEvent('db:project:created', { project: inserted });
+      res.json({ ok: true, project: inserted });
+    } catch (error: any) {
+      console.error('Error in POST /api/db/projects:', error);
+      res.status(500).json({ ok: false, error: error.message || 'Failed to insert project' });
+    }
+  });
+
+  app.patch('/api/db/projects/:id', async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      if (!Number.isFinite(id)) {
+        res.status(400).json({ ok: false, error: 'Invalid project ID' });
+        return;
+      }
+      const updated = await updateDbProject(id, req.body || {});
+      broadcastRealtimeEvent('db:project:updated', { project: updated });
+      res.json({ ok: true, project: updated });
+    } catch (error: any) {
+      console.error('Error in PATCH /api/db/projects/:id:', error);
+      res.status(500).json({ ok: false, error: error.message || 'Failed to update project' });
+    }
+  });
+
+  app.delete('/api/db/projects/:id', async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      if (Number.isFinite(id)) {
+        await deleteDbProject(id);
+      }
+      // Also remove from JSON archivedBriefs if matching ID or tracking code exists
+      const db = readServerDb();
+      db.archivedBriefs = (db.archivedBriefs || []).filter(
+        (b: any) => String(b.id) !== String(req.params.id) && String(b.dbId) !== String(req.params.id)
+      );
+      writeServerDb(db);
+      broadcastRealtimeEvent('db:project:deleted', { id: req.params.id });
+      res.json({ ok: true, deletedId: req.params.id });
+    } catch (error: any) {
+      console.error('Error in DELETE /api/db/projects/:id:', error);
+      res.status(500).json({ ok: false, error: error.message || 'Failed to delete project' });
+    }
+  });
+
+  let isPortfoliosSeeded = false;
+  app.get('/api/db/portfolios', async (_req, res) => {
+    try {
+      let rows = await listDbPortfolios();
+      if (rows.length === 0 && !isPortfoliosSeeded) {
+        isPortfoliosSeeded = true;
+        const db = readServerDb();
+        const seedItems = Array.isArray(db.projects) ? db.projects.slice(0, 12) : [];
+        for (const item of seedItems) {
+          try {
+            await insertDbPortfolio({
+              title: item.title || 'نمونه‌کار استودیو',
+              category: item.category || 'branding',
+              image_url:
+                item.coverImage ||
+                item.image_url ||
+                'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85',
+              project_link: item.project_link || item.videoUrl || '#',
+              description: item.challenge || item.subtitle || item.description || 'پروژه منتخب استودیو Creativity Juice',
+              title_en: item.titleEn || item.title,
+              client: item.client || item.title,
+              year: item.year || '۱۴۰۴',
+              extra_json: JSON.stringify(item),
+            });
+          } catch {
+            // ignore individual seed error
+          }
+        }
+        rows = await listDbPortfolios();
+      }
+      res.json({ ok: true, portfolios: rows });
+    } catch (error: any) {
+      console.error('Error in GET /api/db/portfolios:', error);
+      res.status(500).json({ ok: false, error: error.message || 'Failed to fetch portfolios' });
+    }
+  });
+
+  app.post('/api/db/portfolios', async (req, res) => {
+    try {
+      const body = req.body || {};
+      const inserted = await insertDbPortfolio({
+        title: body.title || 'نمونه‌کار جدید',
+        category: body.category || 'branding',
+        image_url:
+          body.image_url ||
+          body.coverImage ||
+          'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85',
+        project_link: body.project_link || '#',
+        description: body.description || '',
+        title_en: body.title_en || body.titleEn || body.title,
+        client: body.client || body.title,
+        year: body.year || '۱۴۰۵',
+        extra_json: body.extra_json || null,
+      });
+
+      broadcastRealtimeEvent('db:portfolio:created', { portfolio: inserted });
+      res.json({ ok: true, portfolio: inserted });
+    } catch (error: any) {
+      console.error('Error in POST /api/db/portfolios:', error);
+      res.status(500).json({ ok: false, error: error.message || 'Failed to insert portfolio' });
+    }
+  });
+
+  app.delete('/api/db/portfolios/:id', async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      if (Number.isFinite(id)) {
+        await deleteDbPortfolio(id);
+      }
+      broadcastRealtimeEvent('db:portfolio:deleted', { id: req.params.id });
+      res.json({ ok: true, deletedId: req.params.id });
+    } catch (error: any) {
+      console.error('Error in DELETE /api/db/portfolios/:id:', error);
+      res.status(500).json({ ok: false, error: error.message || 'Failed to delete portfolio' });
     }
   });
 
