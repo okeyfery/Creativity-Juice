@@ -5,6 +5,7 @@
  */
 
 import { ClientWorkspace, ProjectBriefSubmission } from './data/clientPortalData';
+import { startBriefRealtimeSyncService } from './briefSyncService';
 
 const STORAGE_KEY_WORKSPACES = 'cj_client_workspaces_v1';
 const STORAGE_KEY_ARCHIVED_BRIEFS = 'cj_studio_archived_briefs_v1';
@@ -505,6 +506,8 @@ export async function pushServerSyncPayload(payload: {
 export function initServerSync() {
   if (typeof window === 'undefined' || isSyncInitialized) return;
   isSyncInitialized = true;
+
+  startBriefRealtimeSyncService();
 
   pullStateFromServer(true).then(() => {
     try {

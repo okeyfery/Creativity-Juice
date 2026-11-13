@@ -12,6 +12,7 @@ import {
   INITIAL_CLIENT_WORKSPACES,
 } from './data/clientPortalData';
 import { pushBriefToServer, pushServerSyncPayload } from './serverSync';
+import { syncSubmittedBriefRealtime } from './briefSyncService';
 
 const STORAGE_KEY_WORKSPACES = 'cj_client_workspaces_v1';
 const STORAGE_KEY_ACTIVE_CLIENT = 'cj_client_portal_active_id';
@@ -888,8 +889,8 @@ export function submitAndArchiveProjectBrief(payload: SubmitBriefPayload): {
   const filteredBriefs = allBriefs.filter((b) => b.id !== briefRecord.id);
   saveGlobalArchivedBriefs([briefRecord, ...filteredBriefs], false, true);
 
-  // Atomically push the new brief & workspace to the central server so Admin immediately receives it from any device
-  void pushBriefToServer(briefRecord, targetWorkspace!);
+  // Atomically enqueue, broadcast across tabs, and push the new brief & workspace to the central server in real time
+  void syncSubmittedBriefRealtime(briefRecord, targetWorkspace!);
 
   return {
     workspace: targetWorkspace!,

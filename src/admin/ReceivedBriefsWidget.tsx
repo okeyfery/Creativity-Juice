@@ -18,6 +18,8 @@ import {
   X,
   PlusCircle,
   ArrowUpRight,
+  Radio,
+  CloudCheck,
 } from 'lucide-react';
 import { ProjectBriefSubmission } from '../data/clientPortalData';
 import {
@@ -33,6 +35,15 @@ import {
   buildBriefForwardLinks,
   NEW_BRIEF_NOTIFICATION_EVENT,
 } from '../serverSync';
+import {
+  startBriefRealtimeSyncService,
+  reconcileClientBriefsWithServer,
+  getBriefSyncTelemetry,
+  getSyncedBriefIds,
+  getPendingOutbox,
+  BRIEF_REALTIME_SYNC_EVENT,
+  BriefSyncTelemetry,
+} from '../briefSyncService';
 
 interface ReceivedBriefsWidgetProps {
   onOpenBriefInPortalTab?: (brief: ProjectBriefSubmission) => void;
@@ -50,15 +61,25 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
   const [isSyncing, setIsSyncing] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [syncTelemetry, setSyncTelemetry] = useState<BriefSyncTelemetry>(() =>
+    getBriefSyncTelemetry()
+  );
+  const [syncedIds, setSyncedIds] = useState<Set<string>>(() => getSyncedBriefIds());
+  const [pendingIds, setPendingIds] = useState<Set<string>>(
+    () => new Set(getPendingOutbox().map((x) => x.brief.id))
+  );
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
-    setTimeout(() => setToastMsg(null), 3500);
+    setTimeout(() => setToastMsg(null), 3800);
   };
 
   const refreshBriefs = () => {
     const latest = getAllArchivedBriefs();
     setBriefs(latest);
+    setSyncTelemetry(getBriefSyncTelemetry());
+    setSyncedIds(getSyncedBriefIds());
+    setPendingIds(new Set(getPendingOutbox().map((x) => x.brief.id)));
     if (selectedBrief) {
       const updatedSelected = latest.find((b) => b.id === selectedBrief.id);
       if (updatedSelected) setSelectedBrief(updatedSelected);
@@ -66,6 +87,7 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
   };
 
   useEffect(() => {
+    startBriefRealtimeSyncService();
     void pullStateFromServer(true).then(() => {
       refreshBriefs();
     });
@@ -74,23 +96,39 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
       refreshBriefs();
     };
 
+    const handleTelemetryUpdate = () => {
+      refreshBriefs();
+    };
+
     window.addEventListener(CLIENT_PORTAL_EVENT, handlePortalUpdate);
     window.addEventListener(NEW_BRIEF_NOTIFICATION_EVENT, handlePortalUpdate);
+    window.addEventListener(BRIEF_REALTIME_SYNC_EVENT, handleTelemetryUpdate);
     window.addEventListener('storage', handlePortalUpdate);
 
     return () => {
       window.removeEventListener(CLIENT_PORTAL_EVENT, handlePortalUpdate);
       window.removeEventListener(NEW_BRIEF_NOTIFICATION_EVENT, handlePortalUpdate);
+      window.removeEventListener(BRIEF_REALTIME_SYNC_EVENT, handleTelemetryUpdate);
       window.removeEventListener('storage', handlePortalUpdate);
     };
   }, []);
 
   const handleManualSync = async () => {
     setIsSyncing(true);
+    const result = await reconcileClientBriefsWithServer();
     await pullStateFromServer(true);
     refreshBriefs();
     setIsSyncing(false);
-    showToast('بریف‌های دریافتی با موفقیت از سرور مرکزی به‌روزرسانی شدند.');
+
+    if (result.ok) {
+      showToast(
+        result.newlyAddedCount > 0
+          ? `همگام‌سازی بلادرنگ انجام شد: ${result.newlyAddedCount} بریف جدید از کلاینت به سرور منتقل گردید.`
+          : `همگام‌سازی کامل کلاینت و سرور انجام شد (${result.syncedCount} بریف همگام).`
+      );
+    } else {
+      showToast('بریف‌های دریافتی از حافظه و سرور به‌روزرسانی شدند.');
+    }
   };
 
   const handleToggleRead = (brief: ProjectBriefSubmission, e?: React.MouseEvent) => {
@@ -152,7 +190,7 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
     setReadFilter('all');
     refreshBriefs();
     showToast(
-      `بریف جدید «${res.brief.brandName}» با کد ${res.brief.trackingCode} در وضعیت «خوانده‌نشده» ثبت شد!`
+      `بریف جدید «${res.brief.brandName}» با کد ${res.brief.trackingCode} به صورت بلادرنگ با سرور همگام و در صدر لیست قرار گرفت!`
     );
   };
 
@@ -223,6 +261,48 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
         </div>
       )}
 
+      {/* Real-Time Client-to-Server Sync Status Bar */}
+      <div className="mb-4 px-3.5 py-2.5 rounded-xl bg-black/45 border border-emerald-500/25 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <span
+            className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1.5 border ${
+              syncTelemetry.streamConnected
+                ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/35'
+                : 'bg-amber-500/15 text-amber-300 border-amber-500/35'
+            }`}
+          >
+            <Radio
+              className={`w-3.5 h-3.5 ${
+                syncTelemetry.streamConnected ? 'text-emerald-400 animate-pulse' : 'text-amber-400'
+              }`}
+            />
+            {syncTelemetry.streamConnected
+              ? 'جریان بلادرنگ کلاینت ⇄ سرور فعال (Real-Time SSE)'
+              : 'همگام‌سازی خودکار کلاینت و سرور'}
+          </span>
+
+          <span className="text-slate-400 text-[11px]">
+            بریف‌های سینک‌شده روی سرور:{' '}
+            <strong className="text-white font-mono">{stats.total}</strong>
+          </span>
+
+          {syncTelemetry.pendingOutboxCount > 0 && (
+            <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[11px] font-bold">
+              {syncTelemetry.pendingOutboxCount} بریف در صف ارسال به سرور
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-3 text-[11px] text-slate-400">
+          {syncTelemetry.lastSyncedAt && (
+            <span>
+              آخرین دریافت بلادرنگ:{' '}
+              <strong className="text-emerald-300 font-mono">{syncTelemetry.lastSyncedAt}</strong>
+            </span>
+          )}
+        </div>
+      </div>
+
       {/* Widget Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-white/10">
         <div className="flex items-center gap-3">
@@ -249,7 +329,7 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
               )}
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
-              نمایش لحظه‌ای بریف‌های ارسال‌شده توسط کارفرمایان با قابلیت تفکیک «خوانده‌شده / خوانده‌نشده»
+              نمایش بلادرنگ بریف‌های ثبت‌شده در کلاینت و سرور با قابلیت تفکیک «خوانده‌شده / خوانده‌نشده»
             </p>
           </div>
         </div>
@@ -259,7 +339,7 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
           <button
             onClick={handleSimulateNewBrief}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/35 text-xs font-bold transition-all"
-            title="ثبت فوری یک بریف نمونه جدید برای تست قرارگیری در بالای لیست خوانده‌نشده‌ها"
+            title="ثبت فوری یک بریف نمونه جدید برای تست سینک بلادرنگ و قرارگیری در بالای لیست خوانده‌نشده‌ها"
           >
             <PlusCircle className="w-3.5 h-3.5" />
             تست دریافت بریف جدید
@@ -281,7 +361,7 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 text-xs font-bold transition-all"
           >
             <RefreshCw className={`w-3.5 h-3.5 text-amber-400 ${isSyncing ? 'animate-spin' : ''}`} />
-            دریافت از سرور
+            همگام‌سازی کلاینت و سرور (Sync)
           </button>
         </div>
       </div>
@@ -355,7 +435,7 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
               : 'بریفی مطابق با فیلتر انتخابی یافت نشد.'}
           </p>
           <p className="text-xs text-slate-500 mt-1">
-            به محض اینکه کارفرمایی فرم بریف را در سایت ثبت کند، در بالای این لیست قرار می‌گیرد.
+            به محض اینکه کارفرمایی فرم بریف را در سایت ثبت کند، به صورت بلادرنگ در بالای این لیست قرار می‌گیرد.
           </p>
         </div>
       ) : (
@@ -363,6 +443,8 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
           {displayedBriefs.map((brief) => {
             const isUnread = !brief.isRead;
             const isUserSubmitted = !brief.id.startsWith('brief-init-');
+            const isPendingSync = pendingIds.has(brief.id);
+            const isSynced = !isPendingSync && (syncedIds.has(brief.id) || !isUserSubmitted);
             const forwardLinks = buildBriefForwardLinks({
               brandName: brief.brandName,
               trackingCode: brief.trackingCode,
@@ -422,6 +504,17 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
                           دریافتی از فرم سایت
                         </span>
                       )}
+
+                      <span
+                        className={`px-2 py-0.5 rounded-md text-[10px] font-bold flex items-center gap-1 border ${
+                          isSynced
+                            ? 'bg-sky-500/15 text-sky-300 border-sky-500/30'
+                            : 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+                        }`}
+                      >
+                        <CloudCheck className="w-2.5 h-2.5" />
+                        {isSynced ? 'همگام با سرور' : 'در حال سینک...'}
+                      </span>
 
                       <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-white/5 text-amber-300 border border-white/10 flex items-center gap-1">
                         <KeyRound className="w-2.5 h-2.5" />

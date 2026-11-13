@@ -332,10 +332,68 @@ async function startServer() {
 
   app.use(express.json({ limit: '25mb' }));
 
+  // Active Server-Sent Events (SSE) clients for real-time Admin Panel updates
+  const sseClients = new Set<express.Response>();
+  let serverRevision = Date.now();
+
+  function broadcastRealtimeEvent(eventType: string, payload: Record<string, any>) {
+    serverRevision = Date.now();
+    const message = JSON.stringify({
+      type: eventType,
+      revision: serverRevision,
+      timestamp: new Date().toISOString(),
+      ...payload,
+    });
+    sseClients.forEach((clientRes) => {
+      try {
+        clientRes.write(`data: ${message}\n\n`);
+      } catch {
+        sseClients.delete(clientRes);
+      }
+    });
+  }
+
+  // 0. GET Real-Time Stream (SSE) for instant Admin Panel brief synchronization
+  app.get('/api/studio-state/stream', (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders?.();
+
+    const db = readServerDb();
+    const initPayload = JSON.stringify({
+      type: 'stream:init',
+      revision: serverRevision,
+      timestamp: new Date().toISOString(),
+      archivedBriefs: sortBriefsNewestFirst(db.archivedBriefs || []),
+      clientWorkspaces: db.clientWorkspaces || [],
+      notificationLogs: db.notificationLogs || [],
+    });
+    res.write(`data: ${initPayload}\n\n`);
+
+    sseClients.add(res);
+
+    const heartbeat = setInterval(() => {
+      try {
+        res.write(`: heartbeat ${Date.now()}\n\n`);
+      } catch {
+        clearInterval(heartbeat);
+        sseClients.delete(res);
+      }
+    }, 15000);
+
+    req.on('close', () => {
+      clearInterval(heartbeat);
+      sseClients.delete(res);
+    });
+  });
+
   // 1. GET full shared studio & client portal state + notification logs
   app.get('/api/studio-state', (_req, res) => {
     const db = readServerDb();
-    res.json({ ok: true, state: db });
+    db.archivedBriefs = sortBriefsNewestFirst(db.archivedBriefs || []);
+    res.json({ ok: true, revision: serverRevision, state: db });
   });
 
   // 2. POST atomic brief submission from any visitor/client device + instant notification dispatch
@@ -344,8 +402,9 @@ async function startServer() {
       const { brief, workspace } = req.body || {};
       const db = readServerDb();
 
+      let enrichedBrief = brief;
       if (brief && brief.id) {
-        const enrichedBrief = {
+        enrichedBrief = {
           ...brief,
           isRead: brief.isRead ?? false,
           createdAtMs: brief.createdAtMs || Date.now(),
@@ -361,7 +420,7 @@ async function startServer() {
           const mergedWsBriefs = sortBriefsNewestFirst(
             mergeById(
               prevWs.archivedBriefs || [],
-              workspace.archivedBriefs || (brief ? [brief] : []),
+              workspace.archivedBriefs || (enrichedBrief ? [enrichedBrief] : []),
               true
             )
           );
@@ -379,9 +438,9 @@ async function startServer() {
 
       // Trigger instant notification for Admin (Email + WhatsApp + Live Notification Log)
       let notificationLog: ServerBriefNotificationLog | null = null;
-      if (brief) {
+      if (enrichedBrief) {
         notificationLog = await dispatchInstantBriefNotifications(
-          brief,
+          enrichedBrief,
           workspace,
           db.notificationConfig || DEFAULT_NOTIFICATION_CONFIG,
           false
@@ -390,10 +449,92 @@ async function startServer() {
       }
 
       const saved = writeServerDb(db);
-      res.json({ ok: true, state: saved, notification: notificationLog });
+
+      // Broadcast real-time event to all connected Admin Panels
+      broadcastRealtimeEvent('brief:created', {
+        brief: enrichedBrief,
+        workspace,
+        notification: notificationLog,
+        archivedBriefs: saved.archivedBriefs,
+        clientWorkspaces: saved.clientWorkspaces,
+        notificationLogs: saved.notificationLogs,
+      });
+
+      res.json({ ok: true, revision: serverRevision, state: saved, notification: notificationLog });
     } catch (err) {
       console.error('Error in POST /api/studio-state/brief:', err);
       res.status(500).json({ ok: false, error: 'Failed to save brief on server' });
+    }
+  });
+
+  // 2b. POST bidirectional client-to-server brief reconciliation
+  app.post('/api/studio-state/briefs/reconcile', async (req, res) => {
+    try {
+      const { clientBriefs = [], clientWorkspaces = [] } = req.body || {};
+      const db = readServerDb();
+      const existingIds = new Set((db.archivedBriefs || []).map((b: any) => b?.id).filter(Boolean));
+
+      const newlyDiscoveredBriefs: any[] = [];
+      if (Array.isArray(clientBriefs)) {
+        clientBriefs.forEach((cb: any) => {
+          if (cb && cb.id && !existingIds.has(cb.id) && !String(cb.id).startsWith('brief-init-')) {
+            newlyDiscoveredBriefs.push({
+              ...cb,
+              isRead: cb.isRead ?? false,
+              createdAtMs: cb.createdAtMs || Date.now(),
+            });
+          }
+        });
+      }
+
+      if (Array.isArray(clientBriefs) && clientBriefs.length > 0) {
+        db.archivedBriefs = sortBriefsNewestFirst(
+          mergeById(db.archivedBriefs || [], clientBriefs, true)
+        );
+      }
+
+      if (Array.isArray(clientWorkspaces) && clientWorkspaces.length > 0) {
+        db.clientWorkspaces = mergeById(db.clientWorkspaces || [], clientWorkspaces, true);
+      }
+
+      const newNotifications: ServerBriefNotificationLog[] = [];
+      for (const newBrief of newlyDiscoveredBriefs) {
+        const notif = await dispatchInstantBriefNotifications(
+          newBrief,
+           undefined,
+          db.notificationConfig || DEFAULT_NOTIFICATION_CONFIG,
+          false
+        );
+        newNotifications.push(notif);
+      }
+
+      if (newNotifications.length > 0) {
+        db.notificationLogs = [...newNotifications, ...(db.notificationLogs || [])].slice(0, 100);
+      }
+
+      const saved = writeServerDb(db);
+
+      if (newlyDiscoveredBriefs.length > 0 || Array.isArray(clientBriefs)) {
+        broadcastRealtimeEvent('brief:reconciled', {
+          newBriefsCount: newlyDiscoveredBriefs.length,
+          archivedBriefs: saved.archivedBriefs,
+          clientWorkspaces: saved.clientWorkspaces,
+          notificationLogs: saved.notificationLogs,
+        });
+      }
+
+      res.json({
+        ok: true,
+        revision: serverRevision,
+        syncedCount: (saved.archivedBriefs || []).length,
+        newlyAddedCount: newlyDiscoveredBriefs.length,
+        archivedBriefs: saved.archivedBriefs,
+        clientWorkspaces: saved.clientWorkspaces,
+        notificationLogs: saved.notificationLogs,
+      });
+    } catch (err) {
+      console.error('Error in POST /api/studio-state/briefs/reconcile:', err);
+      res.status(500).json({ ok: false, error: 'Failed to reconcile briefs' });
     }
   });
 
@@ -539,7 +680,12 @@ async function startServer() {
       }
 
       const saved = writeServerDb(db);
-      res.json({ ok: true, state: saved });
+      broadcastRealtimeEvent('state:synced', {
+        archivedBriefs: saved.archivedBriefs,
+        clientWorkspaces: saved.clientWorkspaces,
+        notificationLogs: saved.notificationLogs,
+      });
+      res.json({ ok: true, revision: serverRevision, state: saved });
     } catch (err) {
       console.error('Error in POST /api/studio-state/sync:', err);
       res.status(500).json({ ok: false, error: 'Failed to sync studio state' });

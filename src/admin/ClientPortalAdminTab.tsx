@@ -19,6 +19,10 @@ import {
   CLIENT_PORTAL_EVENT,
 } from '../clientPortalStore';
 import { ReceivedBriefsWidget } from './ReceivedBriefsWidget';
+import {
+  reconcileClientBriefsWithServer,
+  BRIEF_REALTIME_SYNC_EVENT,
+} from '../briefSyncService';
 import { getStudioSettings, saveStudioSettings } from '../adminStore';
 import {
   pullStateFromServer,
@@ -148,12 +152,13 @@ export const ClientPortalAdminTab: React.FC<ClientPortalAdminTabProps> = ({
   const handleManualServerSync = async () => {
     setIsSyncingServer(true);
     try {
+      await reconcileClientBriefsWithServer();
       await pullStateFromServer(true);
       refreshAll();
       setLastServerSyncTime(
         new Intl.DateTimeFormat('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date())
       );
-      onShowToast('✓ آخرین بریف‌ها، اعلان‌ها و اطلاعات پروژه‌ها از سرور مرکزی دریافت شد.');
+      onShowToast('✓ همگام‌سازی بلادرنگ بریف‌های کلاینت با سرور مرکزی انجام شد.');
     } finally {
       setIsSyncingServer(false);
     }
@@ -243,9 +248,11 @@ export const ClientPortalAdminTab: React.FC<ClientPortalAdminTabProps> = ({
       }
     };
     window.addEventListener(CLIENT_PORTAL_EVENT, refreshAll);
+    window.addEventListener(BRIEF_REALTIME_SYNC_EVENT, refreshAll);
     window.addEventListener(NEW_BRIEF_NOTIFICATION_EVENT, handleNewBriefNotif);
     return () => {
       window.removeEventListener(CLIENT_PORTAL_EVENT, refreshAll);
+      window.removeEventListener(BRIEF_REALTIME_SYNC_EVENT, refreshAll);
       window.removeEventListener(NEW_BRIEF_NOTIFICATION_EVENT, handleNewBriefNotif);
     };
   }, []);
