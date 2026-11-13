@@ -1,7 +1,7 @@
 /**
- * Creativity Juice — Central Server Synchronization & Direct Forwarding Helper
- * Synchronizes Briefs, Client Workspaces, Projects, and Team Credits across all devices via /api/studio-state
- * and generates direct WhatsApp / Email forwarding links for submitted briefs.
+ * Creativity Juice — Central Server Synchronization & Instant Notification Engine
+ * Synchronizes Briefs, Client Workspaces, Projects, Team Credits, and Instant Notifications
+ * across all devices via /api/studio-state and generates direct WhatsApp / Email alerts.
  */
 
 import { ClientWorkspace, ProjectBriefSubmission } from './data/clientPortalData';
@@ -14,13 +14,60 @@ const STORAGE_KEY_SERVICES = 'cj_studio_services_v5';
 const STORAGE_KEY_MANIFESTO = 'cj_studio_manifesto_v6';
 const STORAGE_KEY_MEDIA = 'cj_studio_media_v3';
 const STORAGE_KEY_SETTINGS = 'cj_studio_settings_v3';
+const STORAGE_KEY_NOTIF_CONFIG = 'cj_studio_notif_config_v1';
+const STORAGE_KEY_NOTIF_LOGS = 'cj_studio_notif_logs_v1';
 
 export const SERVER_SYNC_STATUS_EVENT = 'CJ_SERVER_SYNC_STATUS';
+export const NEW_BRIEF_NOTIFICATION_EVENT = 'CJ_NEW_BRIEF_NOTIFICATION';
+
+export interface NotificationConfig {
+  enabled: boolean;
+  adminEmail: string;
+  adminWhatsapp: string;
+  autoEmailEnabled: boolean;
+  autoWhatsappEnabled: boolean;
+  whatsappWebhookUrl?: string;
+  emailWebhookUrl?: string;
+  soundAlertEnabled: boolean;
+}
+
+export interface BriefNotificationRecord {
+  id: string;
+  briefId: string;
+  trackingCode: string;
+  brandName: string;
+  ownerName: string;
+  contactInfo: string;
+  selectedTrack: string;
+  marketTier: string;
+  problemSummary: string;
+  createdAt: string;
+  emailTarget: string;
+  whatsappTarget: string;
+  emailStatus: 'sent' | 'queued' | 'manual-ready';
+  whatsappStatus: 'sent' | 'ready-to-send';
+  readByAdmin: boolean;
+  whatsappUrl: string;
+  mailtoUrl: string;
+  isTest?: boolean;
+}
+
+const DEFAULT_NOTIF_CONFIG: NotificationConfig = {
+  enabled: true,
+  adminEmail: 'youthefzadeh@gmail.com',
+  adminWhatsapp: '',
+  autoEmailEnabled: true,
+  autoWhatsappEnabled: true,
+  whatsappWebhookUrl: '',
+  emailWebhookUrl: '',
+  soundAlertEnabled: true,
+};
 
 let isSyncInitialized = false;
 let isApplyingServerState = false;
 let lastServerSyncAt: string | null = null;
 let serverConnected = true;
+const seenNotificationIds = new Set<string>();
 
 export function getServerSyncStatus() {
   return {
@@ -29,9 +76,148 @@ export function getServerSyncStatus() {
   };
 }
 
+export function playNotificationChime() {
+  if (typeof window === 'undefined') return;
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc1.type = 'sine';
+    osc2.type = 'triangle';
+    osc1.frequency.setValueAtTime(587.33, now); // D5
+    osc1.frequency.setValueAtTime(880, now + 0.12); // A5
+    osc2.frequency.setValueAtTime(293.66, now);
+    osc2.frequency.setValueAtTime(440, now + 0.12);
+    gain.gain.setValueAtTime(0.12, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(ctx.destination);
+    osc1.start(now);
+    osc2.start(now);
+    osc1.stop(now + 0.45);
+    osc2.stop(now + 0.45);
+  } catch {
+    // ignore audio context restrictions
+  }
+}
+
+export function getNotificationConfig(): NotificationConfig {
+  if (typeof window === 'undefined') return DEFAULT_NOTIF_CONFIG;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_NOTIF_CONFIG);
+    const rawSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+    const settings = rawSettings ? JSON.parse(rawSettings) : {};
+    const parsed = raw ? JSON.parse(raw) : {};
+    return {
+      ...DEFAULT_NOTIF_CONFIG,
+      adminEmail: settings.contactEmail || DEFAULT_NOTIF_CONFIG.adminEmail,
+      adminWhatsapp: settings.adminWhatsapp || DEFAULT_NOTIF_CONFIG.adminWhatsapp,
+      ...parsed,
+    };
+  } catch {
+    return DEFAULT_NOTIF_CONFIG;
+  }
+}
+
+export function getNotificationLogs(): BriefNotificationRecord[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_NOTIF_LOGS);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function saveNotificationConfig(
+  partial: Partial<NotificationConfig>
+): Promise<NotificationConfig> {
+  const current = getNotificationConfig();
+  const updated: NotificationConfig = { ...current, ...partial };
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(STORAGE_KEY_NOTIF_CONFIG, JSON.stringify(updated));
+    try {
+      const rawSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+      const settings = rawSettings ? JSON.parse(rawSettings) : {};
+      if (updated.adminEmail) settings.contactEmail = updated.adminEmail;
+      if (updated.adminWhatsapp !== undefined) settings.adminWhatsapp = updated.adminWhatsapp;
+      localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
+    } catch {
+      // ignore
+    }
+    window.dispatchEvent(new CustomEvent('CJ_CLIENT_PORTAL_CHANGED'));
+  }
+
+  try {
+    await fetch('/api/studio-state/notifications/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated),
+    });
+  } catch {
+    // ignore offline error
+  }
+  return updated;
+}
+
+export async function markNotificationsRead(id?: string): Promise<void> {
+  const logs = getNotificationLogs().map((l) => (!id || l.id === id ? { ...l, readByAdmin: true } : l));
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(STORAGE_KEY_NOTIF_LOGS, JSON.stringify(logs));
+    window.dispatchEvent(new CustomEvent('CJ_CLIENT_PORTAL_CHANGED'));
+  }
+  try {
+    await fetch('/api/studio-state/notifications/mark-read', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
+  } catch {
+    // ignore
+  }
+}
+
+export async function triggerTestNotification(
+  customConfig?: Partial<NotificationConfig>
+): Promise<{ ok: boolean; notification?: BriefNotificationRecord }> {
+  try {
+    const configToSend = { ...getNotificationConfig(), ...(customConfig || {}) };
+    const res = await fetch('/api/studio-state/notifications/test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ config: configToSend }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.notification) {
+        const existing = getNotificationLogs().filter((x) => x.id !== data.notification.id);
+        const nextLogs = [data.notification, ...existing];
+        localStorage.setItem(STORAGE_KEY_NOTIF_LOGS, JSON.stringify(nextLogs));
+        if (configToSend.soundAlertEnabled) {
+          playNotificationChime();
+        }
+        window.dispatchEvent(new CustomEvent('CJ_CLIENT_PORTAL_CHANGED'));
+        window.dispatchEvent(
+          new CustomEvent(NEW_BRIEF_NOTIFICATION_EVENT, { detail: data.notification })
+        );
+        return { ok: true, notification: data.notification };
+      }
+    }
+  } catch (err) {
+    console.error('Failed triggering test notification:', err);
+  }
+  return { ok: false };
+}
+
 function mergeArrayById<T extends { id?: string }>(localArr: T[], serverArr: T[]): T[] {
   const map = new Map<string, T>();
-  // Put local items first, then overwrite/enrich with server items while keeping any new local items
   localArr.forEach((item) => {
     if (item && item.id) map.set(item.id, item);
   });
@@ -52,7 +238,6 @@ function mergeArrayById<T extends { id?: string }>(localArr: T[], serverArr: T[]
       }
     }
   });
-  // Sort so server's newest items stay at top
   const serverIds = new Set(serverArr.map((x) => x.id));
   const orderedFromServer = serverArr.map((s) => (s.id ? map.get(s.id)! : s));
   const localOnly = localArr.filter((l) => l.id && !serverIds.has(l.id));
@@ -106,7 +291,45 @@ export async function pullStateFromServer(forceDispatch = false): Promise<boolea
       }
     }
 
-    // 3. Sync Projects & Credits
+    // 3. Sync Notification Config & Notification Logs
+    if (st.notificationConfig && typeof st.notificationConfig === 'object') {
+      const rawNotifCfg = localStorage.getItem(STORAGE_KEY_NOTIF_CONFIG);
+      const nextNotifCfg = JSON.stringify(st.notificationConfig);
+      if (nextNotifCfg !== rawNotifCfg) {
+        localStorage.setItem(STORAGE_KEY_NOTIF_CONFIG, nextNotifCfg);
+        portalChanged = true;
+      }
+    }
+
+    if (Array.isArray(st.notificationLogs)) {
+      const rawLogs = localStorage.getItem(STORAGE_KEY_NOTIF_LOGS);
+      const prevLogs: BriefNotificationRecord[] = rawLogs ? JSON.parse(rawLogs) : [];
+      prevLogs.forEach((l) => seenNotificationIds.add(l.id));
+
+      const nextLogsJson = JSON.stringify(st.notificationLogs);
+      if (nextLogsJson !== rawLogs) {
+        localStorage.setItem(STORAGE_KEY_NOTIF_LOGS, nextLogsJson);
+        portalChanged = true;
+
+        // Check if there is a brand-new unread notification
+        const newestUnread = (st.notificationLogs as BriefNotificationRecord[]).find(
+          (l) => !l.readByAdmin && !seenNotificationIds.has(l.id)
+        );
+        if (newestUnread) {
+          seenNotificationIds.add(newestUnread.id);
+          const cfg = getNotificationConfig();
+          if (cfg.soundAlertEnabled) {
+            playNotificationChime();
+          }
+          window.dispatchEvent(
+            new CustomEvent(NEW_BRIEF_NOTIFICATION_EVENT, { detail: newestUnread })
+          );
+        }
+      }
+      (st.notificationLogs as BriefNotificationRecord[]).forEach((l) => seenNotificationIds.add(l.id));
+    }
+
+    // 4. Sync Projects & Credits
     if (Array.isArray(st.projects) && st.projects.length > 0) {
       const rawLocalProj = localStorage.getItem(STORAGE_KEY_PROJECTS);
       const serverProjJson = JSON.stringify(st.projects);
@@ -117,7 +340,7 @@ export async function pullStateFromServer(forceDispatch = false): Promise<boolea
       }
     }
 
-    // 4. Sync Team Members
+    // 5. Sync Team Members
     if (Array.isArray(st.team) && st.team.length > 0) {
       const rawLocalTeam = localStorage.getItem(STORAGE_KEY_TEAM);
       const serverTeamJson = JSON.stringify(st.team);
@@ -127,7 +350,7 @@ export async function pullStateFromServer(forceDispatch = false): Promise<boolea
       }
     }
 
-    // 5. Sync Services, Manifesto, Media, Settings
+    // 6. Sync Services, Manifesto, Settings
     if (Array.isArray(st.services) && st.services.length > 0) {
       const raw = localStorage.getItem(STORAGE_KEY_SERVICES);
       const next = JSON.stringify(st.services);
@@ -177,8 +400,8 @@ export async function pullStateFromServer(forceDispatch = false): Promise<boolea
 export async function pushBriefToServer(
   brief: ProjectBriefSubmission,
   workspace: ClientWorkspace
-): Promise<boolean> {
-  if (typeof window === 'undefined') return false;
+): Promise<{ ok: boolean; notification?: BriefNotificationRecord }> {
+  if (typeof window === 'undefined') return { ok: false };
   try {
     const res = await fetch('/api/studio-state/brief', {
       method: 'POST',
@@ -186,19 +409,34 @@ export async function pushBriefToServer(
       body: JSON.stringify({ brief, workspace }),
     });
     if (res.ok) {
+      const data = await res.json();
       serverConnected = true;
       lastServerSyncAt = new Date().toLocaleTimeString('fa-IR');
+
+      if (data?.notification) {
+        seenNotificationIds.add(data.notification.id);
+        const existing = getNotificationLogs().filter((x) => x.id !== data.notification.id);
+        localStorage.setItem(
+          STORAGE_KEY_NOTIF_LOGS,
+          JSON.stringify([data.notification, ...existing])
+        );
+        window.dispatchEvent(
+          new CustomEvent(NEW_BRIEF_NOTIFICATION_EVENT, { detail: data.notification })
+        );
+      }
+
       window.dispatchEvent(
         new CustomEvent(SERVER_SYNC_STATUS_EVENT, {
           detail: { connected: true, lastSyncAt: lastServerSyncAt },
         })
       );
-      return true;
+      window.dispatchEvent(new CustomEvent('CJ_CLIENT_PORTAL_CHANGED'));
+      return { ok: true, notification: data?.notification };
     }
   } catch (err) {
     console.error('Failed pushing brief to server:', err);
   }
-  return false;
+  return { ok: false };
 }
 
 export async function pushServerSyncPayload(payload: {
@@ -212,6 +450,7 @@ export async function pushServerSyncPayload(payload: {
   manifesto?: any[];
   media?: any[];
   settings?: any;
+  notificationConfig?: Partial<NotificationConfig>;
 }): Promise<boolean> {
   if (typeof window === 'undefined' || isApplyingServerState) return false;
   try {
@@ -240,7 +479,6 @@ export function initServerSync() {
   if (typeof window === 'undefined' || isSyncInitialized) return;
   isSyncInitialized = true;
 
-  // Initial pull from central server, and if server is empty, seed it with local state
   pullStateFromServer(true).then(() => {
     try {
       const rawBriefs = localStorage.getItem(STORAGE_KEY_ARCHIVED_BRIEFS);
@@ -258,7 +496,6 @@ export function initServerSync() {
     }
   });
 
-  // Periodic background sync every 4 seconds so Admin Panel receives new briefs automatically
   window.setInterval(() => {
     pullStateFromServer(false);
   }, 4000);
@@ -269,7 +506,7 @@ export function initServerSync() {
 }
 
 /**
- * Generates direct WhatsApp and Email URLs so a client or admin can forward a copy of the brief
+ * Generates direct WhatsApp and Email URLs so a client or admin can forward/notify a copy of the brief
  */
 export function buildBriefForwardLinks(params: {
   brandName: string;
@@ -282,19 +519,9 @@ export function buildBriefForwardLinks(params: {
   whatsappPhone?: string;
   adminEmail?: string;
 }) {
-  let whatsappNumber = '';
-  let emailAddr = 'youthefzadeh@gmail.com';
-
-  try {
-    const rawSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
-    if (rawSettings) {
-      const parsed = JSON.parse(rawSettings);
-      if (parsed.adminWhatsapp) whatsappNumber = parsed.adminWhatsapp;
-      if (parsed.contactEmail) emailAddr = parsed.contactEmail;
-    }
-  } catch {
-    // ignore
-  }
+  const notifCfg = getNotificationConfig();
+  let whatsappNumber = notifCfg.adminWhatsapp || '';
+  let emailAddr = notifCfg.adminEmail || 'youthefzadeh@gmail.com';
 
   if (params.whatsappPhone) whatsappNumber = params.whatsappPhone;
   if (params.adminEmail) emailAddr = params.adminEmail;
@@ -302,7 +529,7 @@ export function buildBriefForwardLinks(params: {
   const cleanPhone = whatsappNumber.replace(/[^0-9]/g, '').replace(/^0/, '98');
 
   const messageBody = [
-    `📋 *بریف جدید پروژه — استودیو Creativity Juice*`,
+    `🔔 *اعلان فوری ثبت بریف جدید — استودیو Creativity Juice*`,
     `• نام برند / پروژه: ${params.brandName}`,
     `• کد رهگیری یکتا: ${params.trackingCode}`,
     params.username ? `• نام کاربری پورتال: ${params.username}` : '',
@@ -321,12 +548,16 @@ export function buildBriefForwardLinks(params: {
     ? `https://wa.me/${cleanPhone}?text=${encodedText}`
     : `https://wa.me/?text=${encodedText}`;
 
-  const subject = encodeURIComponent(`بریف جدید پروژه: ${params.brandName} (کد رهگیری: ${params.trackingCode})`);
+  const subject = encodeURIComponent(
+    `🔔 اعلان بریف جدید پروژه: ${params.brandName} (کد رهگیری: ${params.trackingCode})`
+  );
   const mailtoUrl = `mailto:${emailAddr}?subject=${subject}&body=${encodedText}`;
 
   return {
     whatsappUrl,
     mailtoUrl,
     messageBody,
+    emailAddr,
+    whatsappNumber,
   };
 }

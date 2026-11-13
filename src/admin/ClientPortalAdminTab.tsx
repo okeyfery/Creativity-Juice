@@ -18,7 +18,18 @@ import {
   CLIENT_PORTAL_EVENT,
 } from '../clientPortalStore';
 import { getStudioSettings, saveStudioSettings } from '../adminStore';
-import { pullStateFromServer, buildBriefForwardLinks } from '../serverSync';
+import {
+  pullStateFromServer,
+  buildBriefForwardLinks,
+  getNotificationConfig,
+  saveNotificationConfig,
+  getNotificationLogs,
+  markNotificationsRead,
+  triggerTestNotification,
+  NEW_BRIEF_NOTIFICATION_EVENT,
+  NotificationConfig,
+  BriefNotificationRecord,
+} from '../serverSync';
 import {
   Key,
   Plus,
@@ -42,6 +53,10 @@ import {
   Film,
   FileText,
   RefreshCw,
+  Bell,
+  Mail,
+  MessageSquare,
+  Send,
 } from 'lucide-react';
 
 interface ClientPortalAdminTabProps {
@@ -55,7 +70,7 @@ export const ClientPortalAdminTab: React.FC<ClientPortalAdminTabProps> = ({
 }) => {
   const [workspaces, setWorkspaces] = useState<ClientWorkspace[]>(() => getClientWorkspaces());
   const [briefs, setBriefs] = useState<ProjectBriefSubmission[]>(() => getAllArchivedBriefs());
-  const [subTab, setSubTab] = useState<'unified' | 'profiles' | 'briefs' | 'files'>('unified');
+  const [subTab, setSubTab] = useState<'unified' | 'profiles' | 'briefs' | 'files' | 'notifications'>('unified');
   const [searchQuery, setSearchQuery] = useState('');
   const [briefStatusFilter, setBriefStatusFilter] = useState<'all' | 'new' | 'reviewed' | 'in-production'>('all');
   const [fileStatusFilter, setFileStatusFilter] = useState<'all' | 'approved' | 'pending-review' | 'revision-requested'>('all');
@@ -109,12 +124,24 @@ export const ClientPortalAdminTab: React.FC<ClientPortalAdminTabProps> = ({
   const [lastServerSyncTime, setLastServerSyncTime] = useState<string>(() =>
     new Intl.DateTimeFormat('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date())
   );
-  const [adminWhatsapp, setAdminWhatsapp] = useState<string>(() => getStudioSettings().adminWhatsapp || '');
-  const [adminEmail, setAdminEmail] = useState<string>(() => getStudioSettings().contactEmail || 'youthefzadeh@gmail.com');
+  const [notifConfig, setNotifConfig] = useState<NotificationConfig>(() => getNotificationConfig());
+  const [notifLogs, setNotifLogs] = useState<BriefNotificationRecord[]>(() => getNotificationLogs());
+  const [liveIncomingAlert, setLiveIncomingAlert] = useState<BriefNotificationRecord | null>(null);
+  const [isSendingTestNotif, setIsSendingTestNotif] = useState(false);
+
+  const [adminWhatsapp, setAdminWhatsapp] = useState<string>(() => getNotificationConfig().adminWhatsapp || getStudioSettings().adminWhatsapp || '');
+  const [adminEmail, setAdminEmail] = useState<string>(() => getNotificationConfig().adminEmail || getStudioSettings().contactEmail || 'youthefzadeh@gmail.com');
+  const [whatsappWebhookUrl, setWhatsappWebhookUrl] = useState<string>(() => getNotificationConfig().whatsappWebhookUrl || '');
+  const [emailWebhookUrl, setEmailWebhookUrl] = useState<string>(() => getNotificationConfig().emailWebhookUrl || '');
   const [showImportBriefModal, setShowImportBriefModal] = useState(false);
   const [manualBriefBrand, setManualBriefBrand] = useState('');
   const [manualBriefOwner, setManualBriefOwner] = useState('');
   const [manualBriefText, setManualBriefText] = useState('');
+
+  const unreadNotifCount = useMemo(
+    () => notifLogs.filter((n) => !n.readByAdmin).length,
+    [notifLogs]
+  );
 
   const handleManualServerSync = async () => {
     setIsSyncingServer(true);
@@ -124,19 +151,49 @@ export const ClientPortalAdminTab: React.FC<ClientPortalAdminTabProps> = ({
       setLastServerSyncTime(
         new Intl.DateTimeFormat('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date())
       );
-      onShowToast('✓ آخرین بریف‌ها و اطلاعات پروژه‌ها از سرور مرکزی استودیو دریافت و همگام‌سازی شد.');
+      onShowToast('✓ آخرین بریف‌ها، اعلان‌ها و اطلاعات پروژه‌ها از سرور مرکزی دریافت شد.');
     } finally {
       setIsSyncingServer(false);
     }
   };
 
-  const handleSaveForwardSettings = (e: React.FormEvent) => {
+  const handleSaveForwardSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     saveStudioSettings({
       adminWhatsapp: adminWhatsapp.trim(),
       contactEmail: adminEmail.trim() || 'youthefzadeh@gmail.com',
     });
-    onShowToast('✓ شماره واتساپ و ایمیل دریافت کپی بریف‌ها روی سرور ذخیره شد.');
+    const updatedCfg = await saveNotificationConfig({
+      ...notifConfig,
+      adminWhatsapp: adminWhatsapp.trim(),
+      adminEmail: adminEmail.trim() || 'youthefzadeh@gmail.com',
+      whatsappWebhookUrl: whatsappWebhookUrl.trim(),
+      emailWebhookUrl: emailWebhookUrl.trim(),
+    });
+    setNotifConfig(updatedCfg);
+    onShowToast('✓ تنظیمات اعلان فوری ایمیل و واتساپ مدیریت روی سرور ذخیره شد.');
+  };
+
+  const handleTriggerTestNotification = async () => {
+    setIsSendingTestNotif(true);
+    try {
+      const res = await triggerTestNotification({
+        ...notifConfig,
+        adminWhatsapp: adminWhatsapp.trim(),
+        adminEmail: adminEmail.trim() || 'youthefzadeh@gmail.com',
+        whatsappWebhookUrl: whatsappWebhookUrl.trim(),
+        emailWebhookUrl: emailWebhookUrl.trim(),
+      });
+      refreshAll();
+      if (res.ok && res.notification) {
+        setLiveIncomingAlert(res.notification);
+        onShowToast(`🔔 اعلان آزمایشی به ایمیل (${res.notification.emailTarget}) ارسال شد و لینک واتساپ آماده است.`);
+      } else {
+        onShowToast('خطا در ارسال اعلان آزمایشی. لطفاً اتصال سرور را بررسی کنید.');
+      }
+    } finally {
+      setIsSendingTestNotif(false);
+    }
   };
 
   const handleManualImportBrief = (e: React.FormEvent) => {
@@ -159,21 +216,36 @@ export const ClientPortalAdminTab: React.FC<ClientPortalAdminTabProps> = ({
     setManualBriefOwner('');
     setManualBriefText('');
     setShowImportBriefModal(false);
-    onShowToast(`✓ بریف «${res.brief.brandName}» با کد رهگیری ${res.brief.trackingCode} ثبت و در سرور ذخیره شد.`);
+    onShowToast(`✓ بریف «${res.brief.brandName}» با کد رهگیری ${res.brief.trackingCode} ثبت و اعلان فوری صادر شد.`);
   };
 
   const refreshAll = () => {
     const updatedWs = getClientWorkspaces();
     setWorkspaces(updatedWs);
     setBriefs(getAllArchivedBriefs());
+    const cfg = getNotificationConfig();
+    setNotifConfig(cfg);
+    setNotifLogs(getNotificationLogs());
     if (!selectedWorkspaceId && updatedWs.length > 0) {
       setSelectedWorkspaceId(updatedWs[0].id);
     }
   };
 
   useEffect(() => {
+    const handleNewBriefNotif = (ev: Event) => {
+      const customEv = ev as CustomEvent<BriefNotificationRecord>;
+      if (customEv.detail) {
+        setLiveIncomingAlert(customEv.detail);
+        refreshAll();
+        onShowToast(`🔔 بریف جدید از «${customEv.detail.brandName}» (${customEv.detail.trackingCode}) ثبت شد!`);
+      }
+    };
     window.addEventListener(CLIENT_PORTAL_EVENT, refreshAll);
-    return () => window.removeEventListener(CLIENT_PORTAL_EVENT, refreshAll);
+    window.addEventListener(NEW_BRIEF_NOTIFICATION_EVENT, handleNewBriefNotif);
+    return () => {
+      window.removeEventListener(CLIENT_PORTAL_EVENT, refreshAll);
+      window.removeEventListener(NEW_BRIEF_NOTIFICATION_EVENT, handleNewBriefNotif);
+    };
   }, []);
 
   const filteredWorkspaces = useMemo(() => {
@@ -598,6 +670,84 @@ export const ClientPortalAdminTab: React.FC<ClientPortalAdminTabProps> = ({
         </form>
       </div>
 
+      {/* Live Instant Notification Banner when a New Brief Arrives */}
+      {liveIncomingAlert && (
+        <div className="bg-gradient-to-r from-amber-500/20 via-emerald-500/15 to-neutral-900 border-2 border-amber-400 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl animate-fade-in">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500 text-neutral-950 flex items-center justify-center shrink-0 shadow-md">
+              <Bell className="w-5 h-5 animate-bounce" />
+            </div>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="px-2 py-0.5 rounded bg-amber-500 text-neutral-950 font-mono text-[10px] font-black">
+                  {liveIncomingAlert.isTest ? 'TEST NOTIFICATION' : `NEW BRIEF // ${liveIncomingAlert.trackingCode}`}
+                </span>
+                <h4 className="text-sm font-black text-white">
+                  اعلان فوری ثبت بریف جدید: «{liveIncomingAlert.brandName}» ({liveIncomingAlert.ownerName})
+                </h4>
+                <span className="text-[11px] text-emerald-300 font-mono">
+                  {liveIncomingAlert.createdAt}
+                </span>
+              </div>
+              <p className="text-xs text-neutral-200 mt-1 line-clamp-2">
+                {liveIncomingAlert.problemSummary}
+              </p>
+              <div className="flex flex-wrap items-center gap-3 mt-1.5 text-[11px]">
+                <span className="text-emerald-400 font-bold">
+                  ✓ وضعیت ایمیل ({liveIncomingAlert.emailTarget}):{' '}
+                  {liveIncomingAlert.emailStatus === 'sent' ? 'ارسال خودکار انجام شد' : 'آماده ارسال'}
+                </span>
+                <span className="text-amber-300 font-bold">
+                  • وضعیت واتساپ ({liveIncomingAlert.whatsappTarget}): آماده ارسال فوری
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <a
+              href={liveIncomingAlert.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black flex items-center gap-1.5 shadow-md transition"
+            >
+              <span>📲</span>
+              <span>ارسال فوری به واتساپ</span>
+            </a>
+            <a
+              href={liveIncomingAlert.mailtoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3.5 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-amber-500/40 text-xs font-black flex items-center gap-1.5 transition"
+            >
+              <span>✉️</span>
+              <span>ارسال به ایمیل</span>
+            </a>
+            <button
+              type="button"
+              onClick={() => {
+                void markNotificationsRead(liveIncomingAlert.id);
+                setLiveIncomingAlert(null);
+                setSubTab('briefs');
+              }}
+              className="px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 text-xs font-black cursor-pointer"
+            >
+              مشاهده در صندوق بریف‌ها
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                void markNotificationsRead(liveIncomingAlert.id);
+                setLiveIncomingAlert(null);
+              }}
+              className="w-8 h-8 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-400 hover:text-white flex items-center justify-center text-xs cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Unified KPI Metrics Strip */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         <div className="bg-[#141417] border border-[#27272A] p-4 rounded-2xl flex items-center justify-between">
@@ -718,6 +868,23 @@ export const ClientPortalAdminTab: React.FC<ClientPortalAdminTabProps> = ({
           >
             <FolderArchive className="w-4 h-4" />
             <span>مخزن کل فایل‌های آرشیوشده ({stats.totalFiles})</span>
+          </button>
+
+          <button
+            onClick={() => setSubTab('notifications')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition cursor-pointer ${
+              subTab === 'notifications'
+                ? 'bg-emerald-500 text-neutral-950 shadow-sm'
+                : 'bg-neutral-900 text-emerald-300 border border-emerald-500/30 hover:bg-neutral-800'
+            }`}
+          >
+            <Bell className="w-4 h-4" />
+            <span>اعلان‌های فوری ایمیل و واتساپ ({notifLogs.length})</span>
+            {unreadNotifCount > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[10px] font-black">
+                {unreadNotifCount} جدید
+              </span>
+            )}
           </button>
         </div>
 
@@ -1611,6 +1778,286 @@ export const ClientPortalAdminTab: React.FC<ClientPortalAdminTabProps> = ({
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* =====================================================================
+          VIEW 5: INSTANT NOTIFICATIONS CENTER (EMAIL & WHATSAPP ALERTS + LOGS)
+         ===================================================================== */}
+      {subTab === 'notifications' && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          {/* Right Column (5 cols): Notification Channels & Webhook Configuration */}
+          <div className="lg:col-span-5 bg-[#141417] border border-[#27272A] rounded-2xl p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+              <div className="flex items-center gap-2">
+                <Bell className="w-5 h-5 text-emerald-400" />
+                <div>
+                  <h3 className="text-sm sm:text-base font-black text-white">
+                    تنظیمات اعلان‌های فوری ایمیل و واتساپ
+                  </h3>
+                  <p className="text-[11px] text-neutral-400">
+                    ارسال خودکار نوتیفیکیشن به مدیریت به محض ثبت هر بریف جدید توسط کارفرمایان
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <form onSubmit={handleSaveForwardSettings} className="space-y-4">
+              {/* Toggle Switches */}
+              <div className="space-y-2.5 p-3.5 rounded-xl bg-neutral-900 border border-neutral-800">
+                <label className="flex items-center justify-between gap-2 cursor-pointer">
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-amber-400" />
+                    <span className="text-xs font-bold text-white">
+                      ارسال خودکار اعلان به ایمیل مدیریت هنگام ثبت بریف
+                    </span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={notifConfig.autoEmailEnabled}
+                    onChange={(e) =>
+                      setNotifConfig((prev) => ({ ...prev, autoEmailEnabled: e.target.checked }))
+                    }
+                    className="w-4 h-4 accent-emerald-500 cursor-pointer"
+                  />
+                </label>
+
+                <label className="flex items-center justify-between gap-2 cursor-pointer pt-2 border-t border-neutral-800">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-emerald-400" />
+                    <span className="text-xs font-bold text-white">
+                      فعال‌سازی اعلان فوری واتساپ و لینک مستقیم پیام
+                    </span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={notifConfig.autoWhatsappEnabled}
+                    onChange={(e) =>
+                      setNotifConfig((prev) => ({ ...prev, autoWhatsappEnabled: e.target.checked }))
+                    }
+                    className="w-4 h-4 accent-emerald-500 cursor-pointer"
+                  />
+                </label>
+
+                <label className="flex items-center justify-between gap-2 cursor-pointer pt-2 border-t border-neutral-800">
+                  <div className="flex items-center gap-2">
+                    <Bell className="w-4 h-4 text-sky-400" />
+                    <span className="text-xs font-bold text-white">
+                      پخش هشدار صوتی و نمایش بنر زنده در پنل مدیریت
+                    </span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={notifConfig.soundAlertEnabled}
+                    onChange={(e) =>
+                      setNotifConfig((prev) => ({ ...prev, soundAlertEnabled: e.target.checked }))
+                    }
+                    className="w-4 h-4 accent-emerald-500 cursor-pointer"
+                  />
+                </label>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-neutral-300 mb-1">
+                  آدرس ایمیل مدیریت جهت دریافت اعلان فوری بریف‌ها: *
+                </label>
+                <input
+                  type="email"
+                  value={adminEmail}
+                  onChange={(e) => setAdminEmail(e.target.value)}
+                  placeholder="youthefzadeh@gmail.com"
+                  dir="ltr"
+                  className="w-full px-3.5 py-2 rounded-xl bg-neutral-900 border border-neutral-700 text-xs font-mono text-white focus:border-amber-500 outline-none"
+                  required
+                />
+                <span className="text-[10px] text-neutral-500 block mt-1">
+                  هنگام ثبت هر بریف، سرور به صورت خودکار خلاصه و متن کامل بریف را به این ایمیل ارسال می‌کند.
+                </span>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-neutral-300 mb-1">
+                  شماره واتساپ مدیریت جهت دریافت اعلان فوری:
+                </label>
+                <input
+                  type="text"
+                  value={adminWhatsapp}
+                  onChange={(e) => setAdminWhatsapp(e.target.value)}
+                  placeholder="09121234567 یا 989121234567"
+                  dir="ltr"
+                  className="w-full px-3.5 py-2 rounded-xl bg-neutral-900 border border-neutral-700 text-xs font-mono text-white focus:border-emerald-500 outline-none"
+                />
+                <span className="text-[10px] text-neutral-500 block mt-1">
+                  پیام کامل بریف به همراه کد رهگیری مستقیماً برای این شماره واتساپ آماده و ارسال می‌شود.
+                </span>
+              </div>
+
+              <div className="pt-2 border-t border-neutral-800 space-y-3">
+                <span className="text-[11px] font-bold text-amber-400 block">
+                  وب‌هوک‌های اختصاصی (اختیاری - جهت اتصال به ربات واتساپ یا سرور ایمیل سازمانی):
+                </span>
+                <div>
+                  <label className="block text-[11px] text-neutral-400 mb-1">
+                    لینک Webhook واتساپ (CallMeBot / UltraMsg / GreenAPI):
+                  </label>
+                  <input
+                    type="url"
+                    value={whatsappWebhookUrl}
+                    onChange={(e) => setWhatsappWebhookUrl(e.target.value)}
+                    placeholder="https://api.ultramsg.com/..."
+                    dir="ltr"
+                    className="w-full px-3 py-1.5 rounded-xl bg-neutral-950 border border-neutral-800 text-xs font-mono text-neutral-200 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] text-neutral-400 mb-1">
+                    لینک Webhook ایمیل یا اتوماسیون (Make / Zapier / n8n):
+                  </label>
+                  <input
+                    type="url"
+                    value={emailWebhookUrl}
+                    onChange={(e) => setEmailWebhookUrl(e.target.value)}
+                    placeholder="https://hook.eu1.make.com/..."
+                    dir="ltr"
+                    className="w-full px-3 py-1.5 rounded-xl bg-neutral-950 border border-neutral-800 text-xs font-mono text-neutral-200 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-2">
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 text-xs font-black transition cursor-pointer"
+                >
+                  ذخیره تنظیمات اعلان فوری
+                </button>
+                <button
+                  type="button"
+                  onClick={handleTriggerTestNotification}
+                  disabled={isSendingTestNotif}
+                  className="py-2.5 px-4 rounded-xl bg-neutral-800 hover:bg-neutral-700 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>{isSendingTestNotif ? 'در حال ارسال تست...' : 'ارسال اعلان آزمایشی'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Left Column (7 cols): Instant Notification Logs & Dispatch History */}
+          <div className="lg:col-span-7 bg-[#141417] border border-[#27272A] rounded-2xl p-5 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-800 pb-3">
+              <div>
+                <h3 className="text-sm sm:text-base font-black text-white">
+                  تاریخچه و لاگ اعلان‌های فوری بریف‌ها ({notifLogs.length})
+                </h3>
+                <p className="text-[11px] text-neutral-400">
+                  فهرست تمام اعلان‌های صادرشده به ایمیل و واتساپ مدیریت هنگام ثبت بریف توسط کارفرمایان
+                </p>
+              </div>
+
+              {unreadNotifCount > 0 && (
+                <button
+                  type="button"
+                  onClick={() => void markNotificationsRead()}
+                  className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-emerald-400 text-xs font-bold cursor-pointer"
+                >
+                  ✓ علامت‌گذاری همه به عنوان خوانده‌شده ({unreadNotifCount})
+                </button>
+              )}
+            </div>
+
+            {notifLogs.length === 0 ? (
+              <div className="p-8 rounded-2xl bg-neutral-900/50 border border-dashed border-neutral-800 text-center space-y-2.5">
+                <Bell className="w-8 h-8 text-neutral-500 mx-auto" />
+                <p className="text-xs text-neutral-300 font-bold">
+                  هنوز اعلان جدیدی در لاگ ثبت نشده است.
+                </p>
+                <p className="text-[11px] text-neutral-500 max-w-md mx-auto">
+                  به محض ثبت بریف جدید توسط کارفرمایان یا کلیک روی دکمه «ارسال اعلان آزمایشی»، جزئیات ارسال ایمیل و واتساپ در این بخش ثبت می‌گردد.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3 max-h-[68vh] overflow-y-auto pr-1">
+                {notifLogs.map((log) => (
+                  <div
+                    key={log.id}
+                    className={`p-4 rounded-xl border transition space-y-2.5 ${
+                      !log.readByAdmin
+                        ? 'bg-amber-500/10 border-amber-500/50'
+                        : 'bg-neutral-900/80 border-neutral-800'
+                    }`}
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="px-2 py-0.5 rounded bg-neutral-950 text-amber-400 font-mono text-[10px] font-black border border-amber-500/30"
+                          dir="ltr"
+                        >
+                          {log.trackingCode}
+                        </span>
+                        <h4 className="text-xs sm:text-sm font-black text-white">
+                          {log.brandName} ({log.ownerName})
+                        </h4>
+                        {!log.readByAdmin && (
+                          <span className="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black">
+                            اعلان جدید
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[11px] font-mono text-neutral-400">{log.createdAt}</span>
+                    </div>
+
+                    <p className="text-xs text-neutral-300 leading-relaxed line-clamp-2">
+                      <strong className="text-amber-400">{log.selectedTrack}: </strong>
+                      {log.problemSummary}
+                    </p>
+
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-neutral-800/80 text-[11px]">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span
+                          className={`px-2 py-0.5 rounded-md font-bold ${
+                            log.emailStatus === 'sent'
+                              ? 'bg-emerald-500/20 text-emerald-300'
+                              : 'bg-amber-500/20 text-amber-300'
+                          }`}
+                        >
+                          ✉️ ایمیل ({log.emailTarget}):{' '}
+                          {log.emailStatus === 'sent' ? 'ارسال خودکار شد' : 'آماده ارسال'}
+                        </span>
+                        <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-300 font-bold">
+                          📲 واتساپ: {log.whatsappStatus === 'sent' ? 'ارسال وب‌هوک شد' : 'آماده ارسال مستقیم'}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        <a
+                          href={log.whatsappUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => void markNotificationsRead(log.id)}
+                          className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1 transition"
+                        >
+                          <span>📲</span>
+                          <span>ارسال در واتساپ</span>
+                        </a>
+                        <a
+                          href={log.mailtoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => void markNotificationsRead(log.id)}
+                          className="px-2.5 py-1 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-amber-300 text-xs font-bold flex items-center gap-1 transition"
+                        >
+                          <span>✉️</span>
+                          <span>ارسال ایمیل</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
