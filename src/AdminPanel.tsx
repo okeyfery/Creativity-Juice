@@ -7,11 +7,15 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   ProjectItem,
+  ProjectCreditItem,
+  TeamMemberItem,
   MediaItem,
   StudioSettings,
   getProjects,
   saveProject,
+  updateProjectCredits,
   deleteProject,
+  getTeamMembers,
   getMediaItems,
   addMediaItem,
   deleteMediaItem,
@@ -55,6 +59,8 @@ import {
   ExternalLink,
   Briefcase,
   Users,
+  UserPlus,
+  UserCheck,
   StickyNote,
   Laptop,
 } from 'lucide-react';
@@ -90,6 +96,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
   // Data States
   const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMemberItem[]>([]);
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [settings, setSettings] = useState<StudioSettings>(getStudioSettings());
 
@@ -103,6 +110,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [editingProject, setEditingProject] = useState<ProjectItem | null>(null);
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
   const [previewPhotoUrl, setPreviewPhotoUrl] = useState<string | null>(null);
+
+  // Dedicated Quick Project Credits Modal State
+  const [creditsModalProject, setCreditsModalProject] = useState<ProjectItem | null>(null);
+  const [creditsModalList, setCreditsModalList] = useState<ProjectCreditItem[]>([]);
+  const [creditMode, setCreditMode] = useState<'studio' | 'guest'>('studio');
+  const [selectedTeamMemberId, setSelectedTeamMemberId] = useState<string>('');
+  const [creditRoleInput, setCreditRoleInput] = useState<string>('');
+  const [guestNameInput, setGuestNameInput] = useState<string>('');
+  const [guestDeptInput, setGuestDeptInput] = useState<string>('');
 
   // Media Picker Modal State
   const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
@@ -132,6 +148,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     metrics: '',
     deliverables: [],
     tags: [],
+    projectCredits: [],
     colorAccent: '#D97706',
     featured: true,
   });
@@ -249,6 +266,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   // Load latest data from store
   const refreshData = () => {
     setProjects(getProjects());
+    setTeamMembers(getTeamMembers());
     setMediaItems(getMediaItems());
     setSettings(getStudioSettings());
     setIsAuthenticated(isAdminAuthenticated());
@@ -299,10 +317,96 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   };
 
   // -------------------------------------------------------------
-  // Project CRUD Handlers
+  // Project CRUD & Project Credits Handlers
   // -------------------------------------------------------------
+  const resetCreditInputs = (membersList: TeamMemberItem[] = teamMembers) => {
+    setCreditMode('studio');
+    const firstMember = membersList[0];
+    setSelectedTeamMemberId(firstMember ? firstMember.id : '');
+    setCreditRoleInput(firstMember ? firstMember.role : '');
+    setGuestNameInput('');
+    setGuestDeptInput('');
+  };
+
+  const handleSelectStudioMemberChange = (memberId: string) => {
+    setSelectedTeamMemberId(memberId);
+    const found = teamMembers.find((m) => m.id === memberId);
+    if (found) {
+      setCreditRoleInput(found.role);
+    }
+  };
+
+  const handleOpenCreditsModal = (item: ProjectItem) => {
+    setCreditsModalProject(item);
+    setCreditsModalList(Array.isArray(item.projectCredits) ? [...item.projectCredits] : []);
+    resetCreditInputs();
+  };
+
+  const handleAddCreditToList = (
+    currentList: ProjectCreditItem[],
+    setList: (next: ProjectCreditItem[]) => void
+  ) => {
+    if (creditMode === 'studio') {
+      const member = teamMembers.find((m) => m.id === selectedTeamMemberId);
+      if (!member) {
+        showToast('لطفاً یکی از اعضای تیم استودیو را انتخاب کنید.');
+        return;
+      }
+      if (!creditRoleInput.trim()) {
+        showToast('لطفاً سمت و نقش این عضو در پروژه را وارد کنید.');
+        return;
+      }
+      const existingIdx = currentList.findIndex((c) => !c.isGuest && c.memberId === member.id);
+      const newCredit: ProjectCreditItem = {
+        id: existingIdx >= 0 ? currentList[existingIdx].id : `credit-${Date.now()}-${member.id}`,
+        memberId: member.id,
+        name: member.name,
+        roleInProject: creditRoleInput.trim(),
+        department: member.department,
+        avatar: member.photo,
+        isGuest: false,
+      };
+      if (existingIdx >= 0) {
+        const updated = [...currentList];
+        updated[existingIdx] = newCredit;
+        setList(updated);
+        showToast(`نقش «${member.name}» در این پروژه به‌روزرسانی شد.`);
+      } else {
+        setList([...currentList, newCredit]);
+        showToast(`«${member.name}» به عوامل این پروژه اضافه شد.`);
+      }
+    } else {
+      if (!guestNameInput.trim() || !creditRoleInput.trim()) {
+        showToast('لطفاً نام فرد مهمان و نقش او در پروژه را وارد کنید.');
+        return;
+      }
+      const newGuest: ProjectCreditItem = {
+        id: `credit-guest-${Date.now()}`,
+        name: guestNameInput.trim(),
+        roleInProject: creditRoleInput.trim(),
+        department: guestDeptInput.trim() || 'همکار مهمان / آزاد',
+        isGuest: true,
+      };
+      setList([...currentList, newGuest]);
+      setGuestNameInput('');
+      setGuestDeptInput('');
+      setCreditRoleInput('');
+      showToast(`همکار مهمان «${newGuest.name}» به پروژه اضافه شد.`);
+    }
+  };
+
+  const handleSaveCreditsModal = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!creditsModalProject) return;
+    updateProjectCredits(creditsModalProject.id, creditsModalList);
+    setCreditsModalProject(null);
+    refreshData();
+    showToast(`عوامل و نقش‌های پروژه «${creditsModalProject.title}» ذخیره و در سایت اصلی اعمال شد.`);
+  };
+
   const handleOpenCreateProject = () => {
     setEditingProject(null);
+    resetCreditInputs();
     setProjectForm({
       title: '',
       titleEn: '',
@@ -322,6 +426,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       metrics: '',
       deliverables: ['استراتژی و دی‌ان‌ای برند', 'دیزاین سیستم بصری'],
       tags: ['هویت برند', 'معماری'],
+      projectCredits: [],
       colorAccent: '#D97706',
       featured: true,
     });
@@ -330,7 +435,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
   const handleOpenEditProject = (item: ProjectItem) => {
     setEditingProject(item);
-    setProjectForm({ ...item });
+    resetCreditInputs();
+    setProjectForm({
+      ...item,
+      projectCredits: Array.isArray(item.projectCredits) ? [...item.projectCredits] : [],
+    });
     setIsProjectModalOpen(true);
   };
 
@@ -350,6 +459,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     };
 
     const targetCategory = (projectForm.category as any) || 'branding';
+    const creditsList = Array.isArray(projectForm.projectCredits) ? projectForm.projectCredits : [];
 
     const projectData: ProjectItem = {
       id: editingProject ? editingProject.id : `proj-${Date.now()}`,
@@ -382,6 +492,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           ? projectForm.deliverables
           : ['هویت بصری جامع', 'کتابچه استراتژی'],
       tags: projectForm.tags && projectForm.tags.length > 0 ? projectForm.tags : ['استودیو', 'دیزاین'],
+      projectCredits: creditsList,
+      assignedTeamIds: creditsList.filter((cr) => !cr.isGuest && cr.memberId).map((cr) => cr.memberId!),
       colorAccent: projectForm.colorAccent || '#D97706',
       featured: projectForm.featured ?? true,
       isPublished: true,
@@ -391,7 +503,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
     saveProject(projectData);
     setIsProjectModalOpen(false);
-    showToast(editingProject ? 'پروژه با موفقیت به‌روزرسانی شد.' : 'پروژه جدید با موفقیت اضافه شد.');
+    showToast(editingProject ? 'پروژه و عوامل آن با موفقیت به‌روزرسانی شد.' : 'پروژه جدید با موفقیت اضافه شد.');
   };
 
   const handleDeleteProjectEntry = (id: string, title: string) => {
@@ -969,6 +1081,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
                       <div className="flex items-center gap-2">
                         <button
+                          onClick={() => handleOpenCreditsModal(p)}
+                          className="px-2.5 py-1.5 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+                          title="افزودن یا حذف افراد و نقش‌ها در این پروژه"
+                        >
+                          <Users className="w-3.5 h-3.5 text-amber-400" />
+                          <span>عوامل پروژه ({(p.projectCredits || []).length})</span>
+                        </button>
+                        <button
                           onClick={() => handleOpenEditProject(p)}
                           className="p-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 hover:text-white rounded-md transition cursor-pointer"
                           title="ویرایش پروژه"
@@ -1000,7 +1120,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     <span>مدیریت پروژه‌ها و نمونه‌کارها (Projects CMS)</span>
                   </h1>
                   <p className="text-xs sm:text-sm text-neutral-400 mt-1">
-                    فرم‌های ایجاد، ویرایش و حذف پرونده‌های استودیو با اعمال بلادرنگ در گالری عمومی.
+                    فرم‌های ایجاد، ویرایش، مدیریت عوامل اجرایی هر پروژه و حذف پرونده‌های استودیو با اعمال بلادرنگ در سایت اصلی.
                   </p>
                 </div>
 
@@ -1076,7 +1196,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                       </div>
 
                       {/* Content */}
-                      <div className="p-4 space-y-2">
+                      <div className="p-4 space-y-2.5">
                         <div className="flex items-center justify-between">
                           <span className="text-[11px] text-amber-500 font-mono">{p.client}</span>
                           <span className="text-[11px] text-neutral-400 font-mono">{p.year}</span>
@@ -1087,6 +1207,55 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         <p className="text-xs text-neutral-400 line-clamp-2 leading-relaxed">
                           {p.subtitle || p.challenge}
                         </p>
+
+                        {/* Project Credits Summary Section on Card */}
+                        <div className="pt-2 border-t border-neutral-800/80 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[11px] text-neutral-300 font-semibold flex items-center gap-1.5">
+                              <Users className="w-3.5 h-3.5 text-amber-400" />
+                              <span>افراد و عوامل پروژه ({(p.projectCredits || []).length} نفر)</span>
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleOpenCreditsModal(p)}
+                              className="text-[11px] text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1 cursor-pointer bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 px-2 py-0.5 rounded-md transition"
+                            >
+                              <UserPlus className="w-3 h-3" />
+                              <span>افزودن / کم کردن افراد</span>
+                            </button>
+                          </div>
+
+                          {(p.projectCredits || []).length > 0 ? (
+                            <div className="flex flex-wrap gap-1.5">
+                              {(p.projectCredits || []).map((cr) => (
+                                <span
+                                  key={cr.id}
+                                  className="inline-flex items-center gap-1.5 text-[10px] bg-neutral-900 border border-neutral-800 text-neutral-200 px-2 py-1 rounded-md"
+                                  title={`${cr.name} — ${cr.roleInProject}`}
+                                >
+                                  {cr.avatar ? (
+                                    <img
+                                      src={cr.avatar}
+                                      alt={cr.name}
+                                      className="w-4 h-4 rounded-full object-cover shrink-0"
+                                    />
+                                  ) : (
+                                    <span className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-[8px] shrink-0">
+                                      {cr.name.slice(0, 1)}
+                                    </span>
+                                  )}
+                                  <span className="font-semibold text-white">{cr.name}</span>
+                                  <span className="text-neutral-500">·</span>
+                                  <span className="text-amber-400/90 truncate max-w-[110px]">{cr.roleInProject}</span>
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-[10px] text-neutral-500">
+                              هنوز فردی برای این پروژه ثبت نشده است.
+                            </p>
+                          )}
+                        </div>
 
                         <div className="flex flex-wrap gap-1 pt-1">
                           {p.tags.slice(0, 3).map((tag, idx) => (
@@ -1103,9 +1272,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
                     {/* Actions Toolbar */}
                     <div className="p-3 border-t border-[#27272A] bg-neutral-950/40 flex items-center justify-between">
-                      <div className="text-[11px] text-neutral-400 font-mono">
-                        {p.galleryImages?.length || 1} تصویر
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenCreditsModal(p)}
+                        className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 rounded text-xs font-semibold transition cursor-pointer"
+                      >
+                        <Users className="w-3.5 h-3.5 text-amber-400" />
+                        <span>مدیریت عوامل ({(p.projectCredits || []).length})</span>
+                      </button>
 
                       <div className="flex items-center gap-1.5">
                         <button
@@ -1909,6 +2083,207 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 </div>
               </div>
 
+              {/* Project Contributors & Roles Section inside Edit/Create Project Modal */}
+              <div className="space-y-3 bg-[#121214] p-4 rounded-xl border border-amber-500/30">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-800 pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4 text-amber-500" />
+                    <label className="text-xs sm:text-sm text-white font-bold">
+                      افراد و نقش‌های اجرایی در این پروژه (Project Credits)
+                    </label>
+                  </div>
+                  <span className="text-[11px] font-mono text-amber-400">
+                    {(projectForm.projectCredits || []).length} نفر ثبت شده • سینک زنده با سایت اصلی
+                  </span>
+                </div>
+
+                {/* Mode Switcher: Studio Member vs Guest */}
+                <div className="flex items-center gap-2 bg-neutral-900 p-1 rounded-lg border border-neutral-800 w-fit">
+                  <button
+                    type="button"
+                    onClick={() => setCreditMode('studio')}
+                    className={`px-3 py-1 rounded-md text-xs font-semibold transition cursor-pointer ${
+                      creditMode === 'studio'
+                        ? 'bg-amber-500 text-neutral-950 font-bold'
+                        : 'text-neutral-400 hover:text-white'
+                    }`}
+                  >
+                    انتخاب از اعضای تیم استودیو
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCreditMode('guest');
+                      setCreditRoleInput('');
+                    }}
+                    className={`px-3 py-1 rounded-md text-xs font-semibold transition cursor-pointer ${
+                      creditMode === 'guest'
+                        ? 'bg-amber-500 text-neutral-950 font-bold'
+                        : 'text-neutral-400 hover:text-white'
+                    }`}
+                  >
+                    + افزودن فرد مهمان یا آزاد
+                  </button>
+                </div>
+
+                {creditMode === 'studio' ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
+                    <div className="sm:col-span-5">
+                      <label className="block text-[11px] text-neutral-400 mb-1">عضو تیم استودیو</label>
+                      <select
+                        value={selectedTeamMemberId}
+                        onChange={(e) => handleSelectStudioMemberChange(e.target.value)}
+                        className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                      >
+                        {teamMembers.map((tm) => (
+                          <option key={tm.id} value={tm.id}>
+                            {tm.name} ({tm.department})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="sm:col-span-5">
+                      <label className="block text-[11px] text-neutral-400 mb-1">سمت و نقش در این پروژه</label>
+                      <input
+                        type="text"
+                        value={creditRoleInput}
+                        onChange={(e) => setCreditRoleInput(e.target.value)}
+                        placeholder="مثال: کارگردان هنری و تدوینگر ارشد"
+                        className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleAddCreditToList(projectForm.projectCredits || [], (next) =>
+                            setProjectForm({ ...projectForm, projectCredits: next })
+                          )
+                        }
+                        className="w-full py-2 px-3 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs rounded-lg transition cursor-pointer flex items-center justify-center gap-1"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>افزودن</span>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
+                    <div className="sm:col-span-4">
+                      <label className="block text-[11px] text-neutral-400 mb-1">نام فرد مهمان / همکار آزاد</label>
+                      <input
+                        type="text"
+                        value={guestNameInput}
+                        onChange={(e) => setGuestNameInput(e.target.value)}
+                        placeholder="مثال: آرش کاظمی"
+                        className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div className="sm:col-span-4">
+                      <label className="block text-[11px] text-neutral-400 mb-1">نقش در این پروژه</label>
+                      <input
+                        type="text"
+                        value={creditRoleInput}
+                        onChange={(e) => setCreditRoleInput(e.target.value)}
+                        placeholder="مثال: طراح سه‌بعدی و CGI"
+                        className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-[11px] text-neutral-400 mb-1">بخش / تخصص</label>
+                      <input
+                        type="text"
+                        value={guestDeptInput}
+                        onChange={(e) => setGuestDeptInput(e.target.value)}
+                        placeholder="مثال: جلوه‌های بصری"
+                        className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleAddCreditToList(projectForm.projectCredits || [], (next) =>
+                            setProjectForm({ ...projectForm, projectCredits: next })
+                          )
+                        }
+                        className="w-full py-2 px-3 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs rounded-lg transition cursor-pointer flex items-center justify-center gap-1"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>افزودن</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* List of Current Contributors */}
+                <div className="space-y-2 pt-2">
+                  {(projectForm.projectCredits || []).length === 0 ? (
+                    <div className="text-center py-4 bg-neutral-900/60 border border-dashed border-neutral-800 rounded-lg text-xs text-neutral-500">
+                      هنوز فردی برای این پروژه ثبت نشده است. از فرم بالا اعضای تیم یا افراد مهمان را اضافه کنید.
+                    </div>
+                  ) : (
+                    (projectForm.projectCredits || []).map((cr, idx) => (
+                      <div
+                        key={cr.id || idx}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg bg-neutral-900 border border-neutral-800"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          {cr.avatar ? (
+                            <img
+                              src={cr.avatar}
+                              alt={cr.name}
+                              className="w-8 h-8 rounded-full object-cover border border-neutral-700 shrink-0"
+                            />
+                          ) : (
+                            <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center font-bold text-xs shrink-0">
+                              {cr.name.slice(0, 1)}
+                            </div>
+                          )}
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-bold text-white">{cr.name}</span>
+                              <span className="text-[10px] text-neutral-400">
+                                · {cr.isGuest ? 'همکار مهمان / آزاد' : 'عضو رسمی استودیو'}
+                              </span>
+                            </div>
+                            {cr.department && (
+                              <span className="text-[10px] text-neutral-500 block">{cr.department}</span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={cr.roleInProject}
+                            onChange={(e) => {
+                              const next = [...(projectForm.projectCredits || [])];
+                              next[idx] = { ...cr, roleInProject: e.target.value };
+                              setProjectForm({ ...projectForm, projectCredits: next });
+                            }}
+                            placeholder="نقش در پروژه..."
+                            className="bg-neutral-950 border border-neutral-800 rounded-md px-2.5 py-1 text-xs text-amber-400 focus:outline-none focus:border-amber-500 w-44 sm:w-52"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const next = (projectForm.projectCredits || []).filter((_, i) => i !== idx);
+                              setProjectForm({ ...projectForm, projectCredits: next });
+                            }}
+                            className="px-2.5 py-1 bg-red-950/60 hover:bg-red-900 text-red-300 rounded-md text-xs font-semibold transition cursor-pointer flex items-center gap-1 shrink-0"
+                            title="حذف این فرد از پروژه"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>حذف</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
               <div className="pt-4 border-t border-[#27272A] flex items-center justify-end gap-2 shrink-0">
                 <button
                   type="button"
@@ -1922,6 +2297,250 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   className="px-6 py-2 bg-amber-500 hover:bg-amber-400 text-neutral-950 rounded-lg text-xs font-bold transition cursor-pointer shadow-lg shadow-amber-500/20"
                 >
                   {editingProject ? 'ذخیره تغییرات پروژه' : 'انتشار پروژه در استودیو'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------- */}
+      {/* MODAL: DEDICATED QUICK PROJECT CREDITS MANAGER */}
+      {/* ------------------------------------------------------------- */}
+      {creditsModalProject && (
+        <div className="fixed inset-0 z-[160] bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+          <div className="bg-[#141417] border border-amber-500/40 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="px-6 py-4 border-b border-[#27272A] flex items-center justify-between shrink-0 bg-[#161619]">
+              <div className="flex items-center gap-2.5">
+                <Users className="w-5 h-5 text-amber-500" />
+                <div>
+                  <h2 className="font-bold text-sm sm:text-base text-white">
+                    مدیریت عوامل و نقش‌ها: {creditsModalProject.title}
+                  </h2>
+                  <p className="text-[11px] text-neutral-400">
+                    هرگونه افزودن یا حذف افراد در این بخش، بلافاصله در نمونه‌کارها و پروفایل اعضای تیم در سایت اصلی اعمال می‌شود.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setCreditsModalProject(null)}
+                className="p-1 text-neutral-400 hover:text-white rounded-lg hover:bg-neutral-800 transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveCreditsModal} className="flex-1 overflow-y-auto p-6 space-y-5">
+              {/* Add Contributor Box */}
+              <div className="p-4 rounded-xl bg-[#121214] border border-neutral-800 space-y-3.5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                    <UserPlus className="w-4 h-4" />
+                    <span>افزودن فرد جدید به این پروژه</span>
+                  </span>
+
+                  <div className="flex items-center gap-1.5 bg-neutral-900 p-1 rounded-lg border border-neutral-800">
+                    <button
+                      type="button"
+                      onClick={() => setCreditMode('studio')}
+                      className={`px-2.5 py-1 rounded text-xs font-semibold transition cursor-pointer ${
+                        creditMode === 'studio'
+                          ? 'bg-amber-500 text-neutral-950 font-bold'
+                          : 'text-neutral-400 hover:text-white'
+                      }`}
+                    >
+                      از اعضای تیم استودیو
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCreditMode('guest');
+                        setCreditRoleInput('');
+                      }}
+                      className={`px-2.5 py-1 rounded text-xs font-semibold transition cursor-pointer ${
+                        creditMode === 'guest'
+                          ? 'bg-amber-500 text-neutral-950 font-bold'
+                          : 'text-neutral-400 hover:text-white'
+                      }`}
+                    >
+                      فرد مهمان / همکار آزاد
+                    </button>
+                  </div>
+                </div>
+
+                {creditMode === 'studio' ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
+                    <div className="sm:col-span-5">
+                      <label className="block text-[11px] text-neutral-400 mb-1">انتخاب عضو تیم استودیو</label>
+                      <select
+                        value={selectedTeamMemberId}
+                        onChange={(e) => handleSelectStudioMemberChange(e.target.value)}
+                        className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                      >
+                        {teamMembers.map((tm) => (
+                          <option key={tm.id} value={tm.id}>
+                            {tm.name} ({tm.department})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="sm:col-span-5">
+                      <label className="block text-[11px] text-neutral-400 mb-1">سمت و نقش در این پروژه</label>
+                      <input
+                        type="text"
+                        value={creditRoleInput}
+                        onChange={(e) => setCreditRoleInput(e.target.value)}
+                        placeholder="مثال: کارگردان هنری و تدوینگر"
+                        className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <button
+                        type="button"
+                        onClick={() => handleAddCreditToList(creditsModalList, setCreditsModalList)}
+                        className="w-full py-2 px-3 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs rounded-lg transition cursor-pointer flex items-center justify-center gap-1"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>افزودن</span>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
+                    <div className="sm:col-span-4">
+                      <label className="block text-[11px] text-neutral-400 mb-1">نام کامل فرد مهمان</label>
+                      <input
+                        type="text"
+                        value={guestNameInput}
+                        onChange={(e) => setGuestNameInput(e.target.value)}
+                        placeholder="مثال: سهراب احمدی"
+                        className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div className="sm:col-span-4">
+                      <label className="block text-[11px] text-neutral-400 mb-1">نقش در پروژه</label>
+                      <input
+                        type="text"
+                        value={creditRoleInput}
+                        onChange={(e) => setCreditRoleInput(e.target.value)}
+                        placeholder="مثال: صدابردار صحنه"
+                        className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-[11px] text-neutral-400 mb-1">تخصص</label>
+                      <input
+                        type="text"
+                        value={guestDeptInput}
+                        onChange={(e) => setGuestDeptInput(e.target.value)}
+                        placeholder="مثال: مهندسی صدا"
+                        className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <button
+                        type="button"
+                        onClick={() => handleAddCreditToList(creditsModalList, setCreditsModalList)}
+                        className="w-full py-2 px-3 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs rounded-lg transition cursor-pointer flex items-center justify-center gap-1"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>افزودن</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Active Contributors List */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-white">
+                    لیست افراد حاضر در این پروژه ({creditsModalList.length} نفر)
+                  </span>
+                  <span className="text-[11px] text-neutral-400">
+                    می‌توانید عنوان نقش هر فرد را مستقیماً ویرایش یا او را از پروژه حذف کنید
+                  </span>
+                </div>
+
+                {creditsModalList.length === 0 ? (
+                  <div className="text-center py-8 bg-neutral-900/50 border border-dashed border-neutral-800 rounded-xl text-xs text-neutral-500">
+                    هیچ فردی برای این پروژه ثبت نشده است.
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {creditsModalList.map((cr, idx) => (
+                      <div
+                        key={cr.id || idx}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 rounded-xl bg-neutral-900 border border-neutral-800 hover:border-neutral-700 transition"
+                      >
+                        <div className="flex items-center gap-3">
+                          {cr.avatar ? (
+                            <img
+                              src={cr.avatar}
+                              alt={cr.name}
+                              className="w-10 h-10 rounded-full object-cover border border-neutral-700 shrink-0"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center font-bold text-sm shrink-0">
+                              {cr.name.slice(0, 1)}
+                            </div>
+                          )}
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs sm:text-sm font-bold text-white">{cr.name}</span>
+                              <span className="text-[10px] text-neutral-400">
+                                · {cr.isGuest ? 'همکار مهمان' : 'عضو تیم استودیو'}
+                              </span>
+                            </div>
+                            {cr.department && (
+                              <span className="text-[11px] text-neutral-500 block mt-0.5">{cr.department}</span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={cr.roleInProject}
+                            onChange={(e) => {
+                              const next = [...creditsModalList];
+                              next[idx] = { ...cr, roleInProject: e.target.value };
+                              setCreditsModalList(next);
+                            }}
+                            placeholder="سمت در پروژه..."
+                            className="bg-neutral-950 border border-neutral-700 rounded-lg px-3 py-1.5 text-xs text-amber-400 focus:outline-none focus:border-amber-500 w-48 sm:w-56"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCreditsModalList(creditsModalList.filter((_, i) => i !== idx));
+                            }}
+                            className="px-3 py-1.5 bg-red-950/70 hover:bg-red-900 text-red-200 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1 shrink-0"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>حذف از پروژه</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-4 border-t border-[#27272A] flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setCreditsModalProject(null)}
+                  className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-lg text-xs font-semibold transition cursor-pointer"
+                >
+                  انصراف
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-amber-500 hover:bg-amber-400 text-neutral-950 rounded-lg text-xs font-bold transition cursor-pointer shadow-lg shadow-amber-500/20 flex items-center gap-1.5"
+                >
+                  <UserCheck className="w-4 h-4" />
+                  <span>ذخیره و اعمال در سایت اصلی</span>
                 </button>
               </div>
             </form>

@@ -18,6 +18,7 @@ import {
 } from './clientPortalStore';
 import { ProjectItem, isAdminAuthenticated, CJ_STUDIO_DATA_EVENT } from './adminStore';
 import { Dashboard } from './Dashboard';
+import { buildBriefForwardLinks } from './serverSync';
 
 interface ClientPortalWindowProps {
   onClose?: () => void;
@@ -1220,6 +1221,37 @@ export const ClientPortalWindow: React.FC<ClientPortalWindowProps> = ({
                             {b.adminNotes}
                           </div>
                         )}
+
+                        {(() => {
+                          const links = buildBriefForwardLinks(b);
+                          return (
+                            <div className="pt-2 border-t border-neutral-200/80 flex flex-wrap items-center justify-between gap-2">
+                              <span className="text-[10px] font-bold text-emerald-700">
+                                ✓ همگام‌سازی‌شده با سرور مرکزی و پنل مدیریت استودیو
+                              </span>
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <a
+                                  href={links.whatsappUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold flex items-center gap-1 transition"
+                                >
+                                  <span>📲</span>
+                                  <span>ارسال کپی بریف به واتساپ مدیریت</span>
+                                </a>
+                                <a
+                                  href={links.mailtoUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-2.5 py-1 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-amber-300 text-[11px] font-bold flex items-center gap-1 transition"
+                                >
+                                  <span>✉️</span>
+                                  <span>ارسال کپی با ایمیل</span>
+                                </a>
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
                     ))}
                   </div>

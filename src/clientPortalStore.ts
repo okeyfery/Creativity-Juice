@@ -11,6 +11,7 @@ import {
   ProjectBriefSubmission,
   INITIAL_CLIENT_WORKSPACES,
 } from './data/clientPortalData';
+import { pushBriefToServer, pushServerSyncPayload } from './serverSync';
 
 const STORAGE_KEY_WORKSPACES = 'cj_client_workspaces_v1';
 const STORAGE_KEY_ACTIVE_CLIENT = 'cj_client_portal_active_id';
@@ -111,12 +112,16 @@ export function getClientWorkspaces(): ClientWorkspace[] {
   }
 }
 
-export function saveClientWorkspaces(workspaces: ClientWorkspace[]) {
+export function saveClientWorkspaces(workspaces: ClientWorkspace[], replaceOnServer = false) {
   if (typeof window === 'undefined') return;
   try {
     const normalized = workspaces.map((w, i) => normalizeWorkspace(w, i));
     localStorage.setItem(STORAGE_KEY_WORKSPACES, JSON.stringify(normalized));
     notifyChange();
+    void pushServerSyncPayload({
+      clientWorkspaces: normalized,
+      replaceWorkspaces: replaceOnServer,
+    });
   } catch (err) {
     console.error('Failed saving client workspaces:', err);
   }
@@ -330,7 +335,7 @@ export function getClientInitialCalendarItems(client: ClientWorkspace) {
 export function deleteClientWorkspace(id: string) {
   const list = getClientWorkspaces();
   const filtered = list.filter((w) => w.id !== id);
-  saveClientWorkspaces(filtered);
+  saveClientWorkspaces(filtered, true);
   if (getActiveClientId() === id) {
     setActiveClientId(null);
   }
@@ -634,11 +639,15 @@ export function getAllArchivedBriefs(): ProjectBriefSubmission[] {
   return Array.from(map.values());
 }
 
-export function saveGlobalArchivedBriefs(briefs: ProjectBriefSubmission[]) {
+export function saveGlobalArchivedBriefs(briefs: ProjectBriefSubmission[], replaceOnServer = false) {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(STORAGE_KEY_ARCHIVED_BRIEFS, JSON.stringify(briefs));
     notifyChange();
+    void pushServerSyncPayload({
+      archivedBriefs: briefs,
+      replaceBriefs: replaceOnServer,
+    });
   } catch (err) {
     console.error('Failed saving archived briefs:', err);
   }
@@ -823,6 +832,9 @@ export function submitAndArchiveProjectBrief(payload: SubmitBriefPayload): {
   const allBriefs = getAllArchivedBriefs();
   const filteredBriefs = allBriefs.filter((b) => b.id !== briefRecord.id);
   saveGlobalArchivedBriefs([briefRecord, ...filteredBriefs]);
+
+  // Atomically push the new brief & workspace to the central server so Admin immediately receives it from any device
+  void pushBriefToServer(briefRecord, targetWorkspace!);
 
   return {
     workspace: targetWorkspace!,

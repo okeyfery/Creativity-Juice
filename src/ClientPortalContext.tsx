@@ -12,6 +12,7 @@ import {
   CLIENT_PORTAL_EVENT,
 } from './clientPortalStore';
 import { isAdminAuthenticated, CJ_STUDIO_DATA_EVENT } from './adminStore';
+import { initServerSync } from './serverSync';
 
 interface ClientPortalContextValue {
   /** Only the authenticated client's own workspace (strictly filtered by trackingCode & password) */
@@ -52,6 +53,7 @@ export const ClientPortalProvider: React.FC<{ children: React.ReactNode }> = ({ 
   }, []);
 
   useEffect(() => {
+    initServerSync();
     window.addEventListener(CLIENT_PORTAL_EVENT, refreshPortalState);
     window.addEventListener(CJ_STUDIO_DATA_EVENT, refreshPortalState);
     return () => {

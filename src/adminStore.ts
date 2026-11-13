@@ -9,6 +9,17 @@ import { addToTrash } from './trashStore';
 import { PORTFOLIO_CASE_STUDIES, CaseStudy } from './PortfolioGallery';
 import { INITIAL_PROJECTS, MasterProjectItem } from './data/projectsData';
 import { INITIAL_TEAM } from './data/teamData';
+import { pushServerSyncPayload } from './serverSync';
+
+export interface ProjectCreditItem {
+  id: string;
+  memberId?: string;
+  name: string;
+  roleInProject: string;
+  department?: string;
+  avatar?: string;
+  isGuest?: boolean;
+}
 
 export interface ProjectItem {
   id: string;
@@ -38,6 +49,7 @@ export interface ProjectItem {
   featured?: boolean;
   isPublished?: boolean;
   assignedTeamIds?: string[];
+  projectCredits?: ProjectCreditItem[];
   desktopPos?: { top: number; left: number; mobileTop?: number; mobileLeft?: number };
   createdAt: string;
   updatedAt: string;
@@ -64,6 +76,7 @@ export interface StudioSettings {
   manifestoSummary: string;
   contactEmail: string;
   contactPhone: string;
+  adminWhatsapp?: string;
   address: string;
   instagram: string;
   linkedin: string;
@@ -251,8 +264,9 @@ const DEFAULT_SETTINGS: StudioSettings = {
   tagline: 'معماری هویت برند، سینمای تجاری و دیزاین سیستم ادیتوریال',
   taglineEn: 'Contemporary Brand Architecture, Cinema & Creative OS',
   manifestoSummary: 'ما کلیشه‌های تکراری و ادعاهای توخالی را دور می‌ریزیم؛ برای هر برند، یک جهان مستقل، استوار و سینمایی خلق می‌کنیم.',
-  contactEmail: 'atelier@creativityjuice.studio',
+  contactEmail: 'youthefzadeh@gmail.com',
   contactPhone: '+۹۸ ۲۱ ۲۲۰۴ ۸۹۲۱',
+  adminWhatsapp: '',
   address: 'تهران، زعفرانیه، خیابان آصف، برج هنرهای معاصر، طبقه ۸',
   instagram: 'creativityjuice.studio',
   linkedin: 'creativity-juice',
@@ -264,39 +278,86 @@ const DEFAULT_SETTINGS: StudioSettings = {
   hideAdminFromVisitors: true,
 };
 
+// Helper to build default project credits from team data if not explicitly set yet
+export function buildDefaultProjectCredits(
+  project: { id: string; title?: string; role?: string; assignedTeamIds?: string[]; projectCredits?: ProjectCreditItem[] },
+  teamSource?: Array<{ id: string; name: string; role: string; department: string; photo: string; projectRoles?: MemberProjectRole[] }>
+): ProjectCreditItem[] {
+  if (Array.isArray(project.projectCredits)) {
+    return project.projectCredits;
+  }
+
+  const members = teamSource || (INITIAL_TEAM as any[]);
+  const credits: ProjectCreditItem[] = [];
+  const seenMemberIds = new Set<string>();
+
+  members.forEach((m) => {
+    const matchedRole = (m.projectRoles || []).find(
+      (pr: MemberProjectRole) =>
+        pr.projectId === project.id ||
+        (pr.projectTitle && project.title && (pr.projectTitle === project.title || pr.projectTitle.includes(project.title) || project.title.includes(pr.projectTitle)))
+    );
+    const isAssigned = (project.assignedTeamIds || []).includes(m.id);
+
+    if (matchedRole || isAssigned) {
+      seenMemberIds.add(m.id);
+      credits.push({
+        id: `credit-${project.id}-${m.id}`,
+        memberId: m.id,
+        name: m.name,
+        roleInProject: matchedRole?.roleInProject || project.role || m.role,
+        department: m.department,
+        avatar: m.photo,
+        isGuest: false,
+      });
+    }
+  });
+
+  return credits;
+}
+
 // Convert initial Master Projects to ProjectItems
 function getSeedProjects(): ProjectItem[] {
-  return INITIAL_PROJECTS.map((c) => ({
-    id: c.id,
-    title: c.title,
-    titleEn: c.titleEn,
-    subtitle: c.subtitle,
-    category: c.category,
-    categoryLabel: c.categoryLabel,
-    client: c.client,
-    year: c.year,
-    trackCode: c.trackCode,
-    deptTrack: c.deptTrack || c.trackCode,
-    role: c.role || 'استراتژیست هویت و آرت‌دایرکتور',
-    coverImage: c.coverImage,
-    highResImage: c.highResImage || c.coverImage,
-    galleryImages: c.galleryImages || [c.coverImage],
-    cinemaRatio: c.cinemaRatio,
-    videoDuration: c.videoDuration,
-    badge: c.badge,
-    challenge: c.challenge,
-    solution: c.solution,
-    description: c.description || `${c.challenge}\n\n${c.solution}`,
-    metrics: c.metrics,
-    deliverables: c.deliverables,
-    tags: c.tags,
-    colorAccent: c.colorAccent,
-    featured: c.featured ?? true,
-    isPublished: c.isPublished ?? true,
-    desktopPos: c.desktopPos || { top: 61, left: 21, mobileTop: 36, mobileLeft: 56 },
-    createdAt: c.createdAt || '۱۴۰۳/۰۶/۰۱',
-    updatedAt: c.updatedAt || '۱۴۰۳/۱۱/۱۰',
-  }));
+  return INITIAL_PROJECTS.map((c) => {
+    const defaultCredits = buildDefaultProjectCredits({
+      id: c.id,
+      title: c.title,
+      role: c.role,
+    });
+    return {
+      id: c.id,
+      title: c.title,
+      titleEn: c.titleEn,
+      subtitle: c.subtitle,
+      category: c.category,
+      categoryLabel: c.categoryLabel,
+      client: c.client,
+      year: c.year,
+      trackCode: c.trackCode,
+      deptTrack: c.deptTrack || c.trackCode,
+      role: c.role || 'استراتژیست هویت و آرت‌دایرکتور',
+      coverImage: c.coverImage,
+      highResImage: c.highResImage || c.coverImage,
+      galleryImages: c.galleryImages || [c.coverImage],
+      cinemaRatio: c.cinemaRatio,
+      videoDuration: c.videoDuration,
+      badge: c.badge,
+      challenge: c.challenge,
+      solution: c.solution,
+      description: c.description || `${c.challenge}\n\n${c.solution}`,
+      metrics: c.metrics,
+      deliverables: c.deliverables,
+      tags: c.tags,
+      colorAccent: c.colorAccent,
+      featured: c.featured ?? true,
+      isPublished: c.isPublished ?? true,
+      assignedTeamIds: defaultCredits.filter((cr) => cr.memberId).map((cr) => cr.memberId!),
+      projectCredits: defaultCredits,
+      desktopPos: c.desktopPos || { top: 61, left: 21, mobileTop: 36, mobileLeft: 56 },
+      createdAt: c.createdAt || '۱۴۰۳/۰۶/۰۱',
+      updatedAt: c.updatedAt || '۱۴۰۳/۱۱/۱۰',
+    };
+  });
 }
 
 // -------------------------------------------------------------
@@ -312,7 +373,31 @@ export function getProjects(): ProjectItem[] {
         // If cached storage still has old dummy projects (arka, etc.), upgrade to real projects
         const hasDummy = parsed.some((p: any) => p && (p.id === 'arka-architecture' || p.id === 'nectar-tonic' || p.id === 'sample-brand-rebrand'));
         if (!hasDummy) {
-          return parsed;
+          let rawTeam: any[] = INITIAL_TEAM as any[];
+          try {
+            const storedTeam = localStorage.getItem(STORAGE_KEYS.TEAM);
+            if (storedTeam) {
+              const parsedTeam = JSON.parse(storedTeam);
+              if (Array.isArray(parsedTeam) && parsedTeam.length > 0) {
+                rawTeam = parsedTeam;
+              }
+            }
+          } catch {
+            // ignore
+          }
+          return parsed.map((p: ProjectItem) => {
+            const credits = Array.isArray(p.projectCredits)
+              ? p.projectCredits
+              : buildDefaultProjectCredits(p, rawTeam);
+            const assignedIds = Array.isArray(p.projectCredits)
+              ? credits.filter((cr) => !cr.isGuest && cr.memberId).map((cr) => cr.memberId!)
+              : p.assignedTeamIds || credits.filter((cr) => cr.memberId).map((cr) => cr.memberId!);
+            return {
+              ...p,
+              projectCredits: credits,
+              assignedTeamIds: assignedIds,
+            };
+          });
         }
       } else if (Array.isArray(parsed) && parsed.length === 0) {
         return [];
@@ -334,19 +419,124 @@ export function saveProjects(projects: ProjectItem[], notify = true): void {
     if (notify) {
       window.dispatchEvent(new CustomEvent(CJ_STUDIO_DATA_EVENT, { detail: { type: 'projects', count: projects.length } }));
       window.dispatchEvent(new CustomEvent('projects-updated', { detail: projects }));
+      void pushServerSyncPayload({ projects });
     }
   } catch (e) {
     console.error('Error saving projects:', e);
   }
 }
 
+function syncTeamRolesFromProject(updatedItem: ProjectItem): void {
+  try {
+    const rawTeam = localStorage.getItem(STORAGE_KEYS.TEAM);
+    const members: TeamMemberItem[] = rawTeam ? JSON.parse(rawTeam) : [...SEED_TEAM];
+    if (!Array.isArray(members) || members.length === 0) return;
+
+    const credits = Array.isArray(updatedItem.projectCredits)
+      ? updatedItem.projectCredits
+      : buildDefaultProjectCredits(updatedItem, members);
+
+    let teamChanged = false;
+    const nextMembers = members.map((m) => {
+      const creditForMember = credits.find((cr) => !cr.isGuest && cr.memberId === m.id);
+      const existingRoles = m.projectRoles ? [...m.projectRoles] : [];
+      const existingIdx = existingRoles.findIndex(
+        (pr) => pr.projectId === updatedItem.id || pr.projectTitle === updatedItem.title
+      );
+
+      if (creditForMember) {
+        const newEntry: MemberProjectRole = {
+          projectId: updatedItem.id,
+          projectTitle: updatedItem.title,
+          client: updatedItem.client,
+          roleInProject: creditForMember.roleInProject || updatedItem.role || m.role,
+          year: updatedItem.year || '۱۴۰۳',
+          keyDeliverables:
+            updatedItem.deliverables && updatedItem.deliverables.length > 0
+              ? updatedItem.deliverables.slice(0, 3)
+              : existingIdx >= 0
+              ? existingRoles[existingIdx].keyDeliverables
+              : [],
+          impact: updatedItem.metrics || (existingIdx >= 0 ? existingRoles[existingIdx].impact : ''),
+          coverImage: updatedItem.coverImage,
+        };
+        if (existingIdx >= 0) {
+          existingRoles[existingIdx] = newEntry;
+        } else {
+          existingRoles.unshift(newEntry);
+        }
+        teamChanged = true;
+        return { ...m, projectRoles: existingRoles };
+      } else if (existingIdx >= 0) {
+        // Member was removed from this project's credits -> remove from their projectRoles
+        const filteredRoles = existingRoles.filter(
+          (pr) => pr.projectId !== updatedItem.id && pr.projectTitle !== updatedItem.title
+        );
+        teamChanged = true;
+        return { ...m, projectRoles: filteredRoles };
+      }
+      return m;
+    });
+
+    if (teamChanged) {
+      saveTeamMembers(nextMembers, true);
+    }
+  } catch (e) {
+    console.error('Error syncing team members on saveProject:', e);
+  }
+}
+
 export function saveProject(project: ProjectItem): ProjectItem {
   const current = getProjects();
   const index = current.findIndex((p) => p.id === project.id);
+  const existingProject = index >= 0 ? current[index] : undefined;
+
+  let resolvedCredits: ProjectCreditItem[];
+  if (Array.isArray(project.projectCredits)) {
+    resolvedCredits = project.projectCredits;
+  } else if (Array.isArray(project.assignedTeamIds)) {
+    const rawTeam = localStorage.getItem(STORAGE_KEYS.TEAM);
+    const members: TeamMemberItem[] = rawTeam ? JSON.parse(rawTeam) : [...SEED_TEAM];
+    const previousCredits = existingProject?.projectCredits || [];
+    const guestCredits = previousCredits.filter((c) => c.isGuest);
+    const memberCredits: ProjectCreditItem[] = project.assignedTeamIds
+      .map((mId) => {
+        const prev = previousCredits.find((c) => c.memberId === mId);
+        const m = members.find((tm) => tm.id === mId);
+        if (!m && !prev) return null;
+        return {
+          id: prev?.id || `credit-${project.id}-${mId}`,
+          memberId: mId,
+          name: m?.name || prev?.name || '',
+          roleInProject: prev?.roleInProject || project.role || m?.role || 'همکار پروژه',
+          department: m?.department || prev?.department || '',
+          avatar: m?.photo || prev?.avatar || '',
+          isGuest: false,
+        };
+      })
+      .filter(Boolean) as ProjectCreditItem[];
+    resolvedCredits = [...memberCredits, ...guestCredits];
+  } else if (existingProject?.projectCredits) {
+    resolvedCredits = existingProject.projectCredits;
+  } else {
+    resolvedCredits = buildDefaultProjectCredits(project);
+  }
+
+  const resolvedAssignedIds = resolvedCredits
+    .filter((cr) => !cr.isGuest && cr.memberId)
+    .map((cr) => cr.memberId!);
+
+  const roleSummary =
+    resolvedCredits.length > 0
+      ? resolvedCredits.map((cr) => `${cr.name} (${cr.roleInProject})`).join(' • ')
+      : project.role || 'استراتژیست هویت و آرت‌دایرکتور';
+
   const updatedItem: ProjectItem = {
     ...project,
     deptTrack: project.deptTrack || project.trackCode || 'TRACK 01 // BRAND IDENTITY',
-    role: project.role || 'استراتژیست هویت و آرت‌دایرکتور',
+    role: project.role || roleSummary,
+    projectCredits: resolvedCredits,
+    assignedTeamIds: resolvedAssignedIds,
     highResImage: project.highResImage || project.coverImage,
     description:
       project.description ||
@@ -365,62 +555,20 @@ export function saveProject(project: ProjectItem): ProjectItem {
   }
 
   saveProjects(nextProjects);
-
-  // Sync project assignment with team members if role or assignedTeamIds reference any member
-  try {
-    const rawTeam = localStorage.getItem(STORAGE_KEYS.TEAM);
-    const members: TeamMemberItem[] = rawTeam ? JSON.parse(rawTeam) : [...SEED_TEAM];
-    if (Array.isArray(members) && members.length > 0) {
-      let teamChanged = false;
-      const roleText = `${updatedItem.role || ''} ${(updatedItem.tags || []).join(' ')}`;
-      const assignedIds = updatedItem.assignedTeamIds || [];
-      const nextMembers = members.map((m) => {
-        const firstName = m.name.split(' ')[0];
-        const isMatchedByText =
-          roleText.includes(m.name) ||
-          (firstName.length > 2 && roleText.includes(firstName));
-        const isMatchedById = assignedIds.includes(m.id);
-        const existingRoles = m.projectRoles ? [...m.projectRoles] : [];
-        const existingIdx = existingRoles.findIndex((pr) => pr.projectId === updatedItem.id);
-
-        if (isMatchedById || isMatchedByText) {
-          const newEntry: MemberProjectRole = {
-            projectId: updatedItem.id,
-            projectTitle: updatedItem.title,
-            client: updatedItem.client,
-            roleInProject:
-              existingIdx >= 0
-                ? existingRoles[existingIdx].roleInProject
-                : updatedItem.role || m.role,
-            year: updatedItem.year || '۱۴۰۳',
-            keyDeliverables:
-              updatedItem.deliverables && updatedItem.deliverables.length > 0
-                ? updatedItem.deliverables.slice(0, 3)
-                : existingIdx >= 0
-                ? existingRoles[existingIdx].keyDeliverables
-                : [],
-            impact: updatedItem.metrics || (existingIdx >= 0 ? existingRoles[existingIdx].impact : ''),
-            coverImage: updatedItem.coverImage,
-          };
-          if (existingIdx >= 0) {
-            existingRoles[existingIdx] = newEntry;
-          } else {
-            existingRoles.unshift(newEntry);
-          }
-          teamChanged = true;
-          return { ...m, projectRoles: existingRoles };
-        }
-        return m;
-      });
-      if (teamChanged) {
-        saveTeamMembers(nextMembers, true);
-      }
-    }
-  } catch (e) {
-    console.error('Error syncing team members on saveProject:', e);
-  }
+  syncTeamRolesFromProject(updatedItem);
 
   return updatedItem;
+}
+
+export function updateProjectCredits(projectId: string, credits: ProjectCreditItem[]): ProjectItem | null {
+  const current = getProjects();
+  const target = current.find((p) => p.id === projectId);
+  if (!target) return null;
+  return saveProject({
+    ...target,
+    projectCredits: credits,
+    assignedTeamIds: credits.filter((cr) => !cr.isGuest && cr.memberId).map((cr) => cr.memberId!),
+  });
 }
 
 export function deleteProject(id: string): void {
@@ -465,6 +613,7 @@ export function saveMediaItems(items: MediaItem[], notify = true): void {
     localStorage.setItem(STORAGE_KEYS.MEDIA, JSON.stringify(items));
     if (notify) {
       window.dispatchEvent(new CustomEvent(CJ_STUDIO_DATA_EVENT, { detail: { type: 'media', count: items.length } }));
+      void pushServerSyncPayload({ media: items });
     }
   } catch (e) {
     console.error('Error saving media:', e);
@@ -523,6 +672,7 @@ export function saveStudioSettings(settings: Partial<StudioSettings>): StudioSet
   try {
     localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(updated));
     window.dispatchEvent(new CustomEvent(CJ_STUDIO_DATA_EVENT, { detail: { type: 'settings' } }));
+    void pushServerSyncPayload({ settings: updated });
   } catch (e) {
     console.error('Error saving settings:', e);
   }
@@ -790,6 +940,7 @@ export function saveServices(services: ServiceItem[], notify = true): void {
     localStorage.setItem(STORAGE_KEYS.SERVICES, JSON.stringify(services));
     if (notify) {
       window.dispatchEvent(new CustomEvent(CJ_STUDIO_DATA_EVENT, { detail: { type: 'services', count: services.length } }));
+      void pushServerSyncPayload({ services });
     }
   } catch (e) {
     console.error('Error saving services:', e);
@@ -863,10 +1014,9 @@ export function getTeamMembers(): TeamMemberItem[] {
               bio: cleanedBio,
               experience: '',
               philosophy: cleanedPhilosophy,
-              projectRoles:
-                m.projectRoles && m.projectRoles.length > 0
-                  ? m.projectRoles
-                  : seedMatch?.projectRoles || [],
+              projectRoles: Array.isArray(m.projectRoles)
+                ? m.projectRoles
+                : seedMatch?.projectRoles || [],
             };
           });
         } else {
@@ -904,6 +1054,33 @@ export function getTeamMembers(): TeamMemberItem[] {
       const firstName = member.name.split(' ')[0];
 
       allProjects.forEach((proj) => {
+        if (Array.isArray(proj.projectCredits)) {
+          const credit = proj.projectCredits.find((cr) => !cr.isGuest && cr.memberId === member.id);
+          const extraIds = osOverrides[proj.id]?.extraMemberIds || [];
+          if (credit || extraIds.includes(member.id)) {
+            const existing = rolesMap.get(proj.id);
+            rolesMap.set(proj.id, {
+              projectId: proj.id,
+              projectTitle: proj.title,
+              client: proj.client,
+              roleInProject: credit?.roleInProject || existing?.roleInProject || member.role,
+              year: proj.year || '۱۴۰۳',
+              keyDeliverables:
+                existing?.keyDeliverables && existing.keyDeliverables.length > 0
+                  ? existing.keyDeliverables
+                  : proj.deliverables
+                  ? proj.deliverables.slice(0, 3)
+                  : [],
+              impact: existing?.impact || proj.metrics || '',
+              coverImage: proj.coverImage,
+            });
+          } else {
+            // Explicitly not in proj.projectCredits -> remove if present
+            rolesMap.delete(proj.id);
+          }
+          return;
+        }
+
         const roleStr = `${proj.role || ''} ${(proj.tags || []).join(' ')}`;
         const assignedIds = proj.assignedTeamIds || [];
         const extraIds = osOverrides[proj.id]?.extraMemberIds || [];
@@ -954,6 +1131,7 @@ export function syncProjectTeamMemberRole(
 ): void {
   try {
     const current = getTeamMembers();
+    const targetMember = current.find((m) => m.id === memberId);
     const nextMembers = current.map((m) => {
       if (m.id !== memberId) return m;
       const existing = m.projectRoles ? [...m.projectRoles] : [];
@@ -994,6 +1172,42 @@ export function syncProjectTeamMemberRole(
       };
     });
     saveTeamMembers(nextMembers, true);
+
+    // Also keep the project's projectCredits in sync
+    const allProjects = getProjects();
+    const projIdx = allProjects.findIndex((p) => p.id === project.id);
+    if (projIdx >= 0 && targetMember) {
+      const proj = allProjects[projIdx];
+      const existingCredits = Array.isArray(proj.projectCredits) ? [...proj.projectCredits] : [];
+      let nextCredits: ProjectCreditItem[];
+      if (remove) {
+        nextCredits = existingCredits.filter((cr) => cr.memberId !== memberId);
+      } else {
+        const cIdx = existingCredits.findIndex((cr) => cr.memberId === memberId);
+        const creditEntry: ProjectCreditItem = {
+          id: cIdx >= 0 ? existingCredits[cIdx].id : `credit-${proj.id}-${memberId}`,
+          memberId: targetMember.id,
+          name: targetMember.name,
+          roleInProject: roleInProject || targetMember.role,
+          department: targetMember.department,
+          avatar: targetMember.photo,
+          isGuest: false,
+        };
+        if (cIdx >= 0) {
+          existingCredits[cIdx] = creditEntry;
+          nextCredits = existingCredits;
+        } else {
+          nextCredits = [...existingCredits, creditEntry];
+        }
+      }
+      const nextProjects = [...allProjects];
+      nextProjects[projIdx] = {
+        ...proj,
+        projectCredits: nextCredits,
+        assignedTeamIds: nextCredits.filter((cr) => !cr.isGuest && cr.memberId).map((cr) => cr.memberId!),
+      };
+      saveProjects(nextProjects, true);
+    }
   } catch (e) {
     console.error('Error syncing project team member role:', e);
   }
@@ -1004,6 +1218,7 @@ export function saveTeamMembers(members: TeamMemberItem[], notify = true): void 
     localStorage.setItem(STORAGE_KEYS.TEAM, JSON.stringify(members));
     if (notify) {
       window.dispatchEvent(new CustomEvent(CJ_STUDIO_DATA_EVENT, { detail: { type: 'team', count: members.length } }));
+      void pushServerSyncPayload({ team: members });
     }
   } catch (e) {
     console.error('Error saving team members:', e);
@@ -1021,6 +1236,61 @@ export function saveTeamMember(member: TeamMemberItem): TeamMemberItem {
     nextTeam = [member, ...current];
   }
   saveTeamMembers(nextTeam);
+
+  // Sync member's projectRoles back to each project's projectCredits
+  try {
+    const allProjects = getProjects();
+    let projectsChanged = false;
+    const memberRoleMap = new Map<string, MemberProjectRole>();
+    (member.projectRoles || []).forEach((pr) => {
+      memberRoleMap.set(pr.projectId, pr);
+    });
+
+    const nextProjects = allProjects.map((proj) => {
+      const credits = Array.isArray(proj.projectCredits) ? [...proj.projectCredits] : [];
+      const existingIdx = credits.findIndex((cr) => !cr.isGuest && cr.memberId === member.id);
+      const roleForProj = memberRoleMap.get(proj.id);
+
+      if (roleForProj) {
+        const updatedCredit: ProjectCreditItem = {
+          id: existingIdx >= 0 ? credits[existingIdx].id : `credit-${proj.id}-${member.id}`,
+          memberId: member.id,
+          name: member.name,
+          roleInProject: roleForProj.roleInProject || member.role,
+          department: member.department,
+          avatar: member.photo,
+          isGuest: false,
+        };
+        if (existingIdx >= 0) {
+          credits[existingIdx] = updatedCredit;
+        } else {
+          credits.push(updatedCredit);
+        }
+        projectsChanged = true;
+        return {
+          ...proj,
+          projectCredits: credits,
+          assignedTeamIds: credits.filter((cr) => !cr.isGuest && cr.memberId).map((cr) => cr.memberId!),
+        };
+      } else if (existingIdx >= 0) {
+        const nextCredits = credits.filter((cr) => cr.memberId !== member.id);
+        projectsChanged = true;
+        return {
+          ...proj,
+          projectCredits: nextCredits,
+          assignedTeamIds: nextCredits.filter((cr) => !cr.isGuest && cr.memberId).map((cr) => cr.memberId!),
+        };
+      }
+      return proj;
+    });
+
+    if (projectsChanged) {
+      saveProjects(nextProjects, true);
+    }
+  } catch (e) {
+    console.error('Error syncing projects on saveTeamMember:', e);
+  }
+
   return member;
 }
 
@@ -1092,6 +1362,7 @@ export function saveManifestoItems(items: ManifestoItem[], notify = true): void 
     localStorage.setItem(STORAGE_KEYS.MANIFESTO, JSON.stringify(items));
     if (notify) {
       window.dispatchEvent(new CustomEvent(CJ_STUDIO_DATA_EVENT, { detail: { type: 'manifesto', count: items.length } }));
+      void pushServerSyncPayload({ manifesto: items });
     }
   } catch (e) {
     console.error('Error saving manifesto:', e);

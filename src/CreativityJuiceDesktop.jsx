@@ -33,6 +33,7 @@ import {
   submitAndArchiveProjectBrief,
   CLIENT_PORTAL_EVENT,
 } from './clientPortalStore.ts';
+import { buildBriefForwardLinks } from './serverSync.ts';
 
 const S = React;
 const H = { jsx, jsxs, Fragment };
@@ -5508,22 +5509,68 @@ var Au = [
                 ],
               }),
               (() => {
-                let projectMembers = [];
+                let creditsToRender = [];
                 try {
+                  let allProjects = getProjects();
+                  let liveProj = allProjects.find((p) => p.id === e.id) || e;
                   let allMembers = getTeamMembers();
-                  projectMembers = allMembers.filter((m) =>
-                    m.projectRoles?.some(
-                      (pr) =>
-                        pr.projectId === e.id ||
-                        pr.projectTitle === e.title ||
-                        (pr.projectTitle &&
-                          e.title &&
-                          (pr.projectTitle.includes(e.title) ||
-                            e.title.includes(pr.projectTitle))),
-                    ),
-                  );
+                  if (Array.isArray(liveProj.projectCredits)) {
+                    creditsToRender = liveProj.projectCredits.map((cr) => {
+                      let matchedMember = cr.memberId
+                        ? allMembers.find((m) => m.id === cr.memberId)
+                        : null;
+                      let assignedRole = matchedMember?.projectRoles?.find(
+                        (pr) => pr.projectId === e.id || pr.projectTitle === e.title
+                      );
+                      return {
+                        id: cr.id,
+                        name: cr.name,
+                        roleInProject: cr.roleInProject || assignedRole?.roleInProject || matchedMember?.role || 'همکار پروژه',
+                        department: cr.department || matchedMember?.department || '',
+                        avatar: cr.avatar || matchedMember?.photo || '',
+                        initials: matchedMember?.initials || (cr.isGuest ? 'همکار مهمان' : 'عضو استودیو'),
+                        isGuest: Boolean(cr.isGuest),
+                        impact: assignedRole?.impact || '',
+                        keyDeliverables: assignedRole?.keyDeliverables || [],
+                      };
+                    });
+                  } else {
+                    let projectMembers = allMembers.filter((m) =>
+                      m.projectRoles?.some(
+                        (pr) =>
+                          pr.projectId === e.id ||
+                          pr.projectTitle === e.title ||
+                          (pr.projectTitle &&
+                            e.title &&
+                            (pr.projectTitle.includes(e.title) ||
+                              e.title.includes(pr.projectTitle)))
+                      )
+                    );
+                    creditsToRender = projectMembers.map((m) => {
+                      let assignedRole = m.projectRoles?.find(
+                        (pr) =>
+                          pr.projectId === e.id ||
+                          pr.projectTitle === e.title ||
+                          (pr.projectTitle &&
+                            e.title &&
+                            (pr.projectTitle.includes(e.title) ||
+                              e.title.includes(pr.projectTitle)))
+                      );
+                      return {
+                        id: m.id,
+                        name: m.name,
+                        roleInProject: assignedRole?.roleInProject || m.role,
+                        department: m.department,
+                        avatar: m.photo,
+                        initials: m.initials,
+                        isGuest: false,
+                        impact: assignedRole?.impact || '',
+                        keyDeliverables: assignedRole?.keyDeliverables || [],
+                      };
+                    });
+                  }
                 } catch {}
-                if (!projectMembers || projectMembers.length === 0) return null;
+                if (!creditsToRender || creditsToRender.length === 0) return null;
                 return (0, H.jsxs)(`div`, {
                   className: `p-4 rounded-xl bg-[#FAF9F7] border border-neutral-200/90 shadow-2xs space-y-3`,
                   children: [
@@ -5540,8 +5587,8 @@ var Au = [
                               className: `text-xs font-bold text-neutral-900`,
                               children: [
                                 `تیم و خالقان اثر در این پروژه (`,
-                                projectMembers.length,
-                                ` سرپرست ارشد)`,
+                                creditsToRender.length,
+                                ` نفر)`,
                               ],
                             }),
                           ],
@@ -5554,26 +5601,22 @@ var Au = [
                     }),
                     (0, H.jsx)(`div`, {
                       className: `grid grid-cols-1 sm:grid-cols-2 gap-2.5`,
-                      children: projectMembers.map((m) => {
-                        let assignedRole = m.projectRoles?.find(
-                          (pr) =>
-                            pr.projectId === e.id ||
-                            pr.projectTitle === e.title ||
-                            (pr.projectTitle &&
-                              e.title &&
-                              (pr.projectTitle.includes(e.title) ||
-                                e.title.includes(pr.projectTitle))),
-                        );
-                        return (0, H.jsxs)(
+                      children: creditsToRender.map((cr) =>
+                        (0, H.jsxs)(
                           `div`,
                           {
                             className: `flex items-start gap-3 p-2.5 rounded-lg bg-white border border-neutral-200 shadow-2xs`,
                             children: [
-                              (0, H.jsx)(`img`, {
-                                src: m.photo,
-                                alt: m.name,
-                                className: `w-11 h-11 rounded-full object-cover border border-neutral-300 shrink-0 mt-0.5`,
-                              }),
+                              cr.avatar
+                                ? (0, H.jsx)(`img`, {
+                                    src: cr.avatar,
+                                    alt: cr.name,
+                                    className: `w-11 h-11 rounded-full object-cover border border-neutral-300 shrink-0 mt-0.5`,
+                                  })
+                                : (0, H.jsx)(`div`, {
+                                    className: `w-11 h-11 rounded-full bg-neutral-900 text-amber-400 flex items-center justify-center font-black text-sm shrink-0 mt-0.5`,
+                                    children: cr.name.slice(0, 1),
+                                  }),
                               (0, H.jsxs)(`div`, {
                                 className: `min-w-0 flex-1`,
                                 children: [
@@ -5582,45 +5625,50 @@ var Au = [
                                     children: [
                                       (0, H.jsx)(`span`, {
                                         className: `text-xs font-bold text-neutral-900 truncate`,
-                                        children: m.name,
+                                        children: cr.name,
                                       }),
                                       (0, H.jsx)(`span`, {
                                         className: `text-[9.5px] font-mono text-neutral-400 shrink-0`,
-                                        children: m.initials,
+                                        children: cr.isGuest ? `همکار مهمان` : cr.initials,
                                       }),
                                     ],
                                   }),
                                   (0, H.jsx)(`span`, {
                                     className: `inline-block text-[10.5px] font-semibold text-amber-800 bg-amber-50 border border-amber-200/70 px-2 py-0.5 rounded mt-0.5 max-w-full truncate`,
-                                    children: assignedRole?.roleInProject || m.role,
+                                    children: cr.roleInProject,
                                   }),
-                                  assignedRole?.impact &&
+                                  cr.department &&
+                                    (0, H.jsx)(`p`, {
+                                      className: `text-[10px] text-neutral-500 mt-1 truncate`,
+                                      children: cr.department,
+                                    }),
+                                  cr.impact &&
                                     (0, H.jsx)(`p`, {
                                       className: `text-[10px] text-neutral-500 mt-1 line-clamp-1 italic`,
-                                      children: assignedRole.impact,
+                                      children: cr.impact,
                                     }),
-                                  assignedRole?.keyDeliverables &&
-                                    assignedRole.keyDeliverables.length > 0 &&
+                                  cr.keyDeliverables &&
+                                    cr.keyDeliverables.length > 0 &&
                                     (0, H.jsx)(`div`, {
                                       className: `flex flex-wrap gap-1 mt-1.5`,
-                                      children: assignedRole.keyDeliverables.map((del, dIdx) =>
+                                      children: cr.keyDeliverables.map((del, dIdx) =>
                                         (0, H.jsx)(
                                           `span`,
                                           {
                                             className: `text-[9px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded`,
                                             children: del,
                                           },
-                                          dIdx,
-                                        ),
+                                          dIdx
+                                        )
                                       ),
                                     }),
                                 ],
                               }),
                             ],
                           },
-                          m.id,
-                        );
-                      }),
+                          cr.id
+                        )
+                      ),
                     }),
                   ],
                 });
@@ -7904,6 +7952,63 @@ var Au = [
                               }),
                           ],
                         }),
+                        (0, H.jsxs)(`div`, {
+                          className: `pt-3 border-t border-amber-200/80 space-y-2`,
+                          children: [
+                            (0, H.jsxs)(`div`, {
+                              className: `flex flex-wrap items-center justify-between gap-1 text-[11px]`,
+                              children: [
+                                (0, H.jsx)(`span`, {
+                                  className: `font-bold text-emerald-800`,
+                                  children: `✓ ثبت خودکار روی سرور مرکزی استودیو و ارسال مستقیم به پنل مدیریت`,
+                                }),
+                                (0, H.jsx)(`span`, {
+                                  className: `text-[10px] text-neutral-500`,
+                                  children: `ارسال کپی مستقیم برای مدیریت:`,
+                                }),
+                              ],
+                            }),
+                            (() => {
+                              let forwardBrief = createdCreds?.brief || {
+                                trackingCode: createdCreds?.trackingCode || l,
+                                brandName: h.clientName || `برند جدید`,
+                                ownerName: h.clientName || `کارفرما`,
+                                contactInfo: h.clientUrl || `-`,
+                                selectedTrack: h.selectedTrack,
+                                marketTier: h.marketTier,
+                                problem: h.problem,
+                                deadline: h.deadline,
+                                fullSummaryText: ee(),
+                              };
+                              let links = buildBriefForwardLinks(forwardBrief);
+                              return (0, H.jsxs)(`div`, {
+                                className: `grid grid-cols-1 sm:grid-cols-2 gap-2`,
+                                children: [
+                                  (0, H.jsxs)(`a`, {
+                                    href: links.whatsappUrl,
+                                    target: `_blank`,
+                                    rel: `noopener noreferrer`,
+                                    className: `px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black flex items-center justify-center gap-1.5 transition shadow-2xs`,
+                                    children: [
+                                      (0, H.jsx)(`span`, { children: `📲` }),
+                                      (0, H.jsx)(`span`, { children: `ارسال کپی بریف به واتساپ مدیریت` }),
+                                    ],
+                                  }),
+                                  (0, H.jsxs)(`a`, {
+                                    href: links.mailtoUrl,
+                                    target: `_blank`,
+                                    rel: `noopener noreferrer`,
+                                    className: `px-3 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-amber-300 text-xs font-black flex items-center justify-center gap-1.5 transition shadow-2xs`,
+                                    children: [
+                                      (0, H.jsx)(`span`, { children: `✉️` }),
+                                      (0, H.jsx)(`span`, { children: `ارسال کپی بریف به ایمیل مدیریت` }),
+                                    ],
+                                  }),
+                                ],
+                              });
+                            })(),
+                          ],
+                        }),
                       ],
                     }),
                     (0, H.jsxs)(`div`, {
@@ -7977,6 +8082,7 @@ var Au = [
                       username: result.workspace.username || result.workspace.slug,
                       password: result.workspace.password || result.workspace.pinCode,
                       workspaceId: result.workspace.id,
+                      brief: result.brief,
                     });
                     (u(result.workspace.trackingCode || result.brief.trackingCode), c(!0));
                   },

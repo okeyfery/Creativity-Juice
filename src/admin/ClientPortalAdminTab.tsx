@@ -14,8 +14,11 @@ import {
   addDeliverableByAdmin,
   deleteDeliverableByAdmin,
   setActiveClientId,
+  submitAndArchiveProjectBrief,
   CLIENT_PORTAL_EVENT,
 } from '../clientPortalStore';
+import { getStudioSettings, saveStudioSettings } from '../adminStore';
+import { pullStateFromServer, buildBriefForwardLinks } from '../serverSync';
 import {
   Key,
   Plus,
@@ -38,6 +41,7 @@ import {
   Eye,
   Film,
   FileText,
+  RefreshCw,
 } from 'lucide-react';
 
 interface ClientPortalAdminTabProps {
@@ -99,6 +103,64 @@ export const ClientPortalAdminTab: React.FC<ClientPortalAdminTabProps> = ({
     file: ClientDeliverable;
     workspace: ClientWorkspace;
   } | null>(null);
+
+  // Server Sync & WhatsApp/Email Brief Notification Settings
+  const [isSyncingServer, setIsSyncingServer] = useState(false);
+  const [lastServerSyncTime, setLastServerSyncTime] = useState<string>(() =>
+    new Intl.DateTimeFormat('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date())
+  );
+  const [adminWhatsapp, setAdminWhatsapp] = useState<string>(() => getStudioSettings().adminWhatsapp || '');
+  const [adminEmail, setAdminEmail] = useState<string>(() => getStudioSettings().contactEmail || 'youthefzadeh@gmail.com');
+  const [showImportBriefModal, setShowImportBriefModal] = useState(false);
+  const [manualBriefBrand, setManualBriefBrand] = useState('');
+  const [manualBriefOwner, setManualBriefOwner] = useState('');
+  const [manualBriefText, setManualBriefText] = useState('');
+
+  const handleManualServerSync = async () => {
+    setIsSyncingServer(true);
+    try {
+      await pullStateFromServer(true);
+      refreshAll();
+      setLastServerSyncTime(
+        new Intl.DateTimeFormat('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date())
+      );
+      onShowToast('✓ آخرین بریف‌ها و اطلاعات پروژه‌ها از سرور مرکزی استودیو دریافت و همگام‌سازی شد.');
+    } finally {
+      setIsSyncingServer(false);
+    }
+  };
+
+  const handleSaveForwardSettings = (e: React.FormEvent) => {
+    e.preventDefault();
+    saveStudioSettings({
+      adminWhatsapp: adminWhatsapp.trim(),
+      contactEmail: adminEmail.trim() || 'youthefzadeh@gmail.com',
+    });
+    onShowToast('✓ شماره واتساپ و ایمیل دریافت کپی بریف‌ها روی سرور ذخیره شد.');
+  };
+
+  const handleManualImportBrief = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!manualBriefBrand.trim() || !manualBriefText.trim()) {
+      onShowToast('لطفاً نام برند و متن بریف را وارد کنید.');
+      return;
+    }
+    const res = submitAndArchiveProjectBrief({
+      clientName: manualBriefBrand.trim(),
+      ownerName: manualBriefOwner.trim() || manualBriefBrand.trim(),
+      selectedTrack: 'دپارتمان برندینگ و مارکتینگ',
+      marketTier: 'اختصاصی استودیو',
+      problem: manualBriefText.trim().slice(0, 220),
+      fullSummaryText: manualBriefText.trim(),
+    });
+    refreshAll();
+    setSelectedWorkspaceId(res.workspace.id);
+    setManualBriefBrand('');
+    setManualBriefOwner('');
+    setManualBriefText('');
+    setShowImportBriefModal(false);
+    onShowToast(`✓ بریف «${res.brief.brandName}» با کد رهگیری ${res.brief.trackingCode} ثبت و در سرور ذخیره شد.`);
+  };
 
   const refreshAll = () => {
     const updatedWs = getClientWorkspaces();
@@ -479,6 +541,61 @@ export const ClientPortalAdminTab: React.FC<ClientPortalAdminTabProps> = ({
             <span>تعریف پروژه و کد رهگیری جدید</span>
           </button>
         </div>
+      </div>
+
+      {/* Central Server Sync & WhatsApp/Email Brief Forwarding Bar */}
+      <div className="bg-[#141417] border border-emerald-500/30 rounded-2xl p-4 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>متصل به سرور مرکزی استودیو (دریافت خودکار بریف از تمام دستگاه‌ها)</span>
+          </div>
+          <span className="text-[11px] text-neutral-400 font-mono">
+            آخرین همگام‌سازی: {lastServerSyncTime}
+          </span>
+          <button
+            type="button"
+            onClick={handleManualServerSync}
+            disabled={isSyncingServer}
+            className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-amber-400 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncingServer ? 'animate-spin' : ''}`} />
+            <span>{isSyncingServer ? 'در حال دریافت از سرور...' : 'دریافت فوری بریف‌های جدید از سرور'}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowImportBriefModal(true)}
+            className="px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-200 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5 text-emerald-400" />
+            <span>ثبت دستی بریف دریافتی از واتساپ/ایمیل</span>
+          </button>
+        </div>
+
+        <form onSubmit={handleSaveForwardSettings} className="flex flex-wrap items-center gap-2">
+          <input
+            type="text"
+            value={adminWhatsapp}
+            onChange={(e) => setAdminWhatsapp(e.target.value)}
+            placeholder="شماره واتساپ مدیریت (مثال: 0912...)"
+            dir="ltr"
+            className="px-3 py-1.5 rounded-xl bg-neutral-900 border border-neutral-700 text-xs font-mono text-white placeholder-neutral-500 focus:border-amber-500 outline-none w-48"
+          />
+          <input
+            type="email"
+            value={adminEmail}
+            onChange={(e) => setAdminEmail(e.target.value)}
+            placeholder="ایمیل دریافت بریف"
+            dir="ltr"
+            className="px-3 py-1.5 rounded-xl bg-neutral-900 border border-neutral-700 text-xs font-mono text-white placeholder-neutral-500 focus:border-amber-500 outline-none w-52"
+          />
+          <button
+            type="submit"
+            className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition cursor-pointer"
+          >
+            ذخیره واتساپ و ایمیل دریافت بریف
+          </button>
+        </form>
       </div>
 
       {/* Unified KPI Metrics Strip */}
@@ -1295,6 +1412,32 @@ export const ClientPortalAdminTab: React.FC<ClientPortalAdminTabProps> = ({
                           <span>دانلود بریف</span>
                         </button>
 
+                        {(() => {
+                          const links = buildBriefForwardLinks(brief);
+                          return (
+                            <>
+                              <a
+                                href={links.whatsappUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-2.5 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/30 text-xs font-bold flex items-center gap-1 transition"
+                              >
+                                <span>📲</span>
+                                <span>واتساپ</span>
+                              </a>
+                              <a
+                                href={links.mailtoUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-2.5 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-bold flex items-center gap-1 transition"
+                              >
+                                <span>✉️</span>
+                                <span>ایمیل</span>
+                              </a>
+                            </>
+                          );
+                        })()}
+
                         <button
                           onClick={() => {
                             if (isSelected) {
@@ -1879,6 +2022,95 @@ export const ClientPortalAdminTab: React.FC<ClientPortalAdminTabProps> = ({
                 </a>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Manual Import Brief from WhatsApp / Email */}
+      {showImportBriefModal && (
+        <div
+          className="fixed inset-0 z-[240] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setShowImportBriefModal(false)}
+        >
+          <div
+            className="w-full max-w-lg bg-[#16161A] border border-emerald-500/40 rounded-2xl p-6 text-white space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+              <div className="flex items-center gap-2">
+                <FileCode className="w-5 h-5 text-emerald-400" />
+                <h3 className="text-base font-black text-white">
+                  ثبت بریف دریافتی از واتساپ یا ایمیل در سرور مرکزی
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowImportBriefModal(false)}
+                className="w-8 h-8 rounded-lg bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center text-xs cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleManualImportBrief} className="space-y-3.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-neutral-300 mb-1">
+                    نام برند / پروژه: *
+                  </label>
+                  <input
+                    type="text"
+                    value={manualBriefBrand}
+                    onChange={(e) => setManualBriefBrand(e.target.value)}
+                    placeholder="نام برند کارفرما"
+                    className="w-full px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-700 text-xs text-white focus:border-emerald-500 outline-none"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-neutral-300 mb-1">
+                    نام کارفرما / شماره تماس:
+                  </label>
+                  <input
+                    type="text"
+                    value={manualBriefOwner}
+                    onChange={(e) => setManualBriefOwner(e.target.value)}
+                    placeholder="نام یا شماره تماس"
+                    className="w-full px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-700 text-xs text-white focus:border-emerald-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-neutral-300 mb-1">
+                  متن کامل بریف کپی‌شده یا شرح نیاز پروژه: *
+                </label>
+                <textarea
+                  rows={6}
+                  value={manualBriefText}
+                  onChange={(e) => setManualBriefText(e.target.value)}
+                  placeholder="متن بریف ارسال‌شده در واتساپ یا ایمیل را اینجا جای‌گذاری (Paste) کنید..."
+                  className="w-full p-3 rounded-xl bg-neutral-900 border border-neutral-700 text-xs text-white focus:border-emerald-500 outline-none"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowImportBriefModal(false)}
+                  className="px-4 py-2 rounded-xl bg-neutral-800 text-xs font-bold text-neutral-300 cursor-pointer"
+                >
+                  انصراف
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 text-xs font-black cursor-pointer"
+                >
+                  ثبت بریف و صدور کد رهگیری در سرور
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

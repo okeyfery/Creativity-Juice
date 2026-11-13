@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { getProjects, CJ_STUDIO_DATA_EVENT, ProjectItem } from './adminStore';
+import { getProjects, CJ_STUDIO_DATA_EVENT, ProjectItem, ProjectCreditItem } from './adminStore';
 import { INITIAL_PROJECTS } from './data/projectsData';
 
 export interface CaseStudy {
@@ -18,6 +18,7 @@ export interface CaseStudy {
   client: string;
   year: string;
   trackCode: string;
+  role?: string;
   coverImage: string;
   cinemaRatio?: boolean; // 16:9 or 21:9 cinematic banner
   videoDuration?: string; // e.g. "۲:۳۰ دقیقه • فیلم ۴K"
@@ -27,6 +28,7 @@ export interface CaseStudy {
   metrics: string;
   deliverables: string[];
   tags: string[];
+  projectCredits?: ProjectCreditItem[];
   colorAccent: string;
   galleryImages: string[];
 }
@@ -47,22 +49,26 @@ export const PortfolioGallery: React.FC<PortfolioGalleryProps> = ({
     return p.length > 0 ? (p as unknown as CaseStudy[]) : PORTFOLIO_CASE_STUDIES;
   });
 
-  useEffect(() => {
-    const handleUpdate = () => {
-      const p = getProjects();
-      if (p.length > 0) {
-        setAllCases(p as unknown as CaseStudy[]);
-      }
-    };
-    window.addEventListener(CJ_STUDIO_DATA_EVENT, handleUpdate);
-    return () => window.removeEventListener(CJ_STUDIO_DATA_EVENT, handleUpdate);
-  }, []);
-
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [activeCaseStudy, setActiveCaseStudy] = useState<CaseStudy | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'cinema'>('grid');
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      const p = getProjects();
+      if (p.length > 0) {
+        const updatedCases = p as unknown as CaseStudy[];
+        setAllCases(updatedCases);
+        setActiveCaseStudy((prev) =>
+          prev ? updatedCases.find((c) => c.id === prev.id) || prev : null
+        );
+      }
+    };
+    window.addEventListener(CJ_STUDIO_DATA_EVENT, handleUpdate);
+    return () => window.removeEventListener(CJ_STUDIO_DATA_EVENT, handleUpdate);
+  }, []);
 
   const CATEGORIES = useMemo(() => [
     { id: 'all', label: 'همه پروژه‌ها', icon: '✦', count: allCases.length },
@@ -327,6 +333,36 @@ export const PortfolioGallery: React.FC<PortfolioGalleryProps> = ({
                       <span className="text-amber-600">📈</span>
                       <span className="truncate">{item.metrics}</span>
                     </div>
+
+                    {/* Project Contributors Mini Strip on Card */}
+                    {item.projectCredits && item.projectCredits.length > 0 && (
+                      <div className="mt-2.5 pt-2 border-t border-neutral-100 flex items-center justify-between gap-2">
+                        <div className="flex items-center -space-x-1.5 space-x-reverse shrink-0">
+                          {item.projectCredits.slice(0, 4).map((cr) =>
+                            cr.avatar ? (
+                              <img
+                                key={cr.id}
+                                src={cr.avatar}
+                                alt={cr.name}
+                                title={`${cr.name} — ${cr.roleInProject}`}
+                                className="w-6 h-6 rounded-full object-cover border-2 border-white shadow-2xs"
+                              />
+                            ) : (
+                              <div
+                                key={cr.id}
+                                title={`${cr.name} — ${cr.roleInProject}`}
+                                className="w-6 h-6 rounded-full bg-neutral-900 text-amber-400 border-2 border-white flex items-center justify-center text-[9px] font-bold"
+                              >
+                                {cr.name.slice(0, 1)}
+                              </div>
+                            )
+                          )}
+                        </div>
+                        <span className="text-[10.5px] text-neutral-500 truncate">
+                          {item.projectCredits.map((cr) => cr.name).join(' · ')}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Tags & Action Row */}
@@ -522,6 +558,61 @@ export const PortfolioGallery: React.FC<PortfolioGalleryProps> = ({
                   ))}
                 </div>
               </div>
+
+              {/* Project Credits & Contributors Section */}
+              {activeCaseStudy.projectCredits && activeCaseStudy.projectCredits.length > 0 && (
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF9F7] border border-neutral-200/90 space-y-3.5">
+                  <div className="flex items-center justify-between border-b border-neutral-200/70 pb-2.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-black text-neutral-900">
+                        تیم اجرایی و عوامل این پروژه ({activeCaseStudy.projectCredits.length} نفر)
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-mono text-neutral-400 font-bold" dir="ltr">
+                      PROJECT CREDITS & ROLES
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {activeCaseStudy.projectCredits.map((cr) => (
+                      <div
+                        key={cr.id}
+                        className="flex items-center gap-3 p-3 rounded-xl bg-white border border-neutral-200 shadow-2xs"
+                      >
+                        {cr.avatar ? (
+                          <img
+                            src={cr.avatar}
+                            alt={cr.name}
+                            className="w-11 h-11 rounded-full object-cover border border-neutral-300 shrink-0"
+                          />
+                        ) : (
+                          <div className="w-11 h-11 rounded-full bg-neutral-900 text-amber-400 flex items-center justify-center font-black text-sm shrink-0">
+                            {cr.name.slice(0, 1)}
+                          </div>
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="text-xs sm:text-sm font-bold text-neutral-900 truncate">
+                              {cr.name}
+                            </span>
+                            <span className="text-[10px] text-neutral-400 shrink-0">
+                              {cr.isGuest ? 'همکار مهمان' : 'عضو استودیو'}
+                            </span>
+                          </div>
+                          <div className="text-[11px] font-semibold text-amber-800 mt-0.5 truncate">
+                            {cr.roleInProject}
+                          </div>
+                          {cr.department && (
+                            <div className="text-[10px] text-neutral-500 mt-0.5 truncate">
+                              {cr.department}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Visual Gallery Preview */}
               {activeCaseStudy.galleryImages.length > 0 && (
