@@ -12,7 +12,7 @@ import {
   INITIAL_CLIENT_WORKSPACES,
 } from './data/clientPortalData';
 import { pushBriefToServer, pushServerSyncPayload } from './serverSync';
-import { syncSubmittedBriefRealtime } from './briefSyncService';
+import { syncSubmittedBriefRealtime, updateBriefInCollection } from './briefSyncService';
 
 const STORAGE_KEY_WORKSPACES = 'cj_client_workspaces_v1';
 const STORAGE_KEY_ACTIVE_CLIENT = 'cj_client_portal_active_id';
@@ -924,10 +924,17 @@ export function updateBriefStatus(
     };
   });
   saveClientWorkspaces(workspaces);
+
+  void updateBriefInCollection(briefId, {
+    status,
+    isRead,
+    ...(adminNotes !== undefined ? { adminNotes } : {}),
+  });
 }
 
 export function toggleBriefReadStatus(briefId: string, explicitRead?: boolean) {
   let targetNextRead = true;
+  let computedNextStatus: 'new' | 'reviewed' | 'in-production' = 'reviewed';
   const allBriefs = getAllArchivedBriefs().map((b) => {
     if (b.id !== briefId) return b;
     targetNextRead = typeof explicitRead === 'boolean' ? explicitRead : !b.isRead;
@@ -937,6 +944,7 @@ export function toggleBriefReadStatus(briefId: string, explicitRead?: boolean) {
         : !targetNextRead && b.status === 'reviewed'
         ? 'new'
         : b.status;
+    computedNextStatus = nextStatus;
     return {
       ...b,
       isRead: targetNextRead,
@@ -966,6 +974,11 @@ export function toggleBriefReadStatus(briefId: string, explicitRead?: boolean) {
     };
   });
   saveClientWorkspaces(workspaces);
+
+  void updateBriefInCollection(briefId, {
+    isRead: targetNextRead,
+    status: computedNextStatus,
+  });
 }
 
 export function markAllBriefsAsRead() {

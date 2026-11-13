@@ -41,6 +41,7 @@ import {
   getBriefSyncTelemetry,
   getSyncedBriefIds,
   getPendingOutbox,
+  BriefsCollection,
   BRIEF_REALTIME_SYNC_EVENT,
   BriefSyncTelemetry,
 } from '../briefSyncService';
@@ -88,6 +89,9 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
 
   useEffect(() => {
     startBriefRealtimeSyncService();
+    const unsubscribeSnapshot = BriefsCollection.onSnapshot(() => {
+      refreshBriefs();
+    });
     void pullStateFromServer(true).then(() => {
       refreshBriefs();
     });
@@ -106,6 +110,7 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
     window.addEventListener('storage', handlePortalUpdate);
 
     return () => {
+      unsubscribeSnapshot();
       window.removeEventListener(CLIENT_PORTAL_EVENT, handlePortalUpdate);
       window.removeEventListener(NEW_BRIEF_NOTIFICATION_EVENT, handlePortalUpdate);
       window.removeEventListener(BRIEF_REALTIME_SYNC_EVENT, handleTelemetryUpdate);
@@ -277,13 +282,12 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
               }`}
             />
             {syncTelemetry.streamConnected
-              ? 'جریان بلادرنگ کلاینت ⇄ سرور فعال (Real-Time SSE)'
-              : 'همگام‌سازی خودکار کلاینت و سرور'}
+              ? 'متصل به مجموعه داده ابری (Collection: briefs • Vercel ⇄ Cloud)'
+              : 'همگام‌سازی خودکار مجموعه داده briefs'}
           </span>
 
-          <span className="text-slate-400 text-[11px]">
-            بریف‌های سینک‌شده روی سرور:{' '}
-            <strong className="text-white font-mono">{stats.total}</strong>
+          <span className="px-2 py-0.5 rounded bg-sky-500/15 border border-sky-500/30 text-sky-300 font-mono text-[10px] font-bold">
+            DB Collection: /briefs ({stats.total} docs)
           </span>
 
           {syncTelemetry.pendingOutboxCount > 0 && (

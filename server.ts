@@ -330,6 +330,18 @@ async function startServer() {
   const app = express();
   const PORT = Number(process.env.PORT) || 3000;
 
+  // Enable CORS so Vercel deployments (*.vercel.app) and all deployed versions share the same 'briefs' collection
+  app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
+    if (req.method === 'OPTIONS') {
+      res.status(204).end();
+      return;
+    }
+    next();
+  });
+
   app.use(express.json({ limit: '25mb' }));
 
   // Active Server-Sent Events (SSE) clients for real-time Admin Panel updates
@@ -340,6 +352,7 @@ async function startServer() {
     serverRevision = Date.now();
     const message = JSON.stringify({
       type: eventType,
+      collection: 'briefs',
       revision: serverRevision,
       timestamp: new Date().toISOString(),
       ...payload,
@@ -353,8 +366,9 @@ async function startServer() {
     });
   }
 
-  // 0. GET Real-Time Stream (SSE) for instant Admin Panel brief synchronization
-  app.get('/api/studio-state/stream', (req, res) => {
+  // 0. GET Real-Time Stream (SSE) for instant Admin Panel brief synchronization (/api/studio-state/stream & /api/briefs/stream)
+  const handleRealtimeStream = (req: express.Request, res: express.Response) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache, no-transform');
     res.setHeader('Connection', 'keep-alive');
@@ -362,11 +376,14 @@ async function startServer() {
     res.flushHeaders?.();
 
     const db = readServerDb();
+    const sortedBriefs = sortBriefsNewestFirst(db.archivedBriefs || []);
     const initPayload = JSON.stringify({
       type: 'stream:init',
+      collection: 'briefs',
       revision: serverRevision,
       timestamp: new Date().toISOString(),
-      archivedBriefs: sortBriefsNewestFirst(db.archivedBriefs || []),
+      docs: sortedBriefs,
+      archivedBriefs: sortedBriefs,
       clientWorkspaces: db.clientWorkspaces || [],
       notificationLogs: db.notificationLogs || [],
     });
@@ -387,6 +404,138 @@ async function startServer() {
       clearInterval(heartbeat);
       sseClients.delete(res);
     });
+  };
+
+  app.get('/api/studio-state/stream', handleRealtimeStream);
+  app.get('/api/briefs/stream', handleRealtimeStream);
+
+  // Dedicated 'briefs' Collection Endpoints (GET /api/briefs, POST /api/briefs, PATCH /api/briefs/:id)
+  app.get('/api/briefs', (_req, res) => {
+    const db = readServerDb();
+    const docs = sortBriefsNewestFirst(db.archivedBriefs || []);
+    res.json({
+      ok: true,
+      collection: 'briefs',
+      revision: serverRevision,
+      count: docs.length,
+      docs,
+    });
+  });
+
+  app.post('/api/briefs', async (req, res) => {
+    try {
+      const incoming = req.body?.brief || req.body || {};
+      const workspace = req.body?.workspace;
+      const db = readServerDb();
+
+      const docId = incoming.id || `brief-${Date.now()}`;
+      const enrichedBrief = {
+        ...incoming,
+        id: docId,
+        isRead: incoming.isRead ?? false,
+        createdAtMs: incoming.createdAtMs || Date.now(),
+        status: incoming.status || 'new',
+      };
+
+      const filteredBriefs = (db.archivedBriefs || []).filter((b: any) => b.id !== docId);
+      db.archivedBriefs = sortBriefsNewestFirst([enrichedBrief, ...filteredBriefs]);
+
+      if (workspace && workspace.id) {
+        const existingIdx = (db.clientWorkspaces || []).findIndex((w: any) => w.id === workspace.id);
+        if (existingIdx >= 0) {
+          const prevWs = db.clientWorkspaces[existingIdx];
+          db.clientWorkspaces[existingIdx] = {
+            ...prevWs,
+            ...workspace,
+            archivedBriefs: sortBriefsNewestFirst(
+              mergeById(prevWs.archivedBriefs || [], [enrichedBrief], true)
+            ),
+          };
+        } else {
+          db.clientWorkspaces = [workspace, ...(db.clientWorkspaces || [])];
+        }
+      }
+
+      const notificationLog = await dispatchInstantBriefNotifications(
+        enrichedBrief,
+        workspace,
+        db.notificationConfig || DEFAULT_NOTIFICATION_CONFIG,
+        false
+      );
+      db.notificationLogs = [notificationLog, ...(db.notificationLogs || [])].slice(0, 100);
+
+      const saved = writeServerDb(db);
+      broadcastRealtimeEvent('brief:created', {
+        doc: enrichedBrief,
+        brief: enrichedBrief,
+        workspace,
+        notification: notificationLog,
+        docs: saved.archivedBriefs,
+        archivedBriefs: saved.archivedBriefs,
+        clientWorkspaces: saved.clientWorkspaces,
+        notificationLogs: saved.notificationLogs,
+      });
+
+      res.json({
+        ok: true,
+        collection: 'briefs',
+        revision: serverRevision,
+        doc: enrichedBrief,
+        docs: saved.archivedBriefs,
+        notification: notificationLog,
+      });
+    } catch (err) {
+      console.error('Error in POST /api/briefs:', err);
+      res.status(500).json({ ok: false, error: 'Failed to write to briefs collection' });
+    }
+  });
+
+  app.patch('/api/briefs/:id', (req, res) => {
+    try {
+      const targetId = req.params.id;
+      const updates = req.body || {};
+      const db = readServerDb();
+
+      let updatedDoc: any = null;
+      db.archivedBriefs = sortBriefsNewestFirst(
+        (db.archivedBriefs || []).map((b: any) => {
+          if (b && b.id === targetId) {
+            updatedDoc = { ...b, ...updates, id: targetId };
+            return updatedDoc;
+          }
+          return b;
+        })
+      );
+
+      db.clientWorkspaces = (db.clientWorkspaces || []).map((w: any) => {
+        if (!Array.isArray(w.archivedBriefs)) return w;
+        return {
+          ...w,
+          archivedBriefs: w.archivedBriefs.map((b: any) =>
+            b && b.id === targetId ? { ...b, ...updates, id: targetId } : b
+          ),
+        };
+      });
+
+      const saved = writeServerDb(db);
+      broadcastRealtimeEvent('brief:updated', {
+        doc: updatedDoc,
+        docs: saved.archivedBriefs,
+        archivedBriefs: saved.archivedBriefs,
+        clientWorkspaces: saved.clientWorkspaces,
+      });
+
+      res.json({
+        ok: true,
+        collection: 'briefs',
+        revision: serverRevision,
+        doc: updatedDoc,
+        docs: saved.archivedBriefs,
+      });
+    } catch (err) {
+      console.error('Error in PATCH /api/briefs/:id:', err);
+      res.status(500).json({ ok: false });
+    }
   });
 
   // 1. GET full shared studio & client portal state + notification logs

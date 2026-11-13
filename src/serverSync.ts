@@ -5,7 +5,7 @@
  */
 
 import { ClientWorkspace, ProjectBriefSubmission } from './data/clientPortalData';
-import { startBriefRealtimeSyncService } from './briefSyncService';
+import { startBriefRealtimeSyncService, smartCollectionFetch } from './briefSyncService';
 
 const STORAGE_KEY_WORKSPACES = 'cj_client_workspaces_v1';
 const STORAGE_KEY_ARCHIVED_BRIEFS = 'cj_studio_archived_briefs_v1';
@@ -157,7 +157,7 @@ export async function saveNotificationConfig(
   }
 
   try {
-    await fetch('/api/studio-state/notifications/config', {
+    await smartCollectionFetch('/api/studio-state/notifications/config', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updated),
@@ -175,7 +175,7 @@ export async function markNotificationsRead(id?: string): Promise<void> {
     window.dispatchEvent(new CustomEvent('CJ_CLIENT_PORTAL_CHANGED'));
   }
   try {
-    await fetch('/api/studio-state/notifications/mark-read', {
+    await smartCollectionFetch('/api/studio-state/notifications/mark-read', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),
@@ -190,13 +190,13 @@ export async function triggerTestNotification(
 ): Promise<{ ok: boolean; notification?: BriefNotificationRecord }> {
   try {
     const configToSend = { ...getNotificationConfig(), ...(customConfig || {}) };
-    const res = await fetch('/api/studio-state/notifications/test', {
+    const res = await smartCollectionFetch('/api/studio-state/notifications/test', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ config: configToSend }),
     });
-    if (res.ok) {
-      const data = await res.json();
+    if (res.ok && res.data) {
+      const data = res.data;
       if (data?.notification) {
         const existing = getNotificationLogs().filter((x) => x.id !== data.notification.id);
         const nextLogs = [data.notification, ...existing];
@@ -275,16 +275,15 @@ function mergeArrayById<T extends { id?: string }>(localArr: T[], serverArr: T[]
 export async function pullStateFromServer(forceDispatch = false): Promise<boolean> {
   if (typeof window === 'undefined') return false;
   try {
-    const res = await fetch('/api/studio-state', {
+    const res = await smartCollectionFetch('/api/studio-state', {
       method: 'GET',
-      headers: { Accept: 'application/json' },
       cache: 'no-store',
     });
-    if (!res.ok) {
+    if (!res.ok || !res.data) {
       serverConnected = false;
       return false;
     }
-    const data = await res.json();
+    const data = res.data;
     if (!data || !data.ok || !data.state) return false;
 
     serverConnected = true;
@@ -431,13 +430,13 @@ export async function pushBriefToServer(
 ): Promise<{ ok: boolean; notification?: BriefNotificationRecord }> {
   if (typeof window === 'undefined') return { ok: false };
   try {
-    const res = await fetch('/api/studio-state/brief', {
+    const res = await smartCollectionFetch('/api/briefs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ brief, workspace }),
     });
-    if (res.ok) {
-      const data = await res.json();
+    if (res.ok && res.data) {
+      const data = res.data;
       serverConnected = true;
       lastServerSyncAt = new Date().toLocaleTimeString('fa-IR');
 
@@ -482,7 +481,7 @@ export async function pushServerSyncPayload(payload: {
 }): Promise<boolean> {
   if (typeof window === 'undefined' || isApplyingServerState) return false;
   try {
-    const res = await fetch('/api/studio-state/sync', {
+    const res = await smartCollectionFetch('/api/studio-state/sync', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
