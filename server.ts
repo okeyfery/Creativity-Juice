@@ -12,7 +12,7 @@ import {
   insertDbPortfolio,
   deleteDbPortfolio,
 } from './src/db/queries.ts';
-import { requireAuth, AuthRequest } from './src/middleware/auth.ts';
+import { requireAuth, type AuthRequest } from './src/middleware/auth.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
