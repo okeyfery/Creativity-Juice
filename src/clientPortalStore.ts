@@ -8,11 +8,13 @@ import {
   ClientWorkspace,
   ClientDeliverable,
   ClientFeedbackMessage,
+  ProjectBriefSubmission,
   INITIAL_CLIENT_WORKSPACES,
 } from './data/clientPortalData';
 
 const STORAGE_KEY_WORKSPACES = 'cj_client_workspaces_v1';
 const STORAGE_KEY_ACTIVE_CLIENT = 'cj_client_portal_active_id';
+const STORAGE_KEY_ARCHIVED_BRIEFS = 'cj_studio_archived_briefs_v1';
 export const CLIENT_PORTAL_EVENT = 'CJ_CLIENT_PORTAL_CHANGED';
 
 function notifyChange() {
@@ -29,26 +31,91 @@ function safeFormatFaDate(date: Date, options?: Intl.DateTimeFormatOptions): str
   }
 }
 
+function normalizeWorkspace(c: ClientWorkspace, idx = 0): ClientWorkspace {
+  const defaultDefaults = INITIAL_CLIENT_WORKSPACES.find((init) => init.id === c.id);
+  const pin = c.pinCode || defaultDefaults?.pinCode || String(1001 + idx);
+  const trackingCode =
+    c.trackingCode ||
+    defaultDefaults?.trackingCode ||
+    (pin.startsWith('CJ-') ? pin.toUpperCase() : `CJ-${pin}`);
+  const username = (c.username || defaultDefaults?.username || c.slug || trackingCode).trim();
+  const password = (c.password || defaultDefaults?.password || pin).trim();
+
+  let archivedBriefs: ProjectBriefSubmission[] = Array.isArray(c.archivedBriefs)
+    ? c.archivedBriefs
+    : [];
+
+  if (archivedBriefs.length === 0 && c.scopeSummary) {
+    archivedBriefs = [
+      {
+        id: `brief-init-${c.id}`,
+        trackingCode,
+        clientId: c.id,
+        brandName: c.brandName,
+        ownerName: c.ownerName,
+        contactInfo: `@${username}`,
+        submittedAt: c.contractDate || '۱۴۰۵/۰۱/۲۰',
+        selectedTrack: c.category || 'معماری هویت برند و تولید محتوا',
+        marketTier: 'لوکس و پرمیوم / دارایی‌محور (High-Ticket)',
+        problem: c.scopeSummary,
+        brandingDeliverables: (c.deliverables || []).map((d) => d.title),
+        deadline: c.deliveryDate,
+        productionScale: 'پروداکشن استاندارد استودیو (پکیج جامع با تست و نظارت کامل)',
+        fullSummaryText: [
+          `=== پرونده و بریف آرشیوشده پروژه (${trackingCode}) ===`,
+          `• نام برند / پروژه: ${c.brandName}`,
+          `• کارفرما: ${c.ownerName}`,
+          `• کد رهگیری یکتا: ${trackingCode}`,
+          `• نام کاربری پورتال: ${username}`,
+          `• مدیر پروژه در استودیو: ${c.projectLead} (${c.projectLeadRole})`,
+          `• تاریخ ثبت قرارداد: ${c.contractDate}`,
+          `• زمان‌بندی تحویل: ${c.deliveryDate}`,
+          `• حوزه و دپارتمان: ${c.category}`,
+          ``,
+          `[خلاصه بریف و دامنه خدمات پروژه]`,
+          c.scopeSummary,
+        ].join('\n'),
+        status: c.progressPercent >= 80 ? 'in-production' : 'reviewed',
+        adminNotes: `پرونده فعال در استودیو به سرپرستی ${c.projectLead}.`,
+      },
+    ];
+  }
+
+  return {
+    ...c,
+    pinCode: pin,
+    trackingCode,
+    username,
+    password,
+    archivedBriefs,
+  };
+}
+
 export function getClientWorkspaces(): ClientWorkspace[] {
-  if (typeof window === 'undefined') return INITIAL_CLIENT_WORKSPACES;
+  if (typeof window === 'undefined') return INITIAL_CLIENT_WORKSPACES.map(normalizeWorkspace);
   try {
     const raw = localStorage.getItem(STORAGE_KEY_WORKSPACES);
     if (!raw) {
-      localStorage.setItem(STORAGE_KEY_WORKSPACES, JSON.stringify(INITIAL_CLIENT_WORKSPACES));
-      return INITIAL_CLIENT_WORKSPACES;
+      const normalizedInit = INITIAL_CLIENT_WORKSPACES.map(normalizeWorkspace);
+      localStorage.setItem(STORAGE_KEY_WORKSPACES, JSON.stringify(normalizedInit));
+      return normalizedInit;
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_CLIENT_WORKSPACES;
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed.map((item, i) => normalizeWorkspace(item, i));
+    }
+    return INITIAL_CLIENT_WORKSPACES.map(normalizeWorkspace);
   } catch (err) {
     console.error('Failed reading client workspaces:', err);
-    return INITIAL_CLIENT_WORKSPACES;
+    return INITIAL_CLIENT_WORKSPACES.map(normalizeWorkspace);
   }
 }
 
 export function saveClientWorkspaces(workspaces: ClientWorkspace[]) {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(STORAGE_KEY_WORKSPACES, JSON.stringify(workspaces));
+    const normalized = workspaces.map((w, i) => normalizeWorkspace(w, i));
+    localStorage.setItem(STORAGE_KEY_WORKSPACES, JSON.stringify(normalized));
     notifyChange();
   } catch (err) {
     console.error('Failed saving client workspaces:', err);
@@ -86,12 +153,41 @@ export function findClientByPinOrSlug(query: string): ClientWorkspace | null {
   return (
     list.find(
       (c) =>
+        (c.trackingCode && c.trackingCode.toLowerCase() === clean) ||
+        (c.username && c.username.toLowerCase() === clean) ||
         c.pinCode.toLowerCase() === clean ||
         c.slug.toLowerCase() === clean ||
-        c.id.toLowerCase() === clean ||
-        c.brandName.toLowerCase().includes(clean)
+        c.id.toLowerCase() === clean
     ) || null
   );
+}
+
+/**
+ * Strict Client Portal Authentication:
+ * Requires both unique identifier (trackingCode / username / slug) AND dedicated password.
+ */
+export function authenticateClient(identifier: string, passwordInput: string): ClientWorkspace | null {
+  const list = getClientWorkspaces();
+  const cleanId = identifier.trim().toLowerCase();
+  const cleanPass = passwordInput.trim();
+  if (!cleanId || !cleanPass) return null;
+
+  const candidate = list.find(
+    (c) =>
+      (c.trackingCode && c.trackingCode.toLowerCase() === cleanId) ||
+      (c.username && c.username.toLowerCase() === cleanId) ||
+      c.slug.toLowerCase() === cleanId ||
+      c.pinCode.toLowerCase() === cleanId
+  );
+
+  if (!candidate) return null;
+
+  const validPass =
+    (candidate.password && candidate.password === cleanPass) ||
+    (candidate.password && candidate.password.toLowerCase() === cleanPass.toLowerCase()) ||
+    candidate.pinCode === cleanPass;
+
+  return validPass ? candidate : null;
 }
 
 export function getClientById(id: string): ClientWorkspace | null {
@@ -250,18 +346,26 @@ export interface CreatePersonalBrandParams {
   logoBadge?: string;
   pinCode?: string;
   slug?: string;
+  username?: string;
+  password?: string;
+  trackingCode?: string;
 }
 
 export function createPersonalBrandWorkspace(params: CreatePersonalBrandParams): ClientWorkspace {
   const timestamp = Date.now();
-  const rawSlug = (params.slug || params.name)
+  const randomDigits = Math.floor(1000 + Math.random() * 9000).toString();
+  const rawSlug = (params.username || params.slug || params.name)
     .trim()
     .toLowerCase()
     .replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, '-')
     .replace(/-+/g, '-')
     .slice(0, 30) || `creator-${timestamp.toString().slice(-4)}`;
 
-  const pinCode = params.pinCode?.trim() || Math.floor(1000 + Math.random() * 9000).toString();
+  const pinCode = params.password?.trim() || params.pinCode?.trim() || randomDigits;
+  const trackingCode = params.trackingCode?.trim().toUpperCase() || `CJ-${randomDigits}`;
+  const username = params.username?.trim() || rawSlug;
+  const password = params.password?.trim() || pinCode;
+
   const now = new Date();
   const dateFa = safeFormatFaDate(now, {
     year: 'numeric',
@@ -272,6 +376,9 @@ export function createPersonalBrandWorkspace(params: CreatePersonalBrandParams):
   const newWorkspace: ClientWorkspace = {
     id: `pb-${timestamp}`,
     slug: rawSlug,
+    trackingCode,
+    username,
+    password,
     pinCode: pinCode,
     brandName: params.name.trim(),
     brandNameEn: `${params.name.trim()} (Personal Brand)`,
@@ -291,6 +398,7 @@ export function createPersonalBrandWorkspace(params: CreatePersonalBrandParams):
     socialGoal: params.goal,
     brandTone: params.tone,
     targetPlatforms: params.platforms,
+    archivedBriefs: [],
     milestones: [
       {
         id: `ms-${timestamp}-1`,
@@ -488,4 +596,418 @@ export function getClientInitialNotes(client: ClientWorkspace) {
     },
   ];
 }
+
+// ============================================================================
+// PROJECT BRIEF ARCHIVING & ADMIN CLIENT MANAGEMENT
+// ============================================================================
+
+export function getAllArchivedBriefs(): ProjectBriefSubmission[] {
+  const workspaces = getClientWorkspaces();
+  const map = new Map<string, ProjectBriefSubmission>();
+
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_ARCHIVED_BRIEFS);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          parsed.forEach((b: ProjectBriefSubmission) => {
+            if (b && b.id) map.set(b.id, b);
+          });
+        }
+      }
+    } catch {
+      // ignore storage errors
+    }
+  }
+
+  workspaces.forEach((ws) => {
+    if (Array.isArray(ws.archivedBriefs)) {
+      ws.archivedBriefs.forEach((b) => {
+        if (b && b.id && !map.has(b.id)) {
+          map.set(b.id, b);
+        }
+      });
+    }
+  });
+
+  return Array.from(map.values());
+}
+
+export function saveGlobalArchivedBriefs(briefs: ProjectBriefSubmission[]) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(STORAGE_KEY_ARCHIVED_BRIEFS, JSON.stringify(briefs));
+    notifyChange();
+  } catch (err) {
+    console.error('Failed saving archived briefs:', err);
+  }
+}
+
+export interface SubmitBriefPayload {
+  clientId?: string;
+  existingTrackingCode?: string;
+  desiredUsername?: string;
+  desiredPassword?: string;
+  clientName: string;
+  ownerName?: string;
+  clientUrl?: string;
+  selectedTrack: string;
+  marketTier: string;
+  problem: string;
+  emptySpace?: string;
+  enemy?: string;
+  persona?: string;
+  brandingDeliverables?: string[];
+  bottleneck?: string;
+  objection?: string;
+  competitorCliches?: string;
+  marketingMedia?: string[];
+  benchmarks?: string;
+  dealbreakers?: string;
+  deadline?: string;
+  productionScale?: string;
+  decisionStructure?: string;
+  fullSummaryText: string;
+}
+
+export function submitAndArchiveProjectBrief(payload: SubmitBriefPayload): {
+  workspace: ClientWorkspace;
+  brief: ProjectBriefSubmission;
+  isNewWorkspace: boolean;
+} {
+  const now = new Date();
+  const nowFa = safeFormatFaDate(now, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  const list = getClientWorkspaces();
+  let targetWorkspace: ClientWorkspace | null = null;
+  let isNewWorkspace = false;
+
+  if (payload.clientId) {
+    targetWorkspace = list.find((w) => w.id === payload.clientId) || null;
+  }
+  if (!targetWorkspace && payload.existingTrackingCode?.trim()) {
+    targetWorkspace = findClientByPinOrSlug(payload.existingTrackingCode.trim());
+  }
+
+  const randomCodeNum = Math.floor(1000 + Math.random() * 9000);
+  const generatedTrackingCode = targetWorkspace?.trackingCode || `CJ-${randomCodeNum}`;
+  const generatedPassword =
+    targetWorkspace?.password ||
+    payload.desiredPassword?.trim() ||
+    `cj${randomCodeNum}`;
+
+  const briefId = `brief-${Date.now()}`;
+  const briefRecord: ProjectBriefSubmission = {
+    id: briefId,
+    trackingCode: generatedTrackingCode,
+    clientId: targetWorkspace ? targetWorkspace.id : `client-${Date.now()}`,
+    brandName: payload.clientName?.trim() || targetWorkspace?.brandName || 'پروژه جدید استودیو',
+    ownerName: payload.ownerName?.trim() || targetWorkspace?.ownerName || payload.clientName?.trim() || 'کارفرما',
+    contactInfo: payload.clientUrl?.trim() || '-',
+    submittedAt: nowFa,
+    selectedTrack: payload.selectedTrack || 'دپارتمان برندینگ',
+    marketTier: payload.marketTier || 'میان‌رده باکیفیت',
+    problem: payload.problem || '-',
+    emptySpace: payload.emptySpace,
+    enemy: payload.enemy,
+    persona: payload.persona,
+    brandingDeliverables: payload.brandingDeliverables,
+    bottleneck: payload.bottleneck,
+    objection: payload.objection,
+    competitorCliches: payload.competitorCliches,
+    marketingMedia: payload.marketingMedia,
+    benchmarks: payload.benchmarks,
+    dealbreakers: payload.dealbreakers,
+    deadline: payload.deadline,
+    productionScale: payload.productionScale,
+    decisionStructure: payload.decisionStructure,
+    fullSummaryText: payload.fullSummaryText,
+    status: 'new',
+  };
+
+  if (targetWorkspace) {
+    const updatedList = list.map((w) => {
+      if (w.id !== targetWorkspace!.id) return w;
+      const updatedWorkspace: ClientWorkspace = {
+        ...w,
+        archivedBriefs: [briefRecord, ...(w.archivedBriefs || [])],
+        feedbacks: [
+          ...w.feedbacks,
+          {
+            id: `fb-brief-${Date.now()}`,
+            author: w.ownerName || w.brandName,
+            role: 'client',
+            message: `📋 [ثبت و آرشیو بریف جدید در پرونده پروژه] مسیر انتخابی: ${briefRecord.selectedTrack} — صورت‌مسئله: ${briefRecord.problem}`,
+            timestamp: nowFa,
+          },
+        ],
+      };
+      targetWorkspace = updatedWorkspace;
+      return updatedWorkspace;
+    });
+    saveClientWorkspaces(updatedList);
+  } else {
+    isNewWorkspace = true;
+    const rawSlug =
+      (payload.desiredUsername || payload.clientName || `project-${randomCodeNum}`)
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, '-')
+        .replace(/-+/g, '-')
+        .slice(0, 28) || `client-${randomCodeNum}`;
+
+    const newWs: ClientWorkspace = {
+      id: briefRecord.clientId,
+      slug: rawSlug,
+      trackingCode: generatedTrackingCode,
+      username: payload.desiredUsername?.trim() || rawSlug,
+      password: generatedPassword,
+      pinCode: generatedPassword,
+      brandName: briefRecord.brandName,
+      brandNameEn: briefRecord.brandName,
+      ownerName: briefRecord.ownerName,
+      category: `${briefRecord.selectedTrack} • ${briefRecord.marketTier}`,
+      coverImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+      logoBadge: '💼',
+      colorAccent: 'amber',
+      progressPercent: 15,
+      projectLead: 'مهدی لقمانی',
+      projectLeadRole: 'مدیر پروژه و استراتژیست ارشد استودیو',
+      contractDate: nowFa,
+      deliveryDate: briefRecord.deadline || 'در حال زمان‌بندی در استودیو',
+      scopeSummary: `صورت‌مسئله پروژه: ${briefRecord.problem}\nمسیر همکاری: ${briefRecord.selectedTrack} (${briefRecord.marketTier})\nمقیاس پروداکشن: ${briefRecord.productionScale || 'استاندارد استودیو'}`,
+      milestones: [
+        {
+          id: `ms-${Date.now()}-1`,
+          title: 'ثبت بریف کشف پروژه و تشکیل پرونده اختصاصی',
+          description: `بریف اولیه در تاریخ ${nowFa} ثبت و برای مدیریت استودیو ارسال گردید.`,
+          status: 'completed',
+          date: nowFa,
+          badge: 'تکمیل شده',
+        },
+        {
+          id: `ms-${Date.now()}-2`,
+          title: 'آنالیز بریف توسط سرپرست دپارتمان و جلسه کشف تخصصی',
+          description: 'بررسی دقیق نیازمندی‌ها، تدوین نقشه راه و زمان‌بندی فازهای اجرایی.',
+          status: 'in-progress',
+          date: '۴۸ ساعت کاری آینده',
+          badge: 'فاز جاری',
+        },
+      ],
+      deliverables: [],
+      calendar: [],
+      feedbacks: [
+        {
+          id: `fb-init-${Date.now()}`,
+          author: 'مدیریت استودیو Creativity Juice',
+          role: 'lead',
+          message: `سلام و درود! پرونده اختصاصی برند «${briefRecord.brandName}» با کد رهگیری ${generatedTrackingCode} تشکیل شد. بریف شما در آرشیو پروژه ثبت گردید و پس از بررسی تیم استراتژی، مراحل بعدی در همین پورتال به‌روزرسانی خواهد شد.`,
+          timestamp: nowFa,
+        },
+      ],
+      archivedBriefs: [briefRecord],
+      isPersonalBrand: false,
+    };
+
+    targetWorkspace = newWs;
+    saveClientWorkspaces([newWs, ...list]);
+  }
+
+  const allBriefs = getAllArchivedBriefs();
+  const filteredBriefs = allBriefs.filter((b) => b.id !== briefRecord.id);
+  saveGlobalArchivedBriefs([briefRecord, ...filteredBriefs]);
+
+  return {
+    workspace: targetWorkspace!,
+    brief: briefRecord,
+    isNewWorkspace,
+  };
+}
+
+export function updateBriefStatus(
+  briefId: string,
+  status: 'new' | 'reviewed' | 'in-production',
+  adminNotes?: string
+) {
+  const allBriefs = getAllArchivedBriefs().map((b) =>
+    b.id === briefId ? { ...b, status, adminNotes: adminNotes ?? b.adminNotes } : b
+  );
+  saveGlobalArchivedBriefs(allBriefs);
+
+  const workspaces = getClientWorkspaces().map((w) => {
+    if (!Array.isArray(w.archivedBriefs)) return w;
+    return {
+      ...w,
+      archivedBriefs: w.archivedBriefs.map((b) =>
+        b.id === briefId ? { ...b, status, adminNotes: adminNotes ?? b.adminNotes } : b
+      ),
+    };
+  });
+  saveClientWorkspaces(workspaces);
+}
+
+export interface AdminClientProfileInput {
+  id?: string;
+  brandName: string;
+  ownerName: string;
+  category: string;
+  trackingCode: string;
+  username: string;
+  password: string;
+  projectLead?: string;
+  projectLeadRole?: string;
+  scopeSummary?: string;
+  progressPercent?: number;
+  logoBadge?: string;
+  isPersonalBrand?: boolean;
+}
+
+export function saveClientProfileByAdmin(input: AdminClientProfileInput): ClientWorkspace {
+  const list = getClientWorkspaces();
+  const nowFa = safeFormatFaDate(new Date(), {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const existing = input.id ? list.find((w) => w.id === input.id) : null;
+  const cleanTracking = input.trackingCode.trim().toUpperCase() || `CJ-${Math.floor(1000 + Math.random() * 9000)}`;
+  const cleanUsername = input.username.trim() || cleanTracking.toLowerCase();
+  const cleanPassword = input.password.trim() || '1234';
+
+  if (existing) {
+    const updatedWorkspace: ClientWorkspace = {
+      ...existing,
+      brandName: input.brandName.trim() || existing.brandName,
+      ownerName: input.ownerName.trim() || existing.ownerName,
+      category: input.category.trim() || existing.category,
+      trackingCode: cleanTracking,
+      username: cleanUsername,
+      slug: cleanUsername,
+      password: cleanPassword,
+      pinCode: cleanPassword,
+      projectLead: input.projectLead?.trim() || existing.projectLead,
+      projectLeadRole: input.projectLeadRole?.trim() || existing.projectLeadRole,
+      scopeSummary: input.scopeSummary?.trim() || existing.scopeSummary,
+      progressPercent: input.progressPercent ?? existing.progressPercent,
+      logoBadge: input.logoBadge || existing.logoBadge,
+      isPersonalBrand: input.isPersonalBrand ?? existing.isPersonalBrand,
+    };
+    saveClientWorkspaces(list.map((w) => (w.id === existing.id ? updatedWorkspace : w)));
+    return updatedWorkspace;
+  }
+
+  const newWs: ClientWorkspace = {
+    id: `client-${Date.now()}`,
+    slug: cleanUsername,
+    trackingCode: cleanTracking,
+    username: cleanUsername,
+    password: cleanPassword,
+    pinCode: cleanPassword,
+    brandName: input.brandName.trim(),
+    brandNameEn: input.brandName.trim(),
+    ownerName: input.ownerName.trim() || input.brandName.trim(),
+    category: input.category.trim() || 'پروژه اختصاصی استودیو',
+    coverImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+    logoBadge: input.logoBadge || '💼',
+    colorAccent: 'amber',
+    progressPercent: input.progressPercent ?? 20,
+    projectLead: input.projectLead?.trim() || 'مهدی لقمانی',
+    projectLeadRole: input.projectLeadRole?.trim() || 'مدیر پروژه و استراتژیست برند',
+    contractDate: nowFa,
+    deliveryDate: 'بر اساس زمان‌بندی قرارداد',
+    scopeSummary: input.scopeSummary?.trim() || 'پرونده اختصاصی تعریف‌شده توسط مدیریت استودیو.',
+    milestones: [
+      {
+        id: `ms-${Date.now()}-1`,
+        title: 'تشکیل پرونده و راه‌اندازی پورتال اختصاصی کارفرما',
+        description: 'تعریف کد رهگیری یکتا و رمز عبور اختصاصی توسط مدیریت استودیو',
+        status: 'completed',
+        date: nowFa,
+      },
+    ],
+    deliverables: [],
+    calendar: [],
+    feedbacks: [],
+    archivedBriefs: [],
+    isPersonalBrand: Boolean(input.isPersonalBrand),
+  };
+
+  saveClientWorkspaces([newWs, ...list]);
+  return newWs;
+}
+
+export interface AdminDeliverableInput {
+  title: string;
+  type: ClientDeliverable['type'];
+  format: string;
+  fileSize: string;
+  version: string;
+  thumbnail?: string;
+  downloadUrl?: string;
+  status?: ClientDeliverable['status'];
+}
+
+export function addDeliverableByAdmin(
+  clientId: string,
+  input: AdminDeliverableInput
+): ClientWorkspace | null {
+  const list = getClientWorkspaces();
+  const nowFa = safeFormatFaDate(new Date(), {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  });
+
+  let updatedClient: ClientWorkspace | null = null;
+  const nextList = list.map((ws) => {
+    if (ws.id !== clientId) return ws;
+    const newDel: ClientDeliverable = {
+      id: `del-${Date.now()}`,
+      title: input.title.trim(),
+      type: input.type || 'branding',
+      format: input.format.trim() || 'PDF • Master',
+      fileSize: input.fileSize.trim() || '24 MB',
+      version: input.version.trim() || 'v1.0',
+      thumbnail:
+        input.thumbnail?.trim() ||
+        ws.coverImage ||
+        'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+      downloadUrl: input.downloadUrl?.trim(),
+      status: input.status || 'pending-review',
+      dateUploaded: nowFa,
+    };
+    updatedClient = {
+      ...ws,
+      deliverables: [newDel, ...(ws.deliverables || [])],
+    };
+    return updatedClient;
+  });
+
+  if (updatedClient) {
+    saveClientWorkspaces(nextList);
+  }
+  return updatedClient;
+}
+
+export function deleteDeliverableByAdmin(clientId: string, deliverableId: string) {
+  const list = getClientWorkspaces();
+  const nextList = list.map((ws) => {
+    if (ws.id !== clientId) return ws;
+    return {
+      ...ws,
+      deliverables: (ws.deliverables || []).filter((d) => d.id !== deliverableId),
+    };
+  });
+  saveClientWorkspaces(nextList);
+}
+
+
 

@@ -49,9 +49,41 @@ export interface ClientFeedbackMessage {
   replyTo?: string;
 }
 
+export interface ProjectBriefSubmission {
+  id: string;
+  trackingCode: string;
+  clientId: string;
+  brandName: string;
+  ownerName: string;
+  contactInfo: string;
+  submittedAt: string;
+  selectedTrack: string;
+  marketTier: string;
+  problem: string;
+  emptySpace?: string;
+  enemy?: string;
+  persona?: string;
+  brandingDeliverables?: string[];
+  bottleneck?: string;
+  objection?: string;
+  competitorCliches?: string;
+  marketingMedia?: string[];
+  benchmarks?: string;
+  dealbreakers?: string;
+  deadline?: string;
+  productionScale?: string;
+  decisionStructure?: string;
+  fullSummaryText: string;
+  status: 'new' | 'reviewed' | 'in-production';
+  adminNotes?: string;
+}
+
 export interface ClientWorkspace {
   id: string;
   slug: string;
+  trackingCode?: string;
+  username?: string;
+  password?: string;
   pinCode: string;
   brandName: string;
   brandNameEn: string;
@@ -70,6 +102,7 @@ export interface ClientWorkspace {
   deliverables: ClientDeliverable[];
   calendar: ClientCalendarPost[];
   feedbacks: ClientFeedbackMessage[];
+  archivedBriefs?: ProjectBriefSubmission[];
   isPersonalBrand?: boolean;
   targetNiche?: string;
   socialGoal?: string;
@@ -81,6 +114,9 @@ export const INITIAL_CLIENT_WORKSPACES: ClientWorkspace[] = [
   {
     id: 'client-yousefzadeh',
     slug: 'yousefzadeh',
+    trackingCode: 'CJ-1001',
+    username: 'yousefzadeh',
+    password: 'cj1001',
     pinCode: '1001',
     brandName: 'گروه مشاوره سرمایه‌گذاری ملکی یوسف‌زاده',
     brandNameEn: 'Yousefzadeh Real Estate Advisory',
@@ -181,6 +217,9 @@ export const INITIAL_CLIENT_WORKSPACES: ClientWorkspace[] = [
   {
     id: 'client-dr-peiravi',
     slug: 'dr-peiravi',
+    trackingCode: 'CJ-1002',
+    username: 'dr-peiravi',
+    password: 'cj1002',
     pinCode: '1002',
     brandName: 'کلینیک زیبایی دکتر صادق پیروی',
     brandNameEn: 'Dr. Sadegh Peiravi Aesthetic Clinic',
@@ -252,6 +291,9 @@ export const INITIAL_CLIENT_WORKSPACES: ClientWorkspace[] = [
   {
     id: 'client-ghollak',
     slug: 'ghollak',
+    trackingCode: 'CJ-1003',
+    username: 'ghollak',
+    password: 'cj1003',
     pinCode: '1003',
     brandName: 'آموزش اقتصادی قلک طلا',
     brandNameEn: 'Ghollak Tala Financial Academy',
@@ -301,6 +343,9 @@ export const INITIAL_CLIENT_WORKSPACES: ClientWorkspace[] = [
   {
     id: 'client-kaviani',
     slug: 'kaviani',
+    trackingCode: 'CJ-1004',
+    username: 'kaviani',
+    password: 'cj1004',
     pinCode: '1004',
     brandName: 'مشاوره املاک کیان کاویانی',
     brandNameEn: 'Kian Kaviani Real Estate Consultation',
@@ -339,6 +384,9 @@ export const INITIAL_CLIENT_WORKSPACES: ClientWorkspace[] = [
   {
     id: 'client-gogona',
     slug: 'gogona',
+    trackingCode: 'CJ-1005',
+    username: 'gogona',
+    password: 'cj1005',
     pinCode: '1005',
     brandName: 'شرکت صنعتی گوگونا',
     brandNameEn: 'Gogona Industrial Group',
@@ -379,6 +427,9 @@ export const INITIAL_CLIENT_WORKSPACES: ClientWorkspace[] = [
   {
     id: 'client-sepanja',
     slug: 'sepanja',
+    trackingCode: 'CJ-1010',
+    username: 'sepanja',
+    password: 'cj1010',
     pinCode: '1010',
     brandName: 'سپنجا (سامانه رزرو اقامتگاه و گردشگری)',
     brandNameEn: 'Sepanja Tourism & Booking Platform',

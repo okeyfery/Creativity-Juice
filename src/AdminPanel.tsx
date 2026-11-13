@@ -62,21 +62,22 @@ import { MediaPickerModal } from './admin/MediaPickerModal';
 import { ServicesTab } from './admin/ServicesTab';
 import { TeamManifestoTab } from './admin/TeamManifestoTab';
 import { NotesTab } from './admin/NotesTab';
+import { ClientPortalAdminTab } from './admin/ClientPortalAdminTab';
 
 export interface AdminPanelProps {
   onExit?: () => void;
   onLockAndExit?: () => void;
   onSetWallpaper?: (url: string) => void;
-  initialTab?: 'overview' | 'projects' | 'photos' | 'services' | 'team' | 'notes' | 'calendar' | 'settings';
+  initialTab?: 'overview' | 'projects' | 'client-portal' | 'photos' | 'services' | 'team' | 'notes' | 'calendar' | 'settings';
 }
 
-type AdminTab = 'overview' | 'projects' | 'photos' | 'services' | 'team' | 'notes' | 'calendar' | 'settings';
+type AdminTab = 'overview' | 'projects' | 'client-portal' | 'photos' | 'services' | 'team' | 'notes' | 'calendar' | 'settings';
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({
   onExit,
   onLockAndExit,
   onSetWallpaper,
-  initialTab = 'projects',
+  initialTab = 'client-portal',
 }) => {
   // Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => isAdminAuthenticated());
@@ -724,10 +725,27 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             >
               <div className="flex items-center gap-3">
                 <FolderKanban className="w-4 h-4 shrink-0 text-amber-500" />
-                <span className="hidden sm:inline">مدیریت پروژه‌ها</span>
+                <span className="hidden sm:inline">مدیریت نمونه کارها</span>
               </div>
               <span className="hidden sm:inline-block font-mono text-[11px] bg-neutral-800 text-neutral-300 px-1.5 py-0.5 rounded">
                 {projects.length}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('client-portal')}
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors cursor-pointer ${
+                activeTab === 'client-portal'
+                  ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
+                  : 'text-neutral-300 hover:bg-neutral-800/60 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <Key className="w-4 h-4 shrink-0 text-amber-500" />
+                <span className="hidden sm:inline">پورتال کارفرما و بریف‌ها</span>
+              </div>
+              <span className="hidden sm:inline-block font-mono text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded">
+                خصوصی
               </span>
             </button>
 
@@ -839,6 +857,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     </p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      onClick={() => setActiveTab('client-portal')}
+                      className="flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 border border-amber-500/40 text-amber-300 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer"
+                    >
+                      <Key className="w-4 h-4" />
+                      <span>رمزها و بریف‌های کارفرمایان</span>
+                    </button>
                     <button
                       onClick={handleOpenCreateProject}
                       className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-neutral-950 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer shadow-md shadow-amber-500/20"
@@ -1294,6 +1319,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 )}
               </div>
             </div>
+          )}
+
+          {/* TAB: CLIENT PORTAL PROFILES & ARCHIVED BRIEFS */}
+          {activeTab === 'client-portal' && (
+            <ClientPortalAdminTab
+              onShowToast={showToast}
+              onExitToPortal={onExit}
+            />
           )}
 
           {/* TAB 5: SETTINGS & PIN CODE */}

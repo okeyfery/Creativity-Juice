@@ -30,6 +30,7 @@ import { addToTrash } from './trashStore.ts';
 import {
   getActiveClient,
   setActiveClientId,
+  submitAndArchiveProjectBrief,
   CLIENT_PORTAL_EVENT,
 } from './clientPortalStore.ts';
 
@@ -55,11 +56,11 @@ var Au = [
       nameEn: `Content Production & Visuals`,
       trackCode: `TRACK 02 // VISUALS`,
       deptId: 2,
-      itemCount: 3,
+      itemCount: 2,
       iconType: `cinema`,
-      badge: `۳ سند تخصصی`,
+      badge: `۲ سند تخصصی`,
       desktopPos: { top: 38, left: 8.5, mobileTop: 24, mobileLeft: 20 },
-      description: `سناریو و کارگردانی فیلم‌های تبلیغاتی مد، آرت‌دایرکشن موزیک‌ویدئو و تولید محتوای پرمیوم`,
+      description: `معماری تولید؛ مدل‌های همکاری، فرآیند ۵ مرحله‌ای تولید، تضمین کیفیت و فرم بریف`,
     },
     {
       id: `folder-manifesto`,
@@ -952,6 +953,12 @@ var Au = [
             children: (0, H.jsx)(`img`, {
               src: `/assets/aistudio/folder-icon-mac-png-23_a819e89f.png`,
               alt: e.name,
+              onError: (ev) => {
+                if (ev.currentTarget && !ev.currentTarget.dataset.fallback) {
+                  ev.currentTarget.dataset.fallback = `1`;
+                  ev.currentTarget.src = `/mac-folder.png`;
+                }
+              },
               className: `w-full h-full object-contain filter drop-shadow-[0_6px_14px_rgba(0,0,0,0.2)] select-none pointer-events-none`,
               draggable: !1,
             }),
@@ -3162,46 +3169,250 @@ var Au = [
     {
       id: `doc-content-01`,
       folderId: `folder-track-2`,
-      fileName: `01_سند_جامع_استانداردهای_تولید_محتوا_و_سینما.doc`,
+      fileName: `01_سند_جامع_معماری_و_استانداردهای_تولید_محتوا.doc`,
       fileExt: `DOC`,
-      fileSize: `5.2 MB`,
-      dateModified: `Sep 02`,
-      title: `تولید محتوای ادیتوریال، فشن و سینمای تبلیغاتی`,
-      subtitle: `کالبدشکافی استانداردهای پروداکشن، سناریونویسی و ویدیوهای پرستیژ استودیو`,
-      author: `دپارتمان سینما و آرت‌دایرکشن // Creativity Juice`,
-      readTime: `زمان مطالعه: ۵ دقیقه`,
-      category: `CINEMA & CONTENT PRODUCTION`,
+      fileSize: `5.4 MB`,
+      dateModified: `Nov 12`,
+      title: `معماری تولید؛ از جرقه ایده تا مستر نهایی.`,
+      subtitle: `ما پروژه‌های چندرسانه‌ای را از بی‌نظمی در زمان‌بندی، سلیقه‌های فرسایشی و افت کیفیت خارج می‌کنیم. از نخستین خط بریف تا تحویل مستر نهایی، همه‌چیز در یک خط تولید شفاف و قابل پیش‌بینی پیش می‌رود.`,
+      author: `دپارتمان تولید محتوا و سینما // استودیو Creativity Juice`,
+      readTime: `زمان مطالعه: ۶ دقیقه`,
+      category: `ENGAGEMENT & PRODUCTION FRAMEWORKS`,
       glyph: `cinema`,
       badgeColor: `#AF52DE`,
+      isBriefTrigger: !0,
+      briefPrefill: `ارسال بریف اولیه و انتخاب مدل همکاری (دپارتمان تولید محتوا)`,
+      ctaTitle: `«پروژه بعدی خود را با استاندارد سینمایی و زمان‌بندی قطعی کلید بزنید»`,
+      ctaSubtitle: `مطمئن نیستید کدام مدل تولید برای مقیاس برند یا اثر هنری شما مناسب‌تر است؟ بریف اولیه را ثبت کنید یا جلسه بررسی ساختار تولید را رزرو نمایید.`,
+      ctaButtonText: `ارسال بریف اولیه و انتخاب مدل همکاری`,
+      ctaSecondaryButtonText: `رزرو جلسه بررسی ساختار تولید`,
       sections: [
         {
-          heading: `۱. تفاوت محتوای ادیتوریال با بلاگری‌های بازاری`,
-          content: `شبکه‌های اجتماعی سرشار از ویدیوهای تکراری، بلاگری‌های سطحی و تیزرهای پر سر و صدای تلویزیونی هستند که به محض تمام شدن فراموش می‌شوند. نگرش استودیو Creativity Juice در نقطه مقابل این رویکرد قرار دارد: ما تصویر تجاری را به زبان «سینما و ادیتوریال» ترجمه می‌کنیم. هر فریم از ویدیوهای ما باید مثل یک عکس مجله ووگ یا صحنه‌ای از یک فیلم بلند سینمایی دارای استایل، داستان و اتمسفر باشد.`,
-          callout: `«اگر ویدیوی برند شما بتواند بدون صدا هم مخاطب را مجذوب زیبایی و وقار خود کند، به استاندارد سینمایی دست یافته‌اید.»`,
-        },
-        {
-          heading: `۲. چرا برندهای فاخر به زبان تصویر سینمایی نیاز دارند؟`,
-          content: `مشتریان هوشمند با تیزرهای معمولی قانع نمی‌شوند؛ آن‌ها در پی لمس حس برتری، کیفیت ساخت و جهان زیبایی‌شناختی محصول هستند. یک فیلم تبلیغاتی خوب، کاتالوگ فروش نیست؛ بیانیه‌ای تصویری است که جایگاه رفیع برند را به رخ بازار می‌کشد.`,
+          heading: `۰۱. مدل‌های همکاری و استقرار پروژه`,
+          enHeading: `ENGAGEMENT & PRODUCTION FRAMEWORKS`,
+          content: `ساختار همکاری را دقیقاً هم‌اندازه مقیاس پروژه و استراتژی رشد شما مهندسی می‌کنیم؛ با تعهد قطعی به خروجی استاندارد.`,
+          items: [
+            {
+              num: `۰۱`,
+              title: `مدل دارایی‌های پرچمدار و پروژه‌محور`,
+              enTitle: `Flagship & Hero Production`,
+              targetAudience: `مناسب برندها و هنرمندانی که به دنبال خلق یک اثر شاخص، سرنوشت‌ساز و با پرستیژ بالا هستند.`,
+              desc: `مسئولیت خلق صفر تا صد اثر — از ایده‌پردازی و سناریو تا تحویل مستر نهایی — با تمرکز بر حداکثر کیفیت سینمایی، اصالت بصری و درگیرکنندگی عاطفی بر عهده استودیو است.`,
+              deliverables: `تیزرهای تبلیغاتی سینمایی، فیلم‌های کوتاه برند، موزیک‌ویدیوهای مفهومی، تولید مینی‌آلبوم یا تک‌آهنگ شاخص و ویدیوهای معرفی محصول لوکس.`,
+              framework: `قرارداد شفاف مبتنی بر تحویل فازبه‌فاز (Milestone-Based)، زمان‌بندی قفل‌شده با تاریخ انتشار قطعی و بودجه ثابت از پیش تعیین‌شده.`,
+            },
+            {
+              num: `۰۲`,
+              title: `موتور رسانه‌ای و محتوای اپیزودیک`,
+              enTitle: `Media Engine / Episodic Retainer`,
+              targetAudience: `طراحی‌شده برای شرکت‌ها، کارآفرینان و کریتورهایی که قصد راه‌اندازی و راهبری یک رسانه ملکی (مانند یوتیوب یا پادکست تصویری) را دارند.`,
+              desc: `استقرار یک خط تولید چابک برای خلق محتوای سریالی با هویت بصری ثابت و مهندسی نگهداشت حداکثری مخاطب.`,
+              deliverables: `فصل‌های ۱۰ تا ۲۰ اپیزودی کانال یوتیوب، تاک‌شوهای تخصصی برند، پادکست‌های استودیویی تصویری و مجموعه‌های آموزشی سینمایی.`,
+              framework: `قرارداد ماهانه یا فصلی شامل تعداد اپیزود معین، استقرار دکور و نورپردازی اختصاصی، تدوین مستمر و مدیریت گرافیکی تامنیل‌ها و دارایی‌های انتشار.`,
+            },
+            {
+              num: `۰۳`,
+              title: `تولید یکپارچه کمپین لانچ`,
+              enTitle: `Integrated Campaign Co-Production`,
+              targetAudience: `ویژه لانچ محصولات جدید، رویدادهای بزرگ تجاری، ری‌برندینگ و انتشار آلبوم موسیقی.`,
+              desc: `کامل‌ترین پکیج تولیدی برای ساخت یک اکوسیستم چندرسانه‌ای حول یک مفهوم واحد، جهت تسخیر هم‌زمان تمام زوایای توجه بازار.`,
+              deliverables: `ویدیوی اصلی کمپین (Hero Video)، ۳ تا ۵ نسخه برش‌خورده با قلاب‌های فروش متمایز، هویت صوتی و موسیقی اختصاصی، و دارایی‌های بصری پویا برای شبکه‌های اجتماعی و لندینگ‌پیج‌ها.`,
+              framework: `شراکت در فاز لانچ از ۲ تا ۳ ماه پیش از تاریخ انتشار با تقویم تولید فشرده و تست‌های کیفی پیش از عرضه نهایی.`,
+            },
+          ],
           bullets: [
-            `ایجاد کشش روانی و جاذبه حسی نسبت به متریال و طراحی محصول`,
-            `خلق پرستیژ بصری ماندگار که حتی پس از سال‌ها ارزش آرشیوی دارد`,
-            `ایجاد تمایز قاطع در پلتفرم‌های اجتماعی با کاهش نرخ رد شدن ویدیو (Skip Rate)`,
+            `۰۱ / مدل دارایی‌های پرچمدار و پروژه‌محور: خلق صفر تا صد تیزرهای سینمایی، فیلم کوتاه برند و موزیک‌ویدیوهای مفهومی با زمان‌بندی قفل‌شده.`,
+            `۰۲ / موتور رسانه‌ای و محتوای اپیزودیک: خط تولید محتوای سریالی، فصل‌های یوتیوب، تاک‌شو و پادکست تصویری با هویت بصری ثابت.`,
+            `۰۳ / تولید یکپارچه کمپین لانچ: اکوسیستم چندرسانه‌ای شامل ویدیوی اصلی کمپین، نسخه‌های قلاب‌دار، هویت صوتی و دارایی‌های شبکه‌های اجتماعی.`,
           ],
         },
         {
-          heading: `۳. فرآیند ۵ مرحله‌ای پروداکشن استودیو`,
-          content: `فرآیند تولید ویدیو در استودیو از نخستین واژه سناریو تا تحویل مستر نهایی تحت نظارت دقیق سرپرستان پیش می‌رود:`,
+          heading: `۰۲. نقشه راه تولید: از کشف ایده تا مستر نهایی`,
+          enHeading: `FROM COORDINATION TO FINAL DELIVERY`,
+          content: `یک فرآیند بدون اصطکاک. ریسک اجرایی، ابهام و سلیقه‌های تصادفی با مدیریت دقیق مراحل حذف می‌شوند.`,
+          items: [
+            {
+              num: `۰۱`,
+              title: `مرحله ۰۱: دریافت بریف و هم‌راستایی استراتژیک`,
+              enTitle: `Discovery & Strategic Brief`,
+              subPoints: [
+                {
+                  label: `کالبدشکافی اهداف`,
+                  text: `برگزاری نشست استراتژیک با کارفرما یا هنرمند برای شناسایی دقیق پرسونای مخاطب، هدف تجاری، پیام کلیدی و خط قرمزهای برند.`,
+                },
+                {
+                  label: `سند بریف تولید (Production Brief)`,
+                  text: `مکتوب کردن تمام انتظارات کیفی، شاخص‌های کلیدی عملکرد (KPIs)، فرمت‌های خروجی و زمان‌بندی نهایی در قالب یک سند الزام‌آور.`,
+                },
+                {
+                  label: `تثبیت قرارداد و تقویم`,
+                  text: `نهایی‌سازی مدل همکاری، تعیین مراحل پرداخت و قفل کردن تاریخ‌های فیلم‌برداری یا ضبط استودیویی.`,
+                },
+              ],
+            },
+            {
+              num: `۰۲`,
+              title: `مرحله ۰۲: پیش‌تولید و جهان‌سازی اثر`,
+              enTitle: `Pre-Production & Blueprint`,
+              subPoints: [
+                {
+                  label: `سناریو و کپی‌رایتینگ`,
+                  text: `نگارش دقیق فیلمنامه، دیالوگ‌ها، نریشن، کانسپت روایی موزیک‌ویدیو و ساختار اپیزودها.`,
+                },
+                {
+                  label: `استوری‌بورد و مودبورد بصری`,
+                  text: `مصورسازی تک‌تک صحنه‌ها، طراحی پالت رنگی (Color Palette)، نورپردازی، استایل لباس و دکوراسیون صحنه.`,
+                },
+                {
+                  label: `پیش‌تولید صوتی`,
+                  text: `ساخت اتودهای اولیه ملودی، بیت یا طراحی افکت‌های صوتی پیش از آغاز فیلم‌برداری.`,
+                },
+                {
+                  label: `دروازه تایید نهایی (Greenlight Gate)`,
+                  text: `تایید مکتوب سناریو و استوری‌بورد توسط کارفرما پیش از آفیش عوامل و هزینه اجرایی، تا در روز ضبط هیچ ابهامی وجود نداشته باشد.`,
+                },
+              ],
+            },
+            {
+              num: `۰۳`,
+              title: `مرحله ۰۳: تولید، فیلم‌برداری و ضبط استودیویی`,
+              enTitle: `Production & Execution`,
+              subPoints: [
+                {
+                  label: `کارگردانی و مدیریت صحنه`,
+                  text: `اجرای ضبط تحت نظارت مستقیم کارگردان خلاق، هدایت بازیگران یا آرتیست‌ها و کنترل فنی چیدمان نور و تصویر.`,
+                },
+                {
+                  label: `استانداردهای تجهیزات سینمایی`,
+                  text: `بهره‌گیری از دوربین‌ها، لنزها و صدابرداری استاندارد صنعتی برای تضمین اصالت و بافت سینمایی اثر.`,
+                },
+                {
+                  label: `انضباط زمانی صحنه (Call Sheet)`,
+                  text: `مدیریت دقیق جدول برداشت‌ها برای جلوگیری از خستگی عوامل و اتلاف بودجه لوکیشن.`,
+                },
+              ],
+            },
+            {
+              num: `۰۴`,
+              title: `مرحله ۰۴: پس‌تولید سینمایی و بازبینی ساختاریافته`,
+              enTitle: `Post-Production & Review Cycles`,
+              subPoints: [
+                {
+                  label: `تدوین داستانی و ریتم (Offline Edit)`,
+                  text: `چینش راف‌کات اولیه با تکیه بر کشش حسی، ریتم متناسب با پیام و حذف ثانیه‌های زائد.`,
+                },
+                {
+                  label: `اصلاح رنگ و طراحی صدا (Finishing)`,
+                  text: `کالرگریدینگ تخصصی برای تثبیت اتمسفر بصری، آهنگسازی اختصاصی، طراحی افکت‌های صوتی (Foley & SFX) و میکس و مسترینگ منطبق بر استانداردهای پخش.`,
+                },
+                {
+                  label: `دو راند اصلاحات کنترل‌شده (Structured Revisions)`,
+                  text: `ارائه نسخه بازبینی در پلتفرم‌های تعاملی و تایم‌کددار (Frame.io) و اعمال اصلاحات بر پایه سند بریف اولیه در دو مرحله شفاف، جهت جلوگیری از تغییرات سلیقه‌ای و نامحدود.`,
+                },
+              ],
+            },
+            {
+              num: `۰۵`,
+              title: `مرحله ۰۵: مسترینگ و تحویل چندپلتفرمی`,
+              enTitle: `Asset Handover & Distribution Guide`,
+              subPoints: [
+                {
+                  label: `خروجی مستر با حداکثر کیفیت`,
+                  text: `تحویل فایل‌های اصلی سینمایی با کدک‌های استاندارد صنعتی (Apple ProRes 422 HQ، DCI 4K و WAV 24-bit 48kHz) با بالاترین وضوح.`,
+                },
+                {
+                  label: `بهینه‌سازی برای پلتفرم‌ها`,
+                  text: `آماده‌سازی هم‌زمان نسخه‌های عمودی (9:16)، مربعی (1:1) و افقی (16:9) با بالاترین کیفیت بدون افت رزولوشن برای یوتیوب، اینستاگرام، تلویزیون و استریمینگ موسیقی.`,
+                },
+                {
+                  label: `راهنمای انتشار و متادیتا`,
+                  text: `ارائه کپی‌رایتینگ کپشن، تیترهای سئو، تامنیل‌ها و توصیه‌های کارگردان برای دریافت بیشترین بازخورد از مخاطب.`,
+                },
+              ],
+            },
+          ],
           bullets: [
-            `فاز اول // سناریونویسی سینمایی و استوری‌بورد (Screenwriting & Storyboard): خلق زاویه دید غیرمنتظره، استعاره‌های داستانی و شات‌لیست دقیق.`,
-            `فاز دوم // کستینگ و مکان‌یابی معماری (Casting & Location Scouting): انتخاب مدل‌ها و فضاهای معماری که حامل اتمسفر واقعی برند باشند.`,
-            `فاز سوم // روز فیلمبرداری با تجهیزات استاندارد 4K/ProRes: نورپردازی هایپررئال ادیتوریال، مدیریت لنزهای سینمایی و حرکت دوربین پویا.`,
-            `فاز چهارم // تدوین ریتم‌محور و اصلاح رنگ سینمایی (Editorial Cut & Color Grading): هماهنگ‌سازی کنتراست و تنالیته رنگ با پالت هویت برند.`,
-            `فاز پنجم // طراحی صدا و موسیقی متن اختصاصی (Foley & Audio Mastery): عمق‌بخشی به فضا با اصوات واقع‌گرایانه و تم اختصاصی.`,
+            `مرحله ۰۱ — دریافت بریف و هم‌راستایی استراتژیک: کالبدشکافی اهداف، تدوین سند بریف تولید و تثبیت قرارداد و تقویم.`,
+            `مرحله ۰۲ — پیش‌تولید و جهان‌سازی اثر: سناریو، استوری‌بورد و مودبورد بصری، پیش‌تولید صوتی و دروازه تایید نهایی.`,
+            `مرحله ۰۳ — تولید، فیلم‌برداری و ضبط استودیویی: کارگردانی و مدیریت صحنه، تجهیزات سینمایی و انضباط زمانی صحنه.`,
+            `مرحله ۰۴ — پس‌تولید سینمایی و بازبینی ساختاریافته: تدوین داستانی، اصلاح رنگ و طراحی صدا، و دو راند اصلاحات کنترل‌شده.`,
+            `مرحله ۰۵ — مسترینگ و تحویل چندپلتفرمی: خروجی مستر با حداکثر کیفیت، بهینه‌سازی ابعاد پلتفرم‌ها و راهنمای انتشار.`,
           ],
         },
         {
-          heading: `۴. فرمت‌های اجرایی قابل ارائه`,
-          content: `ما پکیج‌های متنوعی متناسب با نیاز برندها ارائه می‌دهیم: از تیزرهای لانچ محدود (Hero Films) و مستندسازی روند خلق معماری، تا ریتینرهای محتوای پیوسته که صفحه اجتماعی شما را به یک نشریه زنده باوقار بدل می‌سازد.`,
+          heading: `۰۳. جدول خلاصه فرآیند اجرا`,
+          enHeading: `PRODUCTION WORKFLOW MATRIX`,
+          content: `تفکیک دقیق مسئولیت‌های استودیو، نقش کارفرما یا هنرمند و خروجی ملموس در هر یک از ۵ مرحله تولید:`,
+          table: {
+            headers: [
+              `مرحله کاری`,
+              `اقدامات کلیدی استودیو`,
+              `نقش کارفرما / هنرمند`,
+              `خروجی ملموس مرحله`,
+            ],
+            rows: [
+              [
+                `۰۱. هماهنگی و بریف`,
+                `مصاحبه استراتژیک و تدوین سند بریف`,
+                `ارائه اهداف، محدودیت‌ها و اطلاعات پروژه`,
+                `سند بریف مکتوب و قرارداد شفاف`,
+              ],
+              [
+                `۰۲. پیش‌تولید`,
+                `سناریو، استوری‌بورد و مودبورد بصری/صوتی`,
+                `بررسی و تایید سناریو و کانسپت نهایی`,
+                `پکیج کامل پیش‌تولید و چراغ سبز ضبط`,
+              ],
+              [
+                `۰۳. روز تولید`,
+                `کارگردانی، صدابرداری و فیلم‌برداری سینمایی`,
+                `حضور در صحنه یا هماهنگی عوامل داخلی`,
+                `فوتیج‌های خام استاندارد و صدای باکیفیت`,
+              ],
+              [
+                `۰۴. پس‌تولید`,
+                `تدوین، اصلاح رنگ، طراحی صدا و میکس`,
+                `ارائه بازخورد متمرکز در ۲ راند استاندارد`,
+                `نسخه فاینال‌کات با درجه‌بندی سینمایی`,
+              ],
+              [
+                `۰۵. تحویل نهایی`,
+                `مسترینگ پلتفرم‌ها و بسته‌بندی دارایی‌ها`,
+                `تسویه نهایی و تایید آرشیو فایل‌ها`,
+                `فولدر مسترها و راهنمای فنی انتشار`,
+              ],
+            ],
+          },
+        },
+        {
+          heading: `۰۴. سه اصل حاکم بر تضمین کیفیت`,
+          enHeading: `Production Governance`,
+          content: `سه قانون بنیادین استودیو برای حذف دوباره‌کاری، تضمین دقت بازبینی و حفظ کامل منافع تجاری کارفرما:`,
+          items: [
+            {
+              num: `۰۱`,
+              title: `اصل قطعیت در پیش‌تولید`,
+              enTitle: `No Guesswork on Set`,
+              desc: `ما هرگز بدون استوری‌بورد و دکوپاژ تاییدشده وارد صحنه نمی‌شویم؛ این انضباط اجرایی، هزینه‌های دوباره‌کاری را به صفر می‌رساند.`,
+            },
+            {
+              num: `۰۲`,
+              title: `قانون بازبینی مهندسی‌شده`,
+              enTitle: `Frame-Accurate Feedback`,
+              desc: `کارفرما بازخورد خود را به‌صورت دقیق و تایم‌کددار روی فریم‌ها ثبت می‌کند تا تغییرات بدون ابهام و در سریع‌ترین زمان ممکن اعمال شوند.`,
+            },
+            {
+              num: `۰۳`,
+              title: `مالکیت کامل تجاری دارایی‌ها`,
+              enTitle: `Full Commercial Rights`,
+              desc: `پس از تحویل نهایی، تمامی حقوق تجاری، حق پخش و مالکیت بهره‌برداری از دارایی‌های تولیدشده به‌طور کامل متعلق به کارفرماست.`,
+            },
+          ],
+          bullets: [
+            `۰۱ / اصل قطعیت در پیش‌تولید: عدم ورود به صحنه بدون استوری‌بورد و دکوپاژ تاییدشده و به صفر رساندن هزینه‌های دوباره‌کاری.`,
+            `۰۲ / قانون بازبینی مهندسی‌شده: ثبت بازخورد دقیق و تایم‌کددار روی فریم‌ها برای اعمال سریع و بدون ابهام تغییرات.`,
+            `۰۳ / مالکیت کامل تجاری دارایی‌ها: تعلق کامل تمامی حقوق تجاری، حق پخش و مالکیت بهره‌برداری از دارایی‌های تولیدشده به کارفرما پس از تحویل نهایی.`,
+          ],
         },
       ],
     },
@@ -3211,9 +3422,9 @@ var Au = [
       fileName: `02_فرم_بریف_تولید_محتوا_و_ویدیو.brief`,
       fileExt: `BRIEF`,
       fileSize: `3.1 MB`,
-      dateModified: `Sep 10`,
+      dateModified: `Nov 12`,
       title: `پرسشنامه و بریف تخصصی تولید محتوا و رسانه`,
-      subtitle: `سند کشف نیازمندی‌های ویدیویی، فرمت‌های پروداکشن و اهداف دیده‌شدن`,
+      subtitle: `سند کشف نیازمندی‌های ویدیویی، انتخاب مدل همکاری و اهداف دیده‌شدن`,
       author: `سامانه بریف استودیو // دپارتمان محتوا و سینما`,
       readTime: `زمان تکمیل: ۴ دقیقه`,
       category: `INTAKE PROTOCOL`,
@@ -3224,43 +3435,17 @@ var Au = [
       sections: [
         {
           heading: `راهنمای ثبت بریف تولید محتوا`,
-          content: `برای رسیدن به بالاترین کیفیت تولید، نیازمند آگاهی از گلوگاه فعلی دیده‌شدن برند، فرمت مدنظر شما و احساسی هستیم که می‌خواهید مخاطب پس از تماشای ویدیو تجربه کند.`,
+          content: `برای رسیدن به بالاترین کیفیت تولید، نیازمند آگاهی از گلوگاه فعلی دیده‌شدن برند، مدل همکاری مدنظر شما و احساسی هستیم که می‌خواهید مخاطب پس از تماشای ویدیو تجربه کند.`,
           callout: `جهت تکمیل مستقیم و ارسال الکترونیکی، روی دکمه «تکمیل و ثبت بریف آنلاین» در پایین این صفحه کلیک فرمایید.`,
         },
         {
           heading: `محورهای کلیدی این پرسشنامه:`,
-          content: `بررسی نیازهای ویدئویی از منظر کارگردانی:`,
+          content: `بررسی نیازهای ویدئویی از منظر کارگردانی و استقرار خط تولید:`,
           bullets: [
-            `گلوگاه دیده‌شدن: مشکل ترافیک، عدم اعتماد به پرستیژ، یا لیدهای کم‌کیفیت.`,
-            `فرمت خروجی مورد انتظار: فیلم تبلیغاتی لانچ، ریتینر ویدیویی، یا مستندسازی معماری.`,
-            `خطوط قرمز زیبایی‌شناختی: چه کارهایی در صنف شما انجام می‌شود که از آن متنفرید.`,
+            `انتخاب مدل همکاری: دارایی‌های پرچمدار و پروژه‌محور، موتور رسانه‌ای و اپیزودیک، یا کمپین یکپارچه لانچ.`,
+            `گلوگاه دیده‌شدن: مشکل ترافیک، عدم اعتماد به پرستیژ، یا نیاز به نگهداشت مخاطب.`,
+            `خطوط قرمز زیبایی‌شناختی: چه کارهایی در صنف شما انجام می‌شود که از آن پرهیز دارید.`,
             `مراجع تحسین‌شده: ۲ یا ۳ فیلم یا ویدیوی شاخص جهانی که سلیقه آن را تحسین می‌کنید.`,
-          ],
-        },
-      ],
-    },
-    {
-      id: `doc-content-03`,
-      folderId: `folder-track-2`,
-      fileName: `03_چک_لیست_روز_فیلمبرداری_و_پروداکشن.md`,
-      fileExt: `MD`,
-      fileSize: `840 KB`,
-      dateModified: `Oct 08`,
-      title: `چک‌لیست استانداردهای فیلمبرداری و مدیریت صحنه`,
-      subtitle: `پروتکل پیش‌تولید، نورپردازی، صدا و مسترینگ نهایی استودیو`,
-      author: `تیم پروداکشن سینمایی // Creativity Juice`,
-      readTime: `زمان مطالعه: ۳ دقیقه`,
-      category: `PRODUCTION CHECKLIST`,
-      glyph: `cinema`,
-      badgeColor: `#30B0C7`,
-      sections: [
-        {
-          heading: `استانداردهای پروداکشن در روز فیلمبرداری`,
-          content: `تمام مراحل صحنه بر اساس یک برنامه‌ریزی زمان‌بندی‌شده (Call Sheet) اداره می‌شود تا بالاترین بهره‌وری از نور طبیعی و تمرکز بازیگران و تیم حاصل گردد.`,
-          bullets: [
-            `تطبیق فریم‌ها با استوری‌بورد و شات‌لیست مصوب کارفرما`,
-            `مانیتورینگ لایو رنگ و نور توسط آرت‌دایرکتور در لوکیشن`,
-            `ثبت هم‌زمان صداهای محیطی و کلوزآپ‌های بافت متریال`,
           ],
         },
       ],
@@ -3969,11 +4154,79 @@ var Au = [
                                                 }),
                                             ],
                                           }),
-                                          (0, H.jsx)(`p`, {
-                                            className: `text-xs sm:text-sm text-neutral-700 leading-relaxed text-right`,
-                                            dir: `rtl`,
-                                            children: item.desc,
-                                          }),
+                                          item.targetAudience &&
+                                            (0, H.jsxs)(`div`, {
+                                              className: `text-xs sm:text-sm text-neutral-800 leading-relaxed flex flex-wrap items-baseline gap-1.5`,
+                                              dir: `rtl`,
+                                              children: [
+                                                (0, H.jsx)(`span`, {
+                                                  className: `font-black text-neutral-900 shrink-0`,
+                                                  children: `مخاطب هدف:`,
+                                                }),
+                                                (0, H.jsx)(`span`, {
+                                                  className: `text-neutral-700`,
+                                                  children: item.targetAudience,
+                                                }),
+                                              ],
+                                            }),
+                                          item.desc &&
+                                            (0, H.jsxs)(`div`, {
+                                              className: `text-xs sm:text-sm text-neutral-700 leading-relaxed text-right`,
+                                              dir: `rtl`,
+                                              children: [
+                                                item.targetAudience &&
+                                                  (0, H.jsx)(`span`, {
+                                                    className: `font-black text-neutral-900 ml-1.5`,
+                                                    children: `شرح اجرا:`,
+                                                  }),
+                                                (0, H.jsx)(`span`, {
+                                                  children: item.desc,
+                                                }),
+                                              ],
+                                            }),
+                                          item.subPoints &&
+                                            item.subPoints.length > 0 &&
+                                            (0, H.jsx)(`div`, {
+                                              className: `space-y-2 pt-1`,
+                                              dir: `rtl`,
+                                              children: item.subPoints.map(
+                                                (sp, spi) =>
+                                                  (0, H.jsxs)(
+                                                    `div`,
+                                                    {
+                                                      className: `p-3 rounded-xl bg-white border border-neutral-200/80 text-xs sm:text-sm leading-relaxed flex items-start gap-2.5`,
+                                                      dir: `rtl`,
+                                                      children: [
+                                                        (0, H.jsx)(`span`, {
+                                                          className: `w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 shrink-0`,
+                                                        }),
+                                                        (0, H.jsxs)(`div`, {
+                                                          className: `flex-1`,
+                                                          dir: `rtl`,
+                                                          children: [
+                                                            sp.label &&
+                                                              (0, H.jsxs)(
+                                                                `span`,
+                                                                {
+                                                                  className: `font-black text-neutral-900 ml-1.5`,
+                                                                  children: [
+                                                                    sp.label,
+                                                                    `:`,
+                                                                  ],
+                                                                },
+                                                              ),
+                                                            (0, H.jsx)(`span`, {
+                                                              className: `text-neutral-700`,
+                                                              children: sp.text,
+                                                            }),
+                                                          ],
+                                                        }),
+                                                      ],
+                                                    },
+                                                    spi,
+                                                  ),
+                                              ),
+                                            }),
                                           item.deliverables &&
                                             (0, H.jsxs)(`div`, {
                                               className: `pt-2 px-3 py-2 rounded-xl bg-white border border-neutral-200/80 text-xs text-neutral-800 flex flex-wrap items-center gap-1.5`,
@@ -3986,6 +4239,21 @@ var Au = [
                                                 (0, H.jsx)(`span`, {
                                                   className: `text-neutral-700 font-medium`,
                                                   children: item.deliverables,
+                                                }),
+                                              ],
+                                            }),
+                                          item.framework &&
+                                            (0, H.jsxs)(`div`, {
+                                              className: `px-3 py-2 rounded-xl bg-amber-50/60 border border-amber-200/70 text-xs text-neutral-800 flex flex-wrap items-center gap-1.5`,
+                                              dir: `rtl`,
+                                              children: [
+                                                (0, H.jsx)(`span`, {
+                                                  className: `font-black text-neutral-900 shrink-0`,
+                                                  children: `چارچوب مالی و زمانی:`,
+                                                }),
+                                                (0, H.jsx)(`span`, {
+                                                  className: `text-neutral-700 font-medium`,
+                                                  children: item.framework,
                                                 }),
                                               ],
                                             }),
@@ -4038,7 +4306,7 @@ var Au = [
                                               (0, H.jsx)(
                                                 `th`,
                                                 {
-                                                  className: `py-3.5 px-4 font-black text-right border-l border-neutral-800 last:border-l-0 ${hi === 2 ? `text-amber-300 bg-neutral-950` : ``}`,
+                                                  className: `py-3.5 px-4 font-black text-right border-l border-neutral-800 last:border-l-0 ${hi === e.table.headers.length - 1 ? `text-amber-300 bg-neutral-950` : ``}`,
                                                   dir: `rtl`,
                                                   children: h,
                                                 },
@@ -4058,7 +4326,7 @@ var Au = [
                                                 (0, H.jsx)(
                                                   `td`,
                                                   {
-                                                    className: `py-3.5 px-4 leading-relaxed text-right border-l border-neutral-100 last:border-l-0 ${ci === 0 ? `font-black text-neutral-900 bg-neutral-50/60 whitespace-nowrap` : ci === 1 ? `text-neutral-500` : `font-bold text-neutral-900 bg-amber-50/40`}`,
+                                                    className: `py-3.5 px-4 leading-relaxed text-right border-l border-neutral-100 last:border-l-0 ${ci === 0 ? `font-black text-neutral-900 bg-neutral-50/60 whitespace-nowrap` : ci === row.length - 1 ? `font-bold text-neutral-900 bg-amber-50/40` : `text-neutral-600`}`,
                                                     dir: `rtl`,
                                                     children: cell,
                                                   },
@@ -4081,7 +4349,7 @@ var Au = [
                     }),
                     e.isBriefTrigger &&
                       (0, H.jsxs)(`div`, {
-                        className: `p-6 rounded-2xl bg-neutral-900 text-white space-y-3 text-center sm:text-right flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl my-6`,
+                        className: `p-6 rounded-2xl bg-neutral-900 text-white space-y-4 text-center sm:text-right flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl my-6`,
                         dir: `rtl`,
                         children: [
                           (0, H.jsxs)(`div`, {
@@ -4103,7 +4371,7 @@ var Au = [
                                 ],
                               }),
                               (0, H.jsx)(`p`, {
-                                className: `text-xs text-neutral-400 mt-1`,
+                                className: `text-xs text-neutral-400 mt-1 leading-relaxed`,
                                 dir: `rtl`,
                                 children:
                                   e.ctaSubtitle ||
@@ -4111,21 +4379,41 @@ var Au = [
                               }),
                             ],
                           }),
-                          (0, H.jsxs)(`button`, {
-                            onClick: () => {
-                              (W.playWindowOpen(),
-                                t(),
-                                a && a(e.briefPrefill || e.title));
-                            },
-                            className: `px-6 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-neutral-950 font-black text-xs transition-all flex items-center gap-2 cursor-pointer shadow-md shrink-0 active:scale-95`,
+                          (0, H.jsxs)(`div`, {
+                            className: `flex flex-col sm:flex-row items-center gap-2.5 shrink-0`,
                             dir: `rtl`,
                             children: [
-                              (0, H.jsx)(jd, { className: `w-3.5 h-3.5` }),
-                              (0, H.jsx)(`span`, {
-                                children:
-                                  e.ctaButtonText ||
-                                  `تکمیل و ثبت بریف آنلاین 🚀`,
+                              (0, H.jsxs)(`button`, {
+                                onClick: () => {
+                                  (W.playWindowOpen(),
+                                    t(),
+                                    a && a(e.briefPrefill || e.title));
+                                },
+                                className: `px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-neutral-950 font-black text-xs transition-all flex items-center gap-2 cursor-pointer shadow-md shrink-0 active:scale-95`,
+                                dir: `rtl`,
+                                children: [
+                                  (0, H.jsx)(jd, { className: `w-3.5 h-3.5` }),
+                                  (0, H.jsx)(`span`, {
+                                    children:
+                                      e.ctaButtonText ||
+                                      `تکمیل و ثبت بریف آنلاین 🚀`,
+                                  }),
+                                ],
                               }),
+                              e.ctaSecondaryButtonText &&
+                                (0, H.jsx)(`button`, {
+                                  onClick: () => {
+                                    (W.playWindowOpen(),
+                                      t(),
+                                      a &&
+                                        a(
+                                          `${e.ctaSecondaryButtonText} — ${e.title}`,
+                                        ));
+                                  },
+                                  className: `px-4 py-2.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-amber-300 font-bold text-xs transition-all cursor-pointer shrink-0 active:scale-95`,
+                                  dir: `rtl`,
+                                  children: e.ctaSecondaryButtonText,
+                                }),
                             ],
                           }),
                         ],
@@ -4162,7 +4450,7 @@ var Au = [
       }),
     });
   },
-  Kd = `cj_studio_documents_v4`,
+  Kd = `cj_studio_documents_v5`,
   qd = ({
     initialFolderId: e,
     onClose: t,
@@ -7251,9 +7539,13 @@ var Au = [
       [l, u] = (0, S.useState)(``),
       [d, f] = (0, S.useState)(!1),
       [p, m] = (0, S.useState)(!1),
+      [createdCreds, setCreatedCreds] = (0, S.useState)(null),
+      activeLoggedClient = getActiveClient(),
       [h, g] = (0, S.useState)({
-        clientName: ``,
+        clientName: activeLoggedClient?.brandName || ``,
         clientUrl: ``,
+        existingTrackingCode: activeLoggedClient?.trackingCode || ``,
+        desiredPassword: ``,
         problem: i || ``,
         marketTier: `میان‌رده باکیفیت`,
         selectedTrack: `دپارتمان برندینگ`,
@@ -7520,43 +7812,97 @@ var Au = [
                       ],
                     }),
                     (0, H.jsxs)(`div`, {
-                      className: `p-4 rounded-2xl bg-[#FAF9F6] border border-neutral-200 inline-flex flex-col sm:flex-row items-center gap-3 select-all`,
+                      className: `p-5 rounded-2xl bg-[#FAF9F6] border border-amber-300 max-w-lg mx-auto space-y-3 text-right`,
                       children: [
-                        (0, H.jsx)(`span`, {
-                          className: `text-xs text-neutral-500 font-medium`,
-                          children: `کد رهگیری پرونده:`,
+                        (0, H.jsxs)(`div`, {
+                          className: `flex items-center justify-between border-b border-neutral-200 pb-2`,
+                          children: [
+                            (0, H.jsx)(`span`, {
+                              className: `text-xs font-black text-neutral-900`,
+                              children: `🔒 اطلاعات ورود اختصاصی پروژه شما (پورتال کارفرما)`,
+                            }),
+                            (0, H.jsx)(`span`, {
+                              className: `text-[10px] font-mono bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold`,
+                              children: `آرشیوشده در مدیریت`,
+                            }),
+                          ],
                         }),
-                        (0, H.jsx)(`span`, {
-                          className: `font-mono text-base font-black text-neutral-900 tracking-wider`,
-                          children: l,
+                        (0, H.jsxs)(`div`, {
+                          className: `grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs`,
+                          children: [
+                            (0, H.jsxs)(`div`, {
+                              className: `p-2.5 rounded-xl bg-white border border-neutral-200`,
+                              children: [
+                                (0, H.jsx)(`span`, {
+                                  className: `text-[10px] text-neutral-500 block mb-0.5`,
+                                  children: `کد رهگیری یکتا:`,
+                                }),
+                                (0, H.jsx)(`strong`, {
+                                  className: `font-mono text-sm font-black text-neutral-950`,
+                                  dir: `ltr`,
+                                  children: createdCreds?.trackingCode || l,
+                                }),
+                              ],
+                            }),
+                            (0, H.jsxs)(`div`, {
+                              className: `p-2.5 rounded-xl bg-white border border-neutral-200`,
+                              children: [
+                                (0, H.jsx)(`span`, {
+                                  className: `text-[10px] text-neutral-500 block mb-0.5`,
+                                  children: `نام کاربری:`,
+                                }),
+                                (0, H.jsx)(`strong`, {
+                                  className: `font-mono text-sm font-black text-neutral-950`,
+                                  dir: `ltr`,
+                                  children: createdCreds?.username || `-`,
+                                }),
+                              ],
+                            }),
+                            (0, H.jsxs)(`div`, {
+                              className: `p-2.5 rounded-xl bg-white border border-neutral-200`,
+                              children: [
+                                (0, H.jsx)(`span`, {
+                                  className: `text-[10px] text-neutral-500 block mb-0.5`,
+                                  children: `رمز عبور اختصاصی:`,
+                                }),
+                                (0, H.jsx)(`strong`, {
+                                  className: `font-mono text-sm font-black text-amber-700`,
+                                  dir: `ltr`,
+                                  children: createdCreds?.password || `-`,
+                                }),
+                              ],
+                            }),
+                          ],
                         }),
-                        (0, H.jsx)(`button`, {
-                          type: `button`,
-                          onClick: () => {
-                            (W.playPop(),
-                              navigator.clipboard &&
-                                (navigator.clipboard.writeText(l),
-                                m(!0),
-                                setTimeout(() => m(!1), 2e3)));
-                          },
-                          className: `px-2.5 py-1 rounded-lg bg-white border border-neutral-300 text-xs text-neutral-700 hover:bg-neutral-100 flex items-center gap-1 font-sans transition-colors cursor-pointer`,
-                          children: p
-                            ? (0, H.jsxs)(H.Fragment, {
-                                children: [
-                                  (0, H.jsx)(X, {
-                                    className: `w-3 h-3 text-emerald-600`,
-                                  }),
-                                  (0, H.jsx)(`span`, { children: `کپی شد` }),
-                                ],
-                              })
-                            : (0, H.jsxs)(H.Fragment, {
-                                children: [
-                                  (0, H.jsx)(od, {
-                                    className: `w-3 h-3 text-neutral-600`,
-                                  }),
-                                  (0, H.jsx)(`span`, { children: `کپی کد` }),
-                                ],
+                        (0, H.jsxs)(`div`, {
+                          className: `flex flex-wrap items-center justify-between gap-2 pt-1`,
+                          children: [
+                            (0, H.jsx)(`button`, {
+                              type: `button`,
+                              onClick: () => {
+                                W.playPop();
+                                let credStr = `کد رهگیری پروژه: ${createdCreds?.trackingCode || l}\nنام کاربری: ${createdCreds?.username || `-`}\nرمز عبور: ${createdCreds?.password || `-`}`;
+                                navigator.clipboard &&
+                                  (navigator.clipboard.writeText(credStr),
+                                  m(!0),
+                                  setTimeout(() => m(!1), 2e3));
+                              },
+                              className: `px-3 py-1.5 rounded-xl bg-white border border-neutral-300 text-xs font-bold text-neutral-700 hover:bg-neutral-100 flex items-center gap-1.5 cursor-pointer`,
+                              children: p ? `✓ کپی شد` : `📋 کپی کد رهگیری و پسورد`,
+                            }),
+                            createdCreds?.workspaceId &&
+                              (0, H.jsx)(`button`, {
+                                type: `button`,
+                                onClick: () => {
+                                  W.playWindowOpen();
+                                  setActiveClientId(createdCreds.workspaceId);
+                                  window.dispatchEvent(new CustomEvent('open-client-portal-window'));
+                                  if (e) e();
+                                },
+                                className: `px-4 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 text-xs font-black cursor-pointer shadow-2xs`,
+                                children: `ورود مستقیم به پروفایل پروژه من ⟵`,
                               }),
+                          ],
                         }),
                       ],
                     }),
@@ -7600,8 +7946,39 @@ var Au = [
               : (0, H.jsxs)(`form`, {
                   onSubmit: (e) => {
                     (e.preventDefault(), W.playWindowOpen());
-                    let t = `CJ-2026-${Math.floor(1e4 + Math.random() * 9e4)}`;
-                    (u(t), c(!0));
+                    let fullSummaryText = ee();
+                    let result = submitAndArchiveProjectBrief({
+                      clientId: activeLoggedClient?.id,
+                      existingTrackingCode: h.existingTrackingCode,
+                      desiredPassword: h.desiredPassword,
+                      clientName: h.clientName || `برند جدید استودیو`,
+                      ownerName: h.clientName || `کارفرما`,
+                      clientUrl: h.clientUrl,
+                      selectedTrack: h.selectedTrack,
+                      marketTier: h.marketTier,
+                      problem: h.problem,
+                      emptySpace: h.emptySpace,
+                      enemy: h.enemy,
+                      persona: h.persona,
+                      brandingDeliverables: h.brandingDeliverables,
+                      bottleneck: h.bottleneck,
+                      objection: h.objection,
+                      competitorCliches: h.competitorCliches,
+                      marketingMedia: h.marketingMedia,
+                      benchmarks: h.benchmarks,
+                      dealbreakers: h.dealbreakers,
+                      deadline: h.deadline,
+                      productionScale: h.productionScale,
+                      decisionStructure: h.decisionStructure,
+                      fullSummaryText,
+                    });
+                    setCreatedCreds({
+                      trackingCode: result.workspace.trackingCode || result.brief.trackingCode,
+                      username: result.workspace.username || result.workspace.slug,
+                      password: result.workspace.password || result.workspace.pinCode,
+                      workspaceId: result.workspace.id,
+                    });
+                    (u(result.workspace.trackingCode || result.brief.trackingCode), c(!0));
                   },
                   className: `space-y-8`,
                   children: [
@@ -7664,6 +8041,40 @@ var Au = [
                                     onChange: (e) =>
                                       g({ ...h, clientUrl: e.target.value }),
                                     placeholder: `مثال: @yourbrand یا website.com`,
+                                    dir: `ltr`,
+                                    className: `w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 text-xs sm:text-sm text-left font-mono bg-white text-neutral-900 placeholder-neutral-400 outline-none transition-all`,
+                                  }),
+                                ],
+                              }),
+                              (0, H.jsxs)(`div`, {
+                                children: [
+                                  (0, H.jsx)(`label`, {
+                                    className: `block text-xs font-bold text-neutral-800 mb-1.5`,
+                                    children: `کد رهگیری پروژه قبلی (اختیاری - در صورت داشتن پروفایل):`,
+                                  }),
+                                  (0, H.jsx)(`input`, {
+                                    type: `text`,
+                                    value: h.existingTrackingCode,
+                                    onChange: (e) =>
+                                      g({ ...h, existingTrackingCode: e.target.value }),
+                                    placeholder: `مثال: CJ-1001 (خالی بگذارید تا کد جدید صادر شود)`,
+                                    dir: `ltr`,
+                                    className: `w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 text-xs sm:text-sm text-left font-mono bg-white text-neutral-900 placeholder-neutral-400 outline-none transition-all`,
+                                  }),
+                                ],
+                              }),
+                              (0, H.jsxs)(`div`, {
+                                children: [
+                                  (0, H.jsx)(`label`, {
+                                    className: `block text-xs font-bold text-neutral-800 mb-1.5`,
+                                    children: `رمز عبور دلخواه برای ورود به پورتال پروژه:`,
+                                  }),
+                                  (0, H.jsx)(`input`, {
+                                    type: `password`,
+                                    value: h.desiredPassword,
+                                    onChange: (e) =>
+                                      g({ ...h, desiredPassword: e.target.value }),
+                                    placeholder: `رمز عبور اختصاصی شما (در صورت خالی بودن خودکار ساخته می‌شود)`,
                                     dir: `ltr`,
                                     className: `w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 text-xs sm:text-sm text-left font-mono bg-white text-neutral-900 placeholder-neutral-400 outline-none transition-all`,
                                   }),
@@ -11927,15 +12338,18 @@ var Au = [
       let handleOpenCal = () => pe();
       let handleOpenNotes = () => O();
       let handleOpenPortal = () => openClientPortal();
+      let handleOpenGallery = () => se();
       window.addEventListener('open-calendar-window', handleOpenCal);
       window.addEventListener('open-notes-window', handleOpenNotes);
       window.addEventListener('open-client-portal-window', handleOpenPortal);
+      window.addEventListener('open-gallery-window', handleOpenGallery);
       return () => {
         window.removeEventListener('open-calendar-window', handleOpenCal);
         window.removeEventListener('open-notes-window', handleOpenNotes);
         window.removeEventListener('open-client-portal-window', handleOpenPortal);
+        window.removeEventListener('open-gallery-window', handleOpenGallery);
       };
-    }, [pe, O, openClientPortal]);
+    }, [pe, O, openClientPortal, se]);
 
     let le = (e) => {
         let t = Lu.find((t) => t.id === e);
@@ -12049,6 +12463,12 @@ var Au = [
                       (0, H.jsx)(`img`, {
                         src: t,
                         alt: `Creativity Juice Desktop`,
+                        onError: () => {
+                          n(`live-motion`);
+                          try {
+                            localStorage.removeItem(`cj-custom-wallpaper`);
+                          } catch {}
+                        },
                         className: `w-full h-full object-cover object-center filter contrast-[1.03] brightness-95 transition-all duration-700`,
                       }),
                       (0, H.jsx)(`div`, {
