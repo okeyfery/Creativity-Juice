@@ -43,7 +43,21 @@ function normalizeWorkspace(c: ClientWorkspace, idx = 0): ClientWorkspace {
   const password = (c.password || defaultDefaults?.password || pin).trim();
 
   let archivedBriefs: ProjectBriefSubmission[] = Array.isArray(c.archivedBriefs)
-    ? c.archivedBriefs
+    ? c.archivedBriefs.map((b) => ({
+        ...b,
+        isRead:
+          typeof b.isRead === 'boolean'
+            ? b.isRead
+            : typeof b.id === 'string' && b.id.startsWith('brief-init-')
+            ? true
+            : b.status !== 'new',
+        createdAtMs:
+          typeof b.createdAtMs === 'number'
+            ? b.createdAtMs
+            : typeof b.id === 'string' && b.id.startsWith('brief-init-')
+            ? 1000
+            : Number((b.id || '').match(/brief-(?:test-)?(\d{10,})/)?.[1] || 2000),
+      }))
     : [];
 
   if (archivedBriefs.length === 0 && c.scopeSummary) {
@@ -77,6 +91,8 @@ function normalizeWorkspace(c: ClientWorkspace, idx = 0): ClientWorkspace {
           c.scopeSummary,
         ].join('\n'),
         status: c.progressPercent >= 80 ? 'in-production' : 'reviewed',
+        isRead: true,
+        createdAtMs: 1000,
         adminNotes: `پرونده فعال در استودیو به سرپرستی ${c.projectLead}.`,
       },
     ];
@@ -112,16 +128,22 @@ export function getClientWorkspaces(): ClientWorkspace[] {
   }
 }
 
-export function saveClientWorkspaces(workspaces: ClientWorkspace[], replaceOnServer = false) {
+export function saveClientWorkspaces(
+  workspaces: ClientWorkspace[],
+  replaceOnServer = false,
+  skipServerSync = false
+) {
   if (typeof window === 'undefined') return;
   try {
     const normalized = workspaces.map((w, i) => normalizeWorkspace(w, i));
     localStorage.setItem(STORAGE_KEY_WORKSPACES, JSON.stringify(normalized));
     notifyChange();
-    void pushServerSyncPayload({
-      clientWorkspaces: normalized,
-      replaceWorkspaces: replaceOnServer,
-    });
+    if (!skipServerSync) {
+      void pushServerSyncPayload({
+        clientWorkspaces: normalized,
+        replaceWorkspaces: replaceOnServer,
+      });
+    }
   } catch (err) {
     console.error('Failed saving client workspaces:', err);
   }
@@ -606,6 +628,21 @@ export function getClientInitialNotes(client: ClientWorkspace) {
 // PROJECT BRIEF ARCHIVING & ADMIN CLIENT MANAGEMENT
 // ============================================================================
 
+function normalizeBriefItem(b: ProjectBriefSubmission): ProjectBriefSubmission {
+  const isSeed = typeof b.id === 'string' && b.id.startsWith('brief-init-');
+  const extractedTime = Number((b.id || '').match(/brief-(?:test-)?(\d{10,})/)?.[1] || (isSeed ? 1000 : 2000));
+  return {
+    ...b,
+    isRead:
+      typeof b.isRead === 'boolean'
+        ? b.isRead
+        : isSeed
+        ? true
+        : b.status !== 'new',
+    createdAtMs: typeof b.createdAtMs === 'number' && b.createdAtMs > 0 ? b.createdAtMs : extractedTime,
+  };
+}
+
 export function getAllArchivedBriefs(): ProjectBriefSubmission[] {
   const workspaces = getClientWorkspaces();
   const map = new Map<string, ProjectBriefSubmission>();
@@ -617,7 +654,7 @@ export function getAllArchivedBriefs(): ProjectBriefSubmission[] {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) {
           parsed.forEach((b: ProjectBriefSubmission) => {
-            if (b && b.id) map.set(b.id, b);
+            if (b && b.id) map.set(b.id, normalizeBriefItem(b));
           });
         }
       }
@@ -630,24 +667,39 @@ export function getAllArchivedBriefs(): ProjectBriefSubmission[] {
     if (Array.isArray(ws.archivedBriefs)) {
       ws.archivedBriefs.forEach((b) => {
         if (b && b.id && !map.has(b.id)) {
-          map.set(b.id, b);
+          map.set(b.id, normalizeBriefItem(b));
         }
       });
     }
   });
 
-  return Array.from(map.values());
+  return Array.from(map.values()).sort((a, b) => {
+    const aIsSeed = typeof a.id === 'string' && a.id.startsWith('brief-init-');
+    const bIsSeed = typeof b.id === 'string' && b.id.startsWith('brief-init-');
+    if (aIsSeed !== bIsSeed) return aIsSeed ? 1 : -1;
+    const aTime = a.createdAtMs || 0;
+    const bTime = b.createdAtMs || 0;
+    if (bTime !== aTime) return bTime - aTime;
+    return 0;
+  });
 }
 
-export function saveGlobalArchivedBriefs(briefs: ProjectBriefSubmission[], replaceOnServer = false) {
+export function saveGlobalArchivedBriefs(
+  briefs: ProjectBriefSubmission[],
+  replaceOnServer = false,
+  skipServerSync = false
+) {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(STORAGE_KEY_ARCHIVED_BRIEFS, JSON.stringify(briefs));
+    const normalized = briefs.map(normalizeBriefItem);
+    localStorage.setItem(STORAGE_KEY_ARCHIVED_BRIEFS, JSON.stringify(normalized));
     notifyChange();
-    void pushServerSyncPayload({
-      archivedBriefs: briefs,
-      replaceBriefs: replaceOnServer,
-    });
+    if (!skipServerSync) {
+      void pushServerSyncPayload({
+        archivedBriefs: normalized,
+        replaceBriefs: replaceOnServer,
+      });
+    }
   } catch (err) {
     console.error('Failed saving archived briefs:', err);
   }
@@ -686,6 +738,7 @@ export function submitAndArchiveProjectBrief(payload: SubmitBriefPayload): {
   isNewWorkspace: boolean;
 } {
   const now = new Date();
+  const nowMs = Date.now();
   const nowFa = safeFormatFaDate(now, {
     year: 'numeric',
     month: 'long',
@@ -712,11 +765,11 @@ export function submitAndArchiveProjectBrief(payload: SubmitBriefPayload): {
     payload.desiredPassword?.trim() ||
     `cj${randomCodeNum}`;
 
-  const briefId = `brief-${Date.now()}`;
+  const briefId = `brief-${nowMs}`;
   const briefRecord: ProjectBriefSubmission = {
     id: briefId,
     trackingCode: generatedTrackingCode,
-    clientId: targetWorkspace ? targetWorkspace.id : `client-${Date.now()}`,
+    clientId: targetWorkspace ? targetWorkspace.id : `client-${nowMs}`,
     brandName: payload.clientName?.trim() || targetWorkspace?.brandName || 'پروژه جدید استودیو',
     ownerName: payload.ownerName?.trim() || targetWorkspace?.ownerName || payload.clientName?.trim() || 'کارفرما',
     contactInfo: payload.clientUrl?.trim() || '-',
@@ -739,6 +792,8 @@ export function submitAndArchiveProjectBrief(payload: SubmitBriefPayload): {
     decisionStructure: payload.decisionStructure,
     fullSummaryText: payload.fullSummaryText,
     status: 'new',
+    isRead: false,
+    createdAtMs: nowMs,
   };
 
   if (targetWorkspace) {
@@ -750,7 +805,7 @@ export function submitAndArchiveProjectBrief(payload: SubmitBriefPayload): {
         feedbacks: [
           ...w.feedbacks,
           {
-            id: `fb-brief-${Date.now()}`,
+            id: `fb-brief-${nowMs}`,
             author: w.ownerName || w.brandName,
             role: 'client',
             message: `📋 [ثبت و آرشیو بریف جدید در پرونده پروژه] مسیر انتخابی: ${briefRecord.selectedTrack} — صورت‌مسئله: ${briefRecord.problem}`,
@@ -761,7 +816,7 @@ export function submitAndArchiveProjectBrief(payload: SubmitBriefPayload): {
       targetWorkspace = updatedWorkspace;
       return updatedWorkspace;
     });
-    saveClientWorkspaces(updatedList);
+    saveClientWorkspaces(updatedList, false, true);
   } else {
     isNewWorkspace = true;
     const rawSlug =
@@ -794,7 +849,7 @@ export function submitAndArchiveProjectBrief(payload: SubmitBriefPayload): {
       scopeSummary: `صورت‌مسئله پروژه: ${briefRecord.problem}\nمسیر همکاری: ${briefRecord.selectedTrack} (${briefRecord.marketTier})\nمقیاس پروداکشن: ${briefRecord.productionScale || 'استاندارد استودیو'}`,
       milestones: [
         {
-          id: `ms-${Date.now()}-1`,
+          id: `ms-${nowMs}-1`,
           title: 'ثبت بریف کشف پروژه و تشکیل پرونده اختصاصی',
           description: `بریف اولیه در تاریخ ${nowFa} ثبت و برای مدیریت استودیو ارسال گردید.`,
           status: 'completed',
@@ -802,7 +857,7 @@ export function submitAndArchiveProjectBrief(payload: SubmitBriefPayload): {
           badge: 'تکمیل شده',
         },
         {
-          id: `ms-${Date.now()}-2`,
+          id: `ms-${nowMs}-2`,
           title: 'آنالیز بریف توسط سرپرست دپارتمان و جلسه کشف تخصصی',
           description: 'بررسی دقیق نیازمندی‌ها، تدوین نقشه راه و زمان‌بندی فازهای اجرایی.',
           status: 'in-progress',
@@ -814,7 +869,7 @@ export function submitAndArchiveProjectBrief(payload: SubmitBriefPayload): {
       calendar: [],
       feedbacks: [
         {
-          id: `fb-init-${Date.now()}`,
+          id: `fb-init-${nowMs}`,
           author: 'مدیریت استودیو Creativity Juice',
           role: 'lead',
           message: `سلام و درود! پرونده اختصاصی برند «${briefRecord.brandName}» با کد رهگیری ${generatedTrackingCode} تشکیل شد. بریف شما در آرشیو پروژه ثبت گردید و پس از بررسی تیم استراتژی، مراحل بعدی در همین پورتال به‌روزرسانی خواهد شد.`,
@@ -826,12 +881,12 @@ export function submitAndArchiveProjectBrief(payload: SubmitBriefPayload): {
     };
 
     targetWorkspace = newWs;
-    saveClientWorkspaces([newWs, ...list]);
+    saveClientWorkspaces([newWs, ...list], false, true);
   }
 
   const allBriefs = getAllArchivedBriefs();
   const filteredBriefs = allBriefs.filter((b) => b.id !== briefRecord.id);
-  saveGlobalArchivedBriefs([briefRecord, ...filteredBriefs]);
+  saveGlobalArchivedBriefs([briefRecord, ...filteredBriefs], false, true);
 
   // Atomically push the new brief & workspace to the central server so Admin immediately receives it from any device
   void pushBriefToServer(briefRecord, targetWorkspace!);
@@ -848,8 +903,11 @@ export function updateBriefStatus(
   status: 'new' | 'reviewed' | 'in-production',
   adminNotes?: string
 ) {
+  const isRead = status === 'new' ? false : true;
   const allBriefs = getAllArchivedBriefs().map((b) =>
-    b.id === briefId ? { ...b, status, adminNotes: adminNotes ?? b.adminNotes } : b
+    b.id === briefId
+      ? { ...b, status, isRead, adminNotes: adminNotes ?? b.adminNotes }
+      : b
   );
   saveGlobalArchivedBriefs(allBriefs);
 
@@ -858,8 +916,74 @@ export function updateBriefStatus(
     return {
       ...w,
       archivedBriefs: w.archivedBriefs.map((b) =>
-        b.id === briefId ? { ...b, status, adminNotes: adminNotes ?? b.adminNotes } : b
+        b.id === briefId
+          ? { ...b, status, isRead, adminNotes: adminNotes ?? b.adminNotes }
+          : b
       ),
+    };
+  });
+  saveClientWorkspaces(workspaces);
+}
+
+export function toggleBriefReadStatus(briefId: string, explicitRead?: boolean) {
+  let targetNextRead = true;
+  const allBriefs = getAllArchivedBriefs().map((b) => {
+    if (b.id !== briefId) return b;
+    targetNextRead = typeof explicitRead === 'boolean' ? explicitRead : !b.isRead;
+    const nextStatus =
+      targetNextRead && b.status === 'new'
+        ? 'reviewed'
+        : !targetNextRead && b.status === 'reviewed'
+        ? 'new'
+        : b.status;
+    return {
+      ...b,
+      isRead: targetNextRead,
+      status: nextStatus,
+    };
+  });
+  saveGlobalArchivedBriefs(allBriefs);
+
+  const workspaces = getClientWorkspaces().map((w) => {
+    if (!Array.isArray(w.archivedBriefs)) return w;
+    return {
+      ...w,
+      archivedBriefs: w.archivedBriefs.map((b) => {
+        if (b.id !== briefId) return b;
+        const nextStatus =
+          targetNextRead && b.status === 'new'
+            ? 'reviewed'
+            : !targetNextRead && b.status === 'reviewed'
+            ? 'new'
+            : b.status;
+        return {
+          ...b,
+          isRead: targetNextRead,
+          status: nextStatus,
+        };
+      }),
+    };
+  });
+  saveClientWorkspaces(workspaces);
+}
+
+export function markAllBriefsAsRead() {
+  const allBriefs = getAllArchivedBriefs().map((b) => ({
+    ...b,
+    isRead: true,
+    status: b.status === 'new' ? ('reviewed' as const) : b.status,
+  }));
+  saveGlobalArchivedBriefs(allBriefs);
+
+  const workspaces = getClientWorkspaces().map((w) => {
+    if (!Array.isArray(w.archivedBriefs)) return w;
+    return {
+      ...w,
+      archivedBriefs: w.archivedBriefs.map((b) => ({
+        ...b,
+        isRead: true,
+        status: b.status === 'new' ? ('reviewed' as const) : b.status,
+      })),
     };
   });
   saveClientWorkspaces(workspaces);

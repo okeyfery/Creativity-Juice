@@ -10,6 +10,7 @@ import {
   saveClientProfileByAdmin,
   deleteClientWorkspace,
   updateBriefStatus,
+  toggleBriefReadStatus,
   updateDeliverableApproval,
   addDeliverableByAdmin,
   deleteDeliverableByAdmin,
@@ -17,6 +18,7 @@ import {
   submitAndArchiveProjectBrief,
   CLIENT_PORTAL_EVENT,
 } from '../clientPortalStore';
+import { ReceivedBriefsWidget } from './ReceivedBriefsWidget';
 import { getStudioSettings, saveStudioSettings } from '../adminStore';
 import {
   pullStateFromServer,
@@ -747,6 +749,15 @@ export const ClientPortalAdminTab: React.FC<ClientPortalAdminTabProps> = ({
           </div>
         </div>
       )}
+
+      {/* Dedicated Received Briefs Widget (Read / Unread + Instant View) */}
+      <ReceivedBriefsWidget
+        onOpenBriefInPortalTab={(targetBrief) => {
+          setSelectedBrief(targetBrief);
+          setAdminNoteInput(targetBrief.adminNotes || '');
+          setSubTab('briefs');
+        }}
+      />
 
       {/* Unified KPI Metrics Strip */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
@@ -1555,6 +1566,26 @@ export const ClientPortalAdminTab: React.FC<ClientPortalAdminTabProps> = ({
                       </div>
 
                       <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            toggleBriefReadStatus(brief.id);
+                            refreshAll();
+                            onShowToast(
+                              brief.isRead
+                                ? `بریف «${brief.brandName}» به عنوان خوانده‌نشده علامت‌گذاری شد.`
+                                : `بریف «${brief.brandName}» به عنوان خوانده‌شده علامت‌گذاری شد.`
+                            );
+                          }}
+                          className={`px-2.5 py-1 rounded-full text-[11px] font-bold border transition cursor-pointer ${
+                            brief.isRead
+                              ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/25'
+                              : 'bg-rose-500/25 text-rose-200 border-rose-500/50 hover:bg-rose-500/35'
+                          }`}
+                        >
+                          {brief.isRead ? '✓ خوانده‌شده (تغییر به خوانده‌نشده)' : '● خوانده‌نشده (علامت خوانده‌شده)'}
+                        </button>
+
                         <span
                           className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
                             brief.status === 'in-production'

@@ -75,6 +75,8 @@ export interface ProjectBriefSubmission {
   decisionStructure?: string;
   fullSummaryText: string;
   status: 'new' | 'reviewed' | 'in-production';
+  isRead?: boolean;
+  createdAtMs?: number;
   adminNotes?: string;
 }
 

@@ -69,6 +69,8 @@ import { ServicesTab } from './admin/ServicesTab';
 import { TeamManifestoTab } from './admin/TeamManifestoTab';
 import { NotesTab } from './admin/NotesTab';
 import { ClientPortalAdminTab } from './admin/ClientPortalAdminTab';
+import { ReceivedBriefsWidget } from './admin/ReceivedBriefsWidget';
+import { getAllArchivedBriefs, CLIENT_PORTAL_EVENT } from './clientPortalStore';
 
 export interface AdminPanelProps {
   onExit?: () => void;
@@ -263,6 +265,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     }
   };
 
+  const [unreadBriefsCount, setUnreadBriefsCount] = useState<number>(
+    () => getAllArchivedBriefs().filter((b) => !b.isRead).length
+  );
+
   // Load latest data from store
   const refreshData = () => {
     setProjects(getProjects());
@@ -270,13 +276,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     setMediaItems(getMediaItems());
     setSettings(getStudioSettings());
     setIsAuthenticated(isAdminAuthenticated());
+    setUnreadBriefsCount(getAllArchivedBriefs().filter((b) => !b.isRead).length);
   };
 
   useEffect(() => {
     refreshData();
     const handleStoreChange = () => refreshData();
     window.addEventListener(CJ_STUDIO_DATA_EVENT, handleStoreChange);
-    return () => window.removeEventListener(CJ_STUDIO_DATA_EVENT, handleStoreChange);
+    window.addEventListener(CLIENT_PORTAL_EVENT, handleStoreChange);
+    return () => {
+      window.removeEventListener(CJ_STUDIO_DATA_EVENT, handleStoreChange);
+      window.removeEventListener(CLIENT_PORTAL_EVENT, handleStoreChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -856,9 +867,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 <Key className="w-4 h-4 shrink-0 text-amber-500" />
                 <span className="hidden sm:inline">پورتال کارفرما و بریف‌ها</span>
               </div>
-              <span className="hidden sm:inline-block font-mono text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded">
-                خصوصی
-              </span>
+              {unreadBriefsCount > 0 ? (
+                <span className="hidden sm:inline-block font-mono text-[10px] font-black bg-rose-500 text-white px-2 py-0.5 rounded-full animate-pulse">
+                  {unreadBriefsCount} جدید
+                </span>
+              ) : (
+                <span className="hidden sm:inline-block font-mono text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded">
+                  خصوصی
+                </span>
+              )}
             </button>
 
             <button
@@ -1039,6 +1056,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   <div className="text-[11px] text-neutral-400 mt-2">ذخیره‌سازی ایمن لوکال</div>
                 </div>
               </div>
+
+              {/* Received Briefs Widget in Overview */}
+              <ReceivedBriefsWidget
+                compact
+                onOpenBriefInPortalTab={() => setActiveTab('client-portal')}
+              />
 
               {/* Recent Projects Overview */}
               <div className="bg-[#141417] border border-[#27272A] rounded-xl p-5">

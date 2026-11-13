@@ -7715,9 +7715,50 @@ var Au = [
           e
         );
       },
+      handleFinalBriefSubmit = () => {
+        W.playWindowOpen();
+        let fullSummaryText = ee();
+        let result = submitAndArchiveProjectBrief({
+          clientId: activeLoggedClient?.id,
+          existingTrackingCode: h.existingTrackingCode,
+          desiredPassword: h.desiredPassword,
+          clientName: h.clientName || `برند جدید استودیو`,
+          ownerName: h.clientName || `کارفرما`,
+          clientUrl: h.clientUrl,
+          selectedTrack: h.selectedTrack,
+          marketTier: h.marketTier,
+          problem: h.problem || `ثبت بریف از طریق فرم کشف پروژه سایت`,
+          emptySpace: h.emptySpace,
+          enemy: h.enemy,
+          persona: h.persona,
+          brandingDeliverables: h.brandingDeliverables,
+          bottleneck: h.bottleneck,
+          objection: h.objection,
+          competitorCliches: h.competitorCliches,
+          marketingMedia: h.marketingMedia,
+          benchmarks: h.benchmarks,
+          dealbreakers: h.dealbreakers,
+          deadline: h.deadline,
+          productionScale: h.productionScale,
+          decisionStructure: h.decisionStructure,
+          fullSummaryText,
+        });
+        setCreatedCreds({
+          trackingCode: result.workspace.trackingCode || result.brief.trackingCode,
+          username: result.workspace.username || result.workspace.slug,
+          password: result.workspace.password || result.workspace.pinCode,
+          workspaceId: result.workspace.id,
+          brief: result.brief,
+        });
+        (u(result.workspace.trackingCode || result.brief.trackingCode), c(!0));
+        return result;
+      },
       w = () => {
         W.playPop();
         let e = ee();
+        if (!s) {
+          handleFinalBriefSubmit();
+        }
         navigator.clipboard &&
           navigator.clipboard.writeText(e).then(() => {
             (f(!0), setTimeout(() => f(!1), 2500));
@@ -7779,15 +7820,30 @@ var Au = [
                 ],
               }),
               (0, H.jsxs)(`div`, {
-                className: `text-[11px] font-mono text-neutral-500 text-left`,
-                dir: `ltr`,
+                className: `flex items-center gap-3 flex-wrap`,
                 children: [
-                  (0, H.jsx)(`strong`, {
-                    className: `text-neutral-900 block font-bold`,
-                    children: `INDEPENDENT CREATIVE DIRECTION`,
-                  }),
-                  (0, H.jsx)(`span`, {
-                    children: `WORLD-BUILDING & NARRATIVE ENGINE`,
+                  !s &&
+                    (0, H.jsxs)(`button`, {
+                      type: `button`,
+                      onClick: handleFinalBriefSubmit,
+                      className: `px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-black text-white text-xs font-black flex items-center gap-1.5 shadow-md cursor-pointer transition-all`,
+                      children: [
+                        (0, H.jsx)(`span`, { children: `🚀` }),
+                        (0, H.jsx)(`span`, { children: `ثبت و ارسال فوری بریف به مدیریت` }),
+                      ],
+                    }),
+                  (0, H.jsxs)(`div`, {
+                    className: `text-[11px] font-mono text-neutral-500 text-left hidden sm:block`,
+                    dir: `ltr`,
+                    children: [
+                      (0, H.jsx)(`strong`, {
+                        className: `text-neutral-900 block font-bold`,
+                        children: `INDEPENDENT CREATIVE DIRECTION`,
+                      }),
+                      (0, H.jsx)(`span`, {
+                        children: `WORLD-BUILDING & NARRATIVE ENGINE`,
+                      }),
+                    ],
                   }),
                 ],
               }),
@@ -8050,41 +8106,8 @@ var Au = [
                 })
               : (0, H.jsxs)(`form`, {
                   onSubmit: (e) => {
-                    (e.preventDefault(), W.playWindowOpen());
-                    let fullSummaryText = ee();
-                    let result = submitAndArchiveProjectBrief({
-                      clientId: activeLoggedClient?.id,
-                      existingTrackingCode: h.existingTrackingCode,
-                      desiredPassword: h.desiredPassword,
-                      clientName: h.clientName || `برند جدید استودیو`,
-                      ownerName: h.clientName || `کارفرما`,
-                      clientUrl: h.clientUrl,
-                      selectedTrack: h.selectedTrack,
-                      marketTier: h.marketTier,
-                      problem: h.problem,
-                      emptySpace: h.emptySpace,
-                      enemy: h.enemy,
-                      persona: h.persona,
-                      brandingDeliverables: h.brandingDeliverables,
-                      bottleneck: h.bottleneck,
-                      objection: h.objection,
-                      competitorCliches: h.competitorCliches,
-                      marketingMedia: h.marketingMedia,
-                      benchmarks: h.benchmarks,
-                      dealbreakers: h.dealbreakers,
-                      deadline: h.deadline,
-                      productionScale: h.productionScale,
-                      decisionStructure: h.decisionStructure,
-                      fullSummaryText,
-                    });
-                    setCreatedCreds({
-                      trackingCode: result.workspace.trackingCode || result.brief.trackingCode,
-                      username: result.workspace.username || result.workspace.slug,
-                      password: result.workspace.password || result.workspace.pinCode,
-                      workspaceId: result.workspace.id,
-                      brief: result.brief,
-                    });
-                    (u(result.workspace.trackingCode || result.brief.trackingCode), c(!0));
+                    e.preventDefault();
+                    handleFinalBriefSubmit();
                   },
                   className: `space-y-8`,
                   children: [
@@ -9503,7 +9526,26 @@ var Au = [
             })
           : (0, H.jsxs)(`form`, {
               onSubmit: (e) => {
-                (e.preventDefault(), W.playWindowOpen(), a(!0));
+                e.preventDefault();
+                W.playWindowOpen();
+                submitAndArchiveProjectBrief({
+                  clientName: o.company || o.name || `پروژه جدید همکاری`,
+                  ownerName: o.name || `کارفرما`,
+                  clientUrl: o.email || `-`,
+                  selectedTrack: o.service || `همکاری خلاقانه استودیو`,
+                  marketTier: o.budget || `استاندارد استودیو`,
+                  problem: o.message || `درخواست شروع همکاری در بخش ${o.service}`,
+                  fullSummaryText: [
+                    `=== درخواست همکاری و بریف سریع — CREATIVITY JUICE ===`,
+                    `• نام کارفرما: ${o.name}`,
+                    `• نام برند / شرکت: ${o.company || `-`}`,
+                    `• ایمیل ارتباطی: ${o.email}`,
+                    `• سرویس درخواستی: ${o.service}`,
+                    `• بودجه تخمینی: ${o.budget}`,
+                    `• توضیحات پروژه: ${o.message || `-`}`,
+                  ].join(`\n`),
+                });
+                a(!0);
               },
               className: `space-y-6`,
               children: [

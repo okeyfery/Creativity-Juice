@@ -216,6 +216,29 @@ export async function triggerTestNotification(
   return { ok: false };
 }
 
+function extractBriefTimestamp(item: any): number {
+  if (!item || typeof item !== 'object') return 0;
+  if (typeof item.createdAtMs === 'number' && item.createdAtMs > 0) return item.createdAtMs;
+  if (typeof item.id === 'string') {
+    if (item.id.startsWith('brief-init-')) return 1000;
+    const match = item.id.match(/brief-(?:test-)?(\d{10,})/);
+    if (match) return Number(match[1]);
+  }
+  return 2000;
+}
+
+export function sortBriefsNewestFirst(briefs: ProjectBriefSubmission[]): ProjectBriefSubmission[] {
+  if (!Array.isArray(briefs)) return [];
+  return [...briefs].sort((a, b) => {
+    const aIsInit = typeof a?.id === 'string' && a.id.startsWith('brief-init-');
+    const bIsInit = typeof b?.id === 'string' && b.id.startsWith('brief-init-');
+    if (aIsInit !== bIsInit) return aIsInit ? 1 : -1;
+    const timeDiff = extractBriefTimestamp(b) - extractBriefTimestamp(a);
+    if (timeDiff !== 0) return timeDiff;
+    return 0;
+  });
+}
+
 function mergeArrayById<T extends { id?: string }>(localArr: T[], serverArr: T[]): T[] {
   const map = new Map<string, T>();
   localArr.forEach((item) => {
@@ -225,7 +248,9 @@ function mergeArrayById<T extends { id?: string }>(localArr: T[], serverArr: T[]
     if (item && item.id) {
       const existing = map.get(item.id) as any;
       if (existing && Array.isArray(existing.archivedBriefs) && Array.isArray((item as any).archivedBriefs)) {
-        const mergedBriefs = mergeArrayById(existing.archivedBriefs, (item as any).archivedBriefs);
+        const mergedBriefs = sortBriefsNewestFirst(
+          mergeArrayById(existing.archivedBriefs, (item as any).archivedBriefs)
+        );
         const mergedFeedbacks = mergeArrayById(existing.feedbacks || [], (item as any).feedbacks || []);
         map.set(item.id, {
           ...existing,
@@ -233,6 +258,8 @@ function mergeArrayById<T extends { id?: string }>(localArr: T[], serverArr: T[]
           archivedBriefs: mergedBriefs,
           feedbacks: mergedFeedbacks,
         });
+      } else if (existing) {
+        map.set(item.id, { ...existing, ...item });
       } else {
         map.set(item.id, item);
       }
@@ -267,11 +294,11 @@ export async function pullStateFromServer(forceDispatch = false): Promise<boolea
     let portalChanged = false;
     let studioChanged = false;
 
-    // 1. Merge Archived Briefs
+    // 1. Merge Archived Briefs (always sort real submitted briefs newest-first)
     if (Array.isArray(st.archivedBriefs) && st.archivedBriefs.length > 0) {
       const rawLocalBriefs = localStorage.getItem(STORAGE_KEY_ARCHIVED_BRIEFS);
       const localBriefs: ProjectBriefSubmission[] = rawLocalBriefs ? JSON.parse(rawLocalBriefs) : [];
-      const mergedBriefs = mergeArrayById(localBriefs, st.archivedBriefs);
+      const mergedBriefs = sortBriefsNewestFirst(mergeArrayById(localBriefs, st.archivedBriefs));
       const mergedJson = JSON.stringify(mergedBriefs);
       if (mergedJson !== rawLocalBriefs) {
         localStorage.setItem(STORAGE_KEY_ARCHIVED_BRIEFS, mergedJson);

@@ -112,6 +112,25 @@ function writeServerDb(data: Record<string, any>): Record<string, any> {
   }
 }
 
+function extractBriefTimestamp(item: any): number {
+  if (!item) return 0;
+  if (typeof item.createdAtMs === 'number') return item.createdAtMs;
+  const idStr = String(item.id || '');
+  if (idStr.startsWith('brief-init-')) return 1000;
+  const match = idStr.match(/(\d{10,15})/);
+  if (match) return Number(match[1]);
+  return 5000;
+}
+
+function sortBriefsNewestFirst(list: any[] = []): any[] {
+  return [...list].sort((a, b) => {
+    const aIsSeed = String(a?.id || '').startsWith('brief-init-');
+    const bIsSeed = String(b?.id || '').startsWith('brief-init-');
+    if (aIsSeed !== bIsSeed) return aIsSeed ? 1 : -1;
+    return extractBriefTimestamp(b) - extractBriefTimestamp(a);
+  });
+}
+
 function mergeById(existingList: any[] = [], incomingList: any[] = [], preferIncoming = true): any[] {
   const map = new Map<string, any>();
   existingList.forEach((item: any) => {
@@ -124,7 +143,7 @@ function mergeById(existingList: any[] = [], incomingList: any[] = [], preferInc
       if (preferIncoming || !map.has(item.id)) {
         const prev = map.get(item.id);
         if (prev && Array.isArray(prev.archivedBriefs) && Array.isArray(item.archivedBriefs)) {
-          const mergedBriefs = mergeById(prev.archivedBriefs, item.archivedBriefs, true);
+          const mergedBriefs = sortBriefsNewestFirst(mergeById(prev.archivedBriefs, item.archivedBriefs, true));
           const mergedFeedbacks = mergeById(prev.feedbacks || [], item.feedbacks || [], true);
           const mergedDeliverables = Array.isArray(item.deliverables) ? item.deliverables : prev.deliverables || [];
           map.set(item.id, {
@@ -135,7 +154,7 @@ function mergeById(existingList: any[] = [], incomingList: any[] = [], preferInc
             deliverables: mergedDeliverables,
           });
         } else {
-          map.set(item.id, item);
+          map.set(item.id, prev ? { ...prev, ...item } : item);
         }
       }
     }
@@ -326,18 +345,25 @@ async function startServer() {
       const db = readServerDb();
 
       if (brief && brief.id) {
-        const filteredBriefs = (db.archivedBriefs || []).filter((b: any) => b.id !== brief.id);
-        db.archivedBriefs = [brief, ...filteredBriefs];
+        const enrichedBrief = {
+          ...brief,
+          isRead: brief.isRead ?? false,
+          createdAtMs: brief.createdAtMs || Date.now(),
+        };
+        const filteredBriefs = (db.archivedBriefs || []).filter((b: any) => b.id !== enrichedBrief.id);
+        db.archivedBriefs = sortBriefsNewestFirst([enrichedBrief, ...filteredBriefs]);
       }
 
       if (workspace && workspace.id) {
         const existingIdx = (db.clientWorkspaces || []).findIndex((w: any) => w.id === workspace.id);
         if (existingIdx >= 0) {
           const prevWs = db.clientWorkspaces[existingIdx];
-          const mergedWsBriefs = mergeById(
-            prevWs.archivedBriefs || [],
-            workspace.archivedBriefs || (brief ? [brief] : []),
-            true
+          const mergedWsBriefs = sortBriefsNewestFirst(
+            mergeById(
+              prevWs.archivedBriefs || [],
+              workspace.archivedBriefs || (brief ? [brief] : []),
+              true
+            )
           );
           const mergedWsFeedbacks = mergeById(prevWs.feedbacks || [], workspace.feedbacks || [], true);
           db.clientWorkspaces[existingIdx] = {
@@ -459,9 +485,11 @@ async function startServer() {
 
       if (Array.isArray(payload.archivedBriefs)) {
         if (payload.replaceBriefs) {
-          db.archivedBriefs = payload.archivedBriefs;
+          db.archivedBriefs = sortBriefsNewestFirst(payload.archivedBriefs);
         } else {
-          db.archivedBriefs = mergeById(db.archivedBriefs || [], payload.archivedBriefs, true);
+          db.archivedBriefs = sortBriefsNewestFirst(
+            mergeById(db.archivedBriefs || [], payload.archivedBriefs, true)
+          );
         }
       }
 
