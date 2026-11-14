@@ -1,8 +1,10 @@
+import 'dotenv/config';
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import {
   listDbProjects,
   insertDbProject,
@@ -17,6 +19,33 @@ import { requireAuth, type AuthRequest } from './src/middleware/auth.ts';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DB_FILE_PATH = path.join(__dirname, 'studio-server-db.json');
+
+const ENV_SUPABASE_URL = (
+  process.env.VITE_SUPABASE_URL ||
+  process.env.SUPABASE_URL ||
+  process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  ''
+).trim();
+
+const ENV_SUPABASE_ANON_KEY = (
+  process.env.VITE_SUPABASE_ANON_KEY ||
+  process.env.SUPABASE_ANON_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  ''
+).trim();
+
+const isServerSupabaseConfigured = Boolean(
+  ENV_SUPABASE_URL &&
+    ENV_SUPABASE_ANON_KEY &&
+    !ENV_SUPABASE_URL.includes('your-project-id') &&
+    !ENV_SUPABASE_ANON_KEY.includes('your-anon-key') &&
+    ENV_SUPABASE_URL.startsWith('http')
+);
+
+const serverSupabase: SupabaseClient | null = isServerSupabaseConfigured
+  ? createClient(ENV_SUPABASE_URL, ENV_SUPABASE_ANON_KEY)
+  : null;
 
 export interface ServerNotificationConfig {
   enabled: boolean;
@@ -415,9 +444,39 @@ async function startServer() {
     };
   }
 
+  app.get('/api/supabase-config', (_req, res) => {
+    res.json({
+      ok: true,
+      supabaseUrl: isServerSupabaseConfigured ? ENV_SUPABASE_URL : '',
+      supabaseAnonKey: isServerSupabaseConfigured ? ENV_SUPABASE_ANON_KEY : '',
+      isSupabaseConfigured: isServerSupabaseConfigured,
+      isPostgresConnected: true,
+    });
+  });
+
   async function getAuthoritativeBriefsFromPostgres() {
     try {
-      const rows = await listDbProjects();
+      let rows = await listDbProjects();
+      if (serverSupabase) {
+        try {
+          const { data } = await serverSupabase
+            .from('projects')
+            .select('*')
+            .order('id', { ascending: false });
+          if (Array.isArray(data) && data.length > 0) {
+            const existingTitles = new Set(rows.map((r: any) => `${r.client_name}::${r.project_title}`));
+            for (const sbRow of data) {
+              const key = `${sbRow.client_name}::${sbRow.project_title}`;
+              if (!existingTitles.has(key)) {
+                rows.unshift(sbRow as any);
+                existingTitles.add(key);
+              }
+            }
+          }
+        } catch {
+          // Ignore Supabase fallback error
+        }
+      }
       return rows.map(pgRowToBriefSubmission);
     } catch (err) {
       console.error('Fallback to local JSON for briefs:', err);
@@ -458,6 +517,25 @@ async function startServer() {
         }
       }
       rows = await listDbPortfolios();
+    }
+    if (serverSupabase) {
+      try {
+        const { data } = await serverSupabase
+          .from('portfolios')
+          .select('*')
+          .order('id', { ascending: false });
+        if (Array.isArray(data) && data.length > 0) {
+          const existingTitles = new Set(rows.map((r: any) => r.title));
+          for (const sbRow of data) {
+            if (sbRow.title && !existingTitles.has(sbRow.title)) {
+              rows.unshift(sbRow as any);
+              existingTitles.add(sbRow.title);
+            }
+          }
+        }
+      } catch {
+        // Ignore Supabase fallback error
+      }
     }
     return rows;
   }
@@ -505,7 +583,7 @@ async function startServer() {
   app.get('/api/studio-state/stream', handleRealtimeStream);
   app.get('/api/briefs/stream', handleRealtimeStream);
 
-  // Dedicated 'briefs' Collection Endpoints backed by PostgreSQL `projects` table
+  // Dedicated 'briefs' Collection Endpoints backed by PostgreSQL & Supabase `projects` table
   app.get('/api/briefs', async (_req, res) => {
     const docs = await getAuthoritativeBriefsFromPostgres();
     res.json({
@@ -523,15 +601,36 @@ async function startServer() {
       const workspace = req.body?.workspace;
       const db = readServerDb();
 
+      const clientName = incoming.ownerName || incoming.client_name || incoming.brandName || 'کارفرما';
+      const contactInfo = incoming.contactInfo || incoming.contact_info || '-';
+      const projectTitle = incoming.brandName || incoming.project_title || 'پروژه جدید';
+      const description = incoming.problem || incoming.description || '-';
+      const budget = incoming.productionScale
+        ? `${incoming.marketTier || ''} • ${incoming.productionScale}`.trim()
+        : incoming.marketTier || incoming.budget || 'استاندارد استودیو';
+
+      if (serverSupabase) {
+        try {
+          await serverSupabase.from('projects').insert([
+            {
+              client_name: clientName,
+              contact_info: contactInfo,
+              project_title: projectTitle,
+              description,
+              budget,
+            },
+          ]);
+        } catch {
+          // ignore serverSupabase error
+        }
+      }
+
       const insertedPg = await insertDbProject({
-        client_name: incoming.ownerName || incoming.client_name || incoming.brandName || 'کارفرما',
-        contact_info: incoming.contactInfo || incoming.contact_info || '-',
-        project_title: incoming.brandName || incoming.project_title || 'پروژه جدید',
-        description: incoming.problem || incoming.description || '-',
-        budget:
-          incoming.productionScale
-            ? `${incoming.marketTier || ''} • ${incoming.productionScale}`.trim()
-            : incoming.marketTier || incoming.budget || 'استاندارد استودیو',
+        client_name: clientName,
+        contact_info: contactInfo,
+        project_title: projectTitle,
+        description,
+        budget,
         tracking_code:
           incoming.trackingCode ||
           incoming.tracking_code ||
@@ -647,7 +746,27 @@ async function startServer() {
 
   app.get('/api/db/projects', async (_req, res) => {
     try {
-      const rows = await listDbProjects();
+      let rows = await listDbProjects();
+      if (serverSupabase) {
+        try {
+          const { data } = await serverSupabase
+            .from('projects')
+            .select('*')
+            .order('id', { ascending: false });
+          if (Array.isArray(data) && data.length > 0) {
+            const existingTitles = new Set(rows.map((r: any) => `${r.client_name}::${r.project_title}`));
+            for (const sbRow of data) {
+              const key = `${sbRow.client_name}::${sbRow.project_title}`;
+              if (!existingTitles.has(key)) {
+                rows.unshift(sbRow as any);
+                existingTitles.add(key);
+              }
+            }
+          }
+        } catch {
+          // ignore
+        }
+      }
       res.json({ ok: true, projects: rows });
     } catch (error: any) {
       console.error('Error in GET /api/db/projects:', error);
@@ -658,12 +777,34 @@ async function startServer() {
   app.post('/api/db/projects', async (req, res) => {
     try {
       const body = req.body || {};
+      const client_name = body.client_name || body.ownerName || 'کارفرما';
+      const contact_info = body.contact_info || body.contactInfo || '-';
+      const project_title = body.project_title || body.brandName || 'پروژه جدید';
+      const description = body.description || body.problem || '-';
+      const budget = body.budget || body.marketTier || 'استاندارد استودیو';
+
+      if (serverSupabase) {
+        try {
+          await serverSupabase.from('projects').insert([
+            {
+              client_name,
+              contact_info,
+              project_title,
+              description,
+              budget,
+            },
+          ]);
+        } catch {
+          // ignore
+        }
+      }
+
       const inserted = await insertDbProject({
-        client_name: body.client_name || body.ownerName || 'کارفرما',
-        contact_info: body.contact_info || body.contactInfo || '-',
-        project_title: body.project_title || body.brandName || 'پروژه جدید',
-        description: body.description || body.problem || '-',
-        budget: body.budget || body.marketTier || 'استاندارد استودیو',
+        client_name,
+        contact_info,
+        project_title,
+        description,
+        budget,
         tracking_code: body.tracking_code || body.trackingCode || `CJ-${Math.floor(1000 + Math.random() * 9000)}`,
         status: body.status || 'new',
         is_read: body.is_read ?? false,
@@ -701,6 +842,13 @@ async function startServer() {
 
   app.delete('/api/db/projects/:id', async (req, res) => {
     try {
+      if (serverSupabase) {
+        try {
+          await serverSupabase.from('projects').delete().eq('id', req.params.id);
+        } catch {
+          // ignore
+        }
+      }
       await deleteDbProject(req.params.id);
       const pgBriefs = await getAuthoritativeBriefsFromPostgres();
       const db = readServerDb();
@@ -731,15 +879,37 @@ async function startServer() {
   app.post('/api/db/portfolios', async (req, res) => {
     try {
       const body = req.body || {};
+      const title = body.title || 'نمونه‌کار جدید';
+      const category = body.category || 'branding';
+      const image_url =
+        body.image_url ||
+        body.coverImage ||
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85';
+      const project_link = body.project_link || '#';
+      const description = body.description || '';
+
+      if (serverSupabase) {
+        try {
+          await serverSupabase.from('portfolios').insert([
+            {
+              title,
+              category,
+              image_url,
+              project_link,
+              description,
+            },
+          ]);
+        } catch {
+          // ignore
+        }
+      }
+
       const inserted = await insertDbPortfolio({
-        title: body.title || 'نمونه‌کار جدید',
-        category: body.category || 'branding',
-        image_url:
-          body.image_url ||
-          body.coverImage ||
-          'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85',
-        project_link: body.project_link || '#',
-        description: body.description || '',
+        title,
+        category,
+        image_url,
+        project_link,
+        description,
         title_en: body.title_en || body.titleEn || body.title,
         client: body.client || body.title,
         year: body.year || '۱۴۰۵',
@@ -756,6 +926,13 @@ async function startServer() {
 
   app.delete('/api/db/portfolios/:id', async (req, res) => {
     try {
+      if (serverSupabase) {
+        try {
+          await serverSupabase.from('portfolios').delete().eq('id', req.params.id);
+        } catch {
+          // ignore
+        }
+      }
       await deleteDbPortfolio(req.params.id);
       broadcastRealtimeEvent('db:portfolio:deleted', { id: req.params.id });
       res.json({ ok: true, deletedId: req.params.id });

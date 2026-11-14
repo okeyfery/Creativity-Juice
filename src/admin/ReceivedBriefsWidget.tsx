@@ -23,29 +23,17 @@ import {
 import { ProjectBriefSubmission } from '../data/clientPortalData';
 import {
   getAllArchivedBriefs,
-  toggleBriefReadStatus,
-  markAllBriefsAsRead,
-  updateBriefStatus,
-  submitAndArchiveProjectBrief,
-  deleteSubmittedBrief,
-  syncProjectsTableIntoBriefs,
   CLIENT_PORTAL_EVENT,
 } from '../clientPortalStore';
 import {
-  pullStateFromServer,
   buildBriefForwardLinks,
   NEW_BRIEF_NOTIFICATION_EVENT,
 } from '../serverSync';
 import {
-  startBriefRealtimeSyncService,
   reconcileClientBriefsWithServer,
-  getBriefSyncTelemetry,
-  getSyncedBriefIds,
-  getPendingOutbox,
-  BriefsCollection,
   BRIEF_REALTIME_SYNC_EVENT,
-  BriefSyncTelemetry,
 } from '../briefSyncService';
+import { useClientPortal } from '../ClientPortalContext';
 
 interface ReceivedBriefsWidgetProps {
   onOpenBriefInPortalTab?: (brief: ProjectBriefSubmission) => void;
@@ -56,7 +44,18 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
   onOpenBriefInPortalTab,
   compact = false,
 }) => {
-  const [briefs, setBriefs] = useState<ProjectBriefSubmission[]>(() => getAllArchivedBriefs());
+  const {
+    briefs,
+    isLoadingBriefs,
+    loadBriefsFromSupabase,
+    toggleBriefReadInSupabase,
+    markAllBriefsReadInSupabase,
+    updateBriefStatusInSupabase,
+    deleteBriefFromSupabase,
+    submitBrief,
+    refreshPortalState,
+  } = useClientPortal();
+
   const [readFilter, setReadFilter] = useState<'all' | 'unread' | 'read' | 'submitted'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBrief, setSelectedBrief] = useState<ProjectBriefSubmission | null>(null);
@@ -70,68 +69,42 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
   };
 
   const refreshBriefs = () => {
-    const latest = getAllArchivedBriefs();
-    setBriefs(latest);
+    refreshPortalState();
     if (selectedBrief) {
+      const latest = getAllArchivedBriefs();
       const updatedSelected = latest.find((b) => b.id === selectedBrief.id);
       if (updatedSelected) setSelectedBrief(updatedSelected);
     }
   };
 
   useEffect(() => {
-    startBriefRealtimeSyncService();
-    const unsubscribeSnapshot = BriefsCollection.onSnapshot(() => {
-      refreshBriefs();
-    });
-    void Promise.all([pullStateFromServer(true), syncProjectsTableIntoBriefs()]).then(() => {
-      refreshBriefs();
-    });
-
-    const handlePortalUpdate = () => {
-      refreshBriefs();
-    };
-
-    window.addEventListener(CLIENT_PORTAL_EVENT, handlePortalUpdate);
-    window.addEventListener(NEW_BRIEF_NOTIFICATION_EVENT, handlePortalUpdate);
-    window.addEventListener(BRIEF_REALTIME_SYNC_EVENT, handlePortalUpdate);
-    window.addEventListener('storage', handlePortalUpdate);
-
-    return () => {
-      unsubscribeSnapshot();
-      window.removeEventListener(CLIENT_PORTAL_EVENT, handlePortalUpdate);
-      window.removeEventListener(NEW_BRIEF_NOTIFICATION_EVENT, handlePortalUpdate);
-      window.removeEventListener(BRIEF_REALTIME_SYNC_EVENT, handlePortalUpdate);
-      window.removeEventListener('storage', handlePortalUpdate);
-    };
-  }, []);
+    void loadBriefsFromSupabase();
+  }, [loadBriefsFromSupabase]);
 
   const handleManualSync = async () => {
     setIsSyncing(true);
     await Promise.all([
       reconcileClientBriefsWithServer(),
-      pullStateFromServer(true),
-      syncProjectsTableIntoBriefs(),
+      loadBriefsFromSupabase(),
     ]);
     refreshBriefs();
     setIsSyncing(false);
-    showToast('لیست پروژه‌ها و بریف‌های ثبت‌شده کارفرمایان از دیتابیس به‌روزرسانی شد.');
+    showToast('لیست پروژه‌ها و بریف‌های ثبت‌شده کارفرمایان مستقیماً از دیتابیس Supabase به‌روزرسانی شد.');
   };
 
   const handleDeleteBriefProject = async (brief: ProjectBriefSubmission, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    await deleteSubmittedBrief(brief.id);
+    await deleteBriefFromSupabase(brief.id);
     if (selectedBrief?.id === brief.id) {
       setSelectedBrief(null);
     }
-    refreshBriefs();
     showToast(`پروژه «${brief.brandName}» از جدول projects دیتابیس حذف شد.`);
   };
 
   const handleToggleRead = (brief: ProjectBriefSubmission, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     const nextRead = !brief.isRead;
-    toggleBriefReadStatus(brief.id, nextRead);
-    refreshBriefs();
+    void toggleBriefReadInSupabase(brief.id, nextRead);
     showToast(
       nextRead
         ? `بریف «${brief.brandName}» به عنوان خوانده‌شده علامت‌گذاری شد.`
@@ -140,21 +113,19 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
   };
 
   const handleMarkAllRead = () => {
-    markAllBriefsAsRead();
-    refreshBriefs();
+    void markAllBriefsReadInSupabase();
     showToast('تمام بریف‌های دریافتی به عنوان «خوانده‌شده» علامت‌گذاری شدند.');
   };
 
   const handleOpenDetail = (brief: ProjectBriefSubmission) => {
     if (!brief.isRead) {
-      toggleBriefReadStatus(brief.id, true);
+      void toggleBriefReadInSupabase(brief.id, true);
     }
-    const updated = getAllArchivedBriefs().find((b) => b.id === brief.id) || {
+    const updated = briefs.find((b) => b.id === brief.id) || {
       ...brief,
       isRead: true,
     };
-    setSelectedBrief(updated);
-    refreshBriefs();
+    setSelectedBrief({ ...updated, isRead: true });
   };
 
   const handleSimulateNewBrief = () => {
@@ -170,7 +141,7 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
       `• صورت‌مسئله: نیاز به ری‌برندینگ جامع، طراحی هویت بصری و تولید محتوای ویدیویی هدفمند برای افزایش فروش.`,
     ].join('\n');
 
-    const res = submitAndArchiveProjectBrief({
+    const res = submitBrief({
       clientName: brandTitle,
       ownerName: 'کارفرمای جدید سایت',
       clientUrl: `09120000${randomNum}`,
@@ -184,9 +155,8 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
     });
 
     setReadFilter('all');
-    refreshBriefs();
     showToast(
-      `بریف جدید «${res.brief.brandName}» با کد ${res.brief.trackingCode} به صورت بلادرنگ با سرور همگام و در صدر لیست قرار گرفت!`
+      `بریف جدید «${res.brief.brandName}» با کد ${res.brief.trackingCode} در دیتابیس Supabase ثبت و در صدر لیست قرار گرفت!`
     );
   };
 
@@ -311,11 +281,11 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
 
           <button
             onClick={handleManualSync}
-            disabled={isSyncing}
+            disabled={isSyncing || isLoadingBriefs}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 text-xs font-bold transition-all"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-amber-400 ${isSyncing ? 'animate-spin' : ''}`} />
-            همگام‌سازی کلاینت و سرور (Sync)
+            <RefreshCw className={`w-3.5 h-3.5 text-amber-400 ${isSyncing || isLoadingBriefs ? 'animate-spin' : ''}`} />
+            همگام‌سازی مستقیم با Supabase
           </button>
         </div>
       </div>
@@ -664,9 +634,9 @@ export const ReceivedBriefsWidget: React.FC<ReceivedBriefsWidgetProps> = ({
                     <button
                       key={st}
                       onClick={() => {
-                        updateBriefStatus(selectedBrief.id, st);
-                        refreshBriefs();
-                        showToast('وضعیت اجرایی بریف به‌روزرسانی شد.');
+                        void updateBriefStatusInSupabase(selectedBrief.id, st);
+                        setSelectedBrief({ ...selectedBrief, status: st, isRead: st !== 'new' });
+                        showToast('وضعیت اجرایی بریف در دیتابیس Supabase به‌روزرسانی شد.');
                       }}
                       className={`px-3 py-1 rounded-lg text-[11px] font-bold border transition-all ${
                         selectedBrief.status === st

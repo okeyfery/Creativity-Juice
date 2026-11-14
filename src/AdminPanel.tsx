@@ -1091,7 +1091,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
                     <span>همگام بلادرنگ</span>
                   </div>
-                  <div className="text-[11px] text-neutral-400 mt-2">ذخیره‌سازی ایمن لوکال</div>
+                  <div className="text-[11px] text-neutral-400 mt-2">ذخیره‌سازی دائمی دیتابیس (Supabase / SQL)</div>
                 </div>
               </div>
 

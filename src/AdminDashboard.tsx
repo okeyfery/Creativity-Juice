@@ -656,7 +656,7 @@ export default function AdminDashboard({ onExit, onLockAndExit, onSetWallpaper }
                     <span>سینک بلادرنگ با دسکتاپ</span>
                   </div>
                   <div className="text-[11px] text-neutral-400 mt-2">
-                    <span>ذخیره‌سازی لوکال و ایمن</span>
+                    <span>ذخیره‌سازی دائمی در دیتابیس (Supabase / SQL)</span>
                   </div>
                 </div>
               </div>

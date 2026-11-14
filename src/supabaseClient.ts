@@ -1,33 +1,84 @@
 /**
  * Creativity Juice — Supabase & PostgreSQL Database Client
  * Connects the application to:
- * 1. Supabase (@supabase/supabase-js) using VITE_SUPABASE_URL & VITE_SUPABASE_ANON_KEY
- * 2. Cloud SQL PostgreSQL (/api/db/projects & /api/db/portfolios)
+ * 1. Supabase (@supabase/supabase-js) using .env keys:
+ *    VITE_SUPABASE_URL / SUPABASE_URL / NEXT_PUBLIC_SUPABASE_URL
+ *    VITE_SUPABASE_ANON_KEY / SUPABASE_ANON_KEY / NEXT_PUBLIC_SUPABASE_ANON_KEY
+ * 2. Server-side Database API (/api/db/projects & /api/db/portfolios) backed by Supabase & Cloud SQL PostgreSQL
  * Tables:
  * - 'projects' (columns: id, client_name, contact_info, project_title, description, budget)
  * - 'portfolios' (columns: id, title, category, image_url, project_link, description)
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { smartCollectionFetch } from './briefSyncService';
 import { getInMemoryAuthToken } from './context/AuthContext';
 
 const env = (import.meta as any).env || {};
-export const SUPABASE_URL: string =
-  env.VITE_SUPABASE_URL || env.NEXT_PUBLIC_SUPABASE_URL || '';
-export const SUPABASE_ANON_KEY: string =
-  env.VITE_SUPABASE_ANON_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+export let SUPABASE_URL: string =
+  env.VITE_SUPABASE_URL ||
+  env.SUPABASE_URL ||
+  env.NEXT_PUBLIC_SUPABASE_URL ||
+  '';
+export let SUPABASE_ANON_KEY: string =
+  env.VITE_SUPABASE_ANON_KEY ||
+  env.SUPABASE_ANON_KEY ||
+  env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  '';
 
-export const isSupabaseConfigured = Boolean(
-  SUPABASE_URL &&
-    SUPABASE_ANON_KEY &&
-    !SUPABASE_URL.includes('your-project-id') &&
-    SUPABASE_URL.startsWith('http')
-);
+function isValidSupabaseConfig(url: string, key: string): boolean {
+  return Boolean(
+    url &&
+      key &&
+      !url.includes('your-project-id') &&
+      !key.includes('your-anon-key') &&
+      url.startsWith('http')
+  );
+}
 
-export const supabase: SupabaseClient | null = isSupabaseConfigured
+export let isSupabaseConfigured = isValidSupabaseConfig(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+export let supabase: SupabaseClient | null = isSupabaseConfigured
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null;
+
+let runtimeConfigPromise: Promise<SupabaseClient | null> | null = null;
+
+/**
+ * Ensures the Supabase client is initialized from either build-time Vite .env variables
+ * or runtime server .env variables exposed via /api/supabase-config.
+ */
+export async function ensureSupabaseClient(): Promise<SupabaseClient | null> {
+  if (supabase) return supabase;
+  if (typeof window === 'undefined') return null;
+
+  if (!runtimeConfigPromise) {
+    runtimeConfigPromise = (async () => {
+      try {
+        const res = await smartCollectionFetch('/api/supabase-config', {
+          method: 'GET',
+          cache: 'no-store',
+        });
+        if (res.ok && res.data) {
+          const url = String(res.data.supabaseUrl || '').trim();
+          const key = String(res.data.supabaseAnonKey || '').trim();
+          if (isValidSupabaseConfig(url, key)) {
+            SUPABASE_URL = url;
+            SUPABASE_ANON_KEY = key;
+            isSupabaseConfigured = true;
+            supabase = createClient(url, key);
+            return supabase;
+          }
+        }
+      } catch {
+        // Fallback to server-side database endpoints
+      }
+      return supabase;
+    })();
+  }
+
+  return runtimeConfigPromise;
+}
 
 export interface SupabaseProjectRow {
   id?: number | string;
@@ -70,16 +121,17 @@ function getAuthHeaders(): Record<string, string> {
 }
 
 // ============================================================================
-// 1. CLIENT PROJECTS TABLE ('projects')
+// 1. CLIENT PROJECTS / BRIEFS TABLE ('projects')
 // Columns: client_name, contact_info, project_title, description, budget
 // ============================================================================
 
 export async function fetchProjectsFromDatabase(): Promise<SupabaseProjectRow[]> {
   let supabaseRows: SupabaseProjectRow[] = [];
+  const client = await ensureSupabaseClient();
 
-  if (supabase) {
+  if (client) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from('projects')
         .select('*')
         .order('id', { ascending: false });
@@ -100,10 +152,11 @@ export async function fetchProjectsFromDatabase(): Promise<SupabaseProjectRow[]>
     if (res.ok && Array.isArray(res.data?.projects)) {
       const pgRows = res.data.projects as SupabaseProjectRow[];
       if (supabaseRows.length === 0) return pgRows;
-      // Merge unique rows if both Supabase and PostgreSQL backend are active
       const map = new Map<string, SupabaseProjectRow>();
       [...supabaseRows, ...pgRows].forEach((r) => {
-        const key = `${r.client_name}::${r.project_title}::${r.id || ''}`;
+        const key = r.tracking_code
+          ? `code:${r.tracking_code}`
+          : `${r.client_name}::${r.project_title}::${r.id || ''}`;
         if (!map.has(key)) map.set(key, r);
       });
       return Array.from(map.values());
@@ -127,11 +180,12 @@ export async function insertProjectToDatabase(
   };
 
   let insertedRow: SupabaseProjectRow | null = null;
+  const client = await ensureSupabaseClient();
 
   // 1. Insert into Supabase 'projects' table (strictly using the 5 required columns)
-  if (supabase) {
+  if (client) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from('projects')
         .insert([cleanPayload])
         .select()
@@ -144,7 +198,7 @@ export async function insertProjectToDatabase(
     }
   }
 
-  // 2. Insert into Cloud SQL PostgreSQL 'projects' table
+  // 2. Insert into Server / Cloud SQL PostgreSQL 'projects' table
   try {
     const res = await smartCollectionFetch('/api/db/projects', {
       method: 'POST',
@@ -173,10 +227,11 @@ export async function insertProjectToDatabase(
 
 export async function deleteProjectFromDatabase(id: number | string): Promise<boolean> {
   let deleted = false;
+  const client = await ensureSupabaseClient();
 
-  if (supabase) {
+  if (client) {
     try {
-      const { error } = await supabase.from('projects').delete().eq('id', id);
+      const { error } = await client.from('projects').delete().eq('id', id);
       if (!error) deleted = true;
     } catch (err) {
       console.warn('Supabase delete project error:', err);
@@ -207,10 +262,11 @@ export async function deleteProjectFromDatabase(id: number | string): Promise<bo
 
 export async function fetchPortfoliosFromDatabase(): Promise<SupabasePortfolioRow[]> {
   let supabaseRows: SupabasePortfolioRow[] = [];
+  const client = await ensureSupabaseClient();
 
-  if (supabase) {
+  if (client) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from('portfolios')
         .select('*')
         .order('id', { ascending: false });
@@ -259,11 +315,12 @@ export async function insertPortfolioToDatabase(
   };
 
   let insertedRow: SupabasePortfolioRow | null = null;
+  const client = await ensureSupabaseClient();
 
   // 1. Insert into Supabase 'portfolios' table (strictly using the 5 required columns)
-  if (supabase) {
+  if (client) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from('portfolios')
         .insert([cleanPayload])
         .select()
@@ -276,7 +333,7 @@ export async function insertPortfolioToDatabase(
     }
   }
 
-  // 2. Insert into Cloud SQL PostgreSQL 'portfolios' table
+  // 2. Insert into Server / Cloud SQL PostgreSQL 'portfolios' table
   try {
     const res = await smartCollectionFetch('/api/db/portfolios', {
       method: 'POST',
@@ -306,10 +363,11 @@ export async function insertPortfolioToDatabase(
 
 export async function deletePortfolioFromDatabase(id: number | string): Promise<boolean> {
   let deleted = false;
+  const client = await ensureSupabaseClient();
 
-  if (supabase) {
+  if (client) {
     try {
-      const { error } = await supabase.from('portfolios').delete().eq('id', id);
+      const { error } = await client.from('portfolios').delete().eq('id', id);
       if (!error) deleted = true;
     } catch (err) {
       console.warn('Supabase delete portfolio error:', err);
