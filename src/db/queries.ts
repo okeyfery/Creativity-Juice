@@ -1,6 +1,6 @@
 import { desc, eq, or } from 'drizzle-orm';
 import { db } from './index.ts';
-import { projects, portfolios } from './schema.ts';
+import { projects, portfolios, studioStateStore } from './schema.ts';
 
 export interface DbProjectInsert {
   client_name: string;
@@ -38,7 +38,6 @@ export async function listDbProjects() {
 
 export async function insertDbProject(input: DbProjectInsert) {
   try {
-    // Prevent duplicate rows if the same tracking_code was already inserted within the same submission flow
     if (input.tracking_code) {
       const existing = await db
         .select()
@@ -124,6 +123,50 @@ export async function listDbPortfolios() {
 
 export async function insertDbPortfolio(input: DbPortfolioInsert) {
   try {
+    // Check if an existing portfolio matches by extra_json.id or title so edits update in-place
+    let incomingCustomId: string | null = null;
+    if (input.extra_json) {
+      try {
+        const parsed = JSON.parse(input.extra_json);
+        if (parsed && parsed.id) incomingCustomId = String(parsed.id);
+      } catch {
+        // ignore
+      }
+    }
+
+    const all = await listDbPortfolios();
+    const existingMatch = all.find((row) => {
+      if (incomingCustomId && row.extra_json) {
+        try {
+          const parsed = JSON.parse(row.extra_json);
+          if (parsed && String(parsed.id) === incomingCustomId) return true;
+        } catch {
+          // ignore
+        }
+      }
+      if (incomingCustomId && `portfolio-db-${row.id}` === incomingCustomId) return true;
+      return row.title === input.title;
+    });
+
+    if (existingMatch) {
+      const updated = await db
+        .update(portfolios)
+        .set({
+          title: input.title,
+          category: input.category,
+          image_url: input.image_url,
+          project_link: input.project_link,
+          description: input.description,
+          title_en: input.title_en || existingMatch.title_en || null,
+          client: input.client || existingMatch.client || null,
+          year: input.year || existingMatch.year || null,
+          extra_json: input.extra_json || existingMatch.extra_json || null,
+        })
+        .where(eq(portfolios.id, existingMatch.id))
+        .returning();
+      return updated[0];
+    }
+
     const rows = await db
       .insert(portfolios)
       .values({
@@ -157,7 +200,6 @@ export async function deleteDbPortfolio(idOrSlug: number | string) {
       if (rows.length > 0) return rows[0];
     }
 
-    // If deleting by string slug/id stored in extra_json or title
     const all = await listDbPortfolios();
     const match = all.find((row) => {
       if (row.title === idOrSlug) return true;
@@ -183,5 +225,45 @@ export async function deleteDbPortfolio(idOrSlug: number | string) {
   } catch (error) {
     console.error('Failed to delete portfolio from database:', error);
     throw new Error('Failed to delete portfolio from database.', { cause: error });
+  }
+}
+
+const GLOBAL_STATE_KEY = 'studio_global_state_v1';
+
+export async function getDbStudioState(): Promise<Record<string, any> | null> {
+  try {
+    const rows = await db
+      .select()
+      .from(studioStateStore)
+      .where(eq(studioStateStore.key, GLOBAL_STATE_KEY));
+    if (rows.length > 0 && rows[0].value_json) {
+      return JSON.parse(rows[0].value_json);
+    }
+    return null;
+  } catch (error) {
+    console.error('Failed to read studio_state_store from database:', error);
+    return null;
+  }
+}
+
+export async function saveDbStudioState(stateObj: Record<string, any>): Promise<void> {
+  try {
+    const jsonStr = JSON.stringify(stateObj);
+    await db
+      .insert(studioStateStore)
+      .values({
+        key: GLOBAL_STATE_KEY,
+        value_json: jsonStr,
+        updated_at: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: studioStateStore.key,
+        set: {
+          value_json: jsonStr,
+          updated_at: new Date(),
+        },
+      });
+  } catch (error) {
+    console.error('Failed to write studio_state_store to database:', error);
   }
 }

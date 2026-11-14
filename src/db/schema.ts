@@ -42,6 +42,14 @@ export const portfolios = pgTable('portfolios', {
   created_at: timestamp('created_at').defaultNow(),
 });
 
+// 4. Shared Studio State Key-Value table ('studio_state_store')
+// Ensures Preview (ais-dev), Shared Link (ais-pre), and Published Cloud Run instances share all state in PostgreSQL
+export const studioStateStore = pgTable('studio_state_store', {
+  key: text('key').primaryKey(),
+  value_json: text('value_json').notNull(),
+  updated_at: timestamp('updated_at').defaultNow(),
+});
+
 export const usersRelations = relations(users, ({ many }) => ({
   submittedProjects: many(projects),
 }));

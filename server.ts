@@ -13,6 +13,8 @@ import {
   listDbPortfolios,
   insertDbPortfolio,
   deleteDbPortfolio,
+  getDbStudioState,
+  saveDbStudioState,
 } from './src/db/queries.ts';
 import { requireAuth, type AuthRequest } from './src/middleware/auth.ts';
 
@@ -144,11 +146,32 @@ function writeServerDb(data: Record<string, any>): Record<string, any> {
       updatedAt: new Date().toISOString(),
     };
     fs.writeFileSync(DB_FILE_PATH, JSON.stringify(nextData, null, 2), 'utf-8');
+    void saveDbStudioState(nextData);
     return nextData;
   } catch (err) {
     console.error('Error writing studio-server-db.json:', err);
+    void saveDbStudioState(data);
     return data;
   }
+}
+
+async function readServerDbAsync(): Promise<Record<string, any>> {
+  const localFallback = readServerDb();
+  try {
+    const pgState = await getDbStudioState();
+    if (pgState && typeof pgState === 'object') {
+      const merged = {
+        ...localFallback,
+        ...pgState,
+      };
+      return merged;
+    }
+    // Seed initial file state into PostgreSQL studio_state_store
+    await saveDbStudioState(localFallback);
+  } catch {
+    // ignore fallback error
+  }
+  return localFallback;
 }
 
 function extractBriefTimestamp(item: any): number {
@@ -687,7 +710,7 @@ async function startServer() {
     try {
       const incoming = req.body?.brief || req.body || {};
       const workspace = req.body?.workspace;
-      const db = readServerDb();
+      const db = await readServerDbAsync();
 
       const clientName = incoming.ownerName || incoming.client_name || incoming.brandName || 'کارفرما';
       const contactInfo = incoming.contactInfo || incoming.contact_info || '-';
@@ -797,7 +820,7 @@ async function startServer() {
         (b: any) => b.id === targetId || b.trackingCode === targetId || String(b.dbId) === targetId
       );
 
-      const db = readServerDb();
+      const db = await readServerDbAsync();
       db.archivedBriefs = pgBriefs;
       const saved = writeServerDb(db);
 
@@ -939,7 +962,7 @@ async function startServer() {
       }
       await deleteDbProject(req.params.id);
       const pgBriefs = await getAuthoritativeBriefsFromPostgres();
-      const db = readServerDb();
+      const db = await readServerDbAsync();
       db.archivedBriefs = pgBriefs;
       writeServerDb(db);
       broadcastRealtimeEvent('db:project:deleted', {
@@ -1032,9 +1055,13 @@ async function startServer() {
 
   // 1. GET full shared studio & client portal state + notification logs (backed by PostgreSQL)
   app.get('/api/studio-state', async (_req, res) => {
-    const db = readServerDb();
-    const pgBriefs = await getAuthoritativeBriefsFromPostgres();
+    const [db, pgBriefs, pgPortfolios] = await Promise.all([
+      readServerDbAsync(),
+      getAuthoritativeBriefsFromPostgres(),
+      getAuthoritativePortfoliosFromPostgres(),
+    ]);
     db.archivedBriefs = pgBriefs;
+    db.portfolios = pgPortfolios;
     res.json({ ok: true, revision: serverRevision, state: db });
   });
 
@@ -1042,7 +1069,7 @@ async function startServer() {
   app.post('/api/studio-state/brief', async (req, res) => {
     try {
       const { brief, workspace } = req.body || {};
-      const db = readServerDb();
+      const db = await readServerDbAsync();
 
       let enrichedBrief = brief;
       if (brief) {
@@ -1126,7 +1153,7 @@ async function startServer() {
   app.post('/api/studio-state/briefs/reconcile', async (req, res) => {
     try {
       const { clientBriefs = [], clientWorkspaces = [] } = req.body || {};
-      const db = readServerDb();
+      const db = await readServerDbAsync();
       const currentPgBriefs = await getAuthoritativeBriefsFromPostgres();
       const existingCodes = new Set(currentPgBriefs.map((b: any) => b?.trackingCode).filter(Boolean));
 
@@ -1196,10 +1223,10 @@ async function startServer() {
   });
 
   // 3. POST update notification config
-  app.post('/api/studio-state/notifications/config', (req, res) => {
+  app.post('/api/studio-state/notifications/config', async (req, res) => {
     try {
       const incomingConfig = req.body || {};
-      const db = readServerDb();
+      const db = await readServerDbAsync();
       db.notificationConfig = {
         ...(db.notificationConfig || DEFAULT_NOTIFICATION_CONFIG),
         ...incomingConfig,
@@ -1217,10 +1244,10 @@ async function startServer() {
   });
 
   // 4. POST mark notifications as read by Admin
-  app.post('/api/studio-state/notifications/mark-read', (req, res) => {
+  app.post('/api/studio-state/notifications/mark-read', async (req, res) => {
     try {
       const { id } = req.body || {};
-      const db = readServerDb();
+      const db = await readServerDbAsync();
       db.notificationLogs = (db.notificationLogs || []).map((log: ServerBriefNotificationLog) => {
         if (!id || log.id === id) {
           return { ...log, readByAdmin: true };
@@ -1239,7 +1266,7 @@ async function startServer() {
   app.post('/api/studio-state/notifications/test', async (req, res) => {
     try {
       const customConfig = req.body?.config || {};
-      const db = readServerDb();
+      const db = await readServerDbAsync();
       const mergedConfig: ServerNotificationConfig = {
         ...(db.notificationConfig || DEFAULT_NOTIFICATION_CONFIG),
         ...customConfig,
@@ -1276,10 +1303,10 @@ async function startServer() {
   });
 
   // 6. POST sync state (Admin or Client updates)
-  app.post('/api/studio-state/sync', (req, res) => {
+  app.post('/api/studio-state/sync', async (req, res) => {
     try {
       const payload = req.body || {};
-      const db = readServerDb();
+      const db = await readServerDbAsync();
 
       if (Array.isArray(payload.archivedBriefs)) {
         if (payload.replaceBriefs) {

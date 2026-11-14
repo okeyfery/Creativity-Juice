@@ -307,15 +307,87 @@ export async function pullStateFromServer(forceDispatch = false): Promise<boolea
       }
     }
 
-    // 2. Merge Client Workspaces
+    // 2. Authoritative Client Workspaces from PostgreSQL studio_state_store
     if (Array.isArray(st.clientWorkspaces) && st.clientWorkspaces.length > 0) {
       const rawLocalWs = localStorage.getItem(STORAGE_KEY_WORKSPACES);
-      const localWs: ClientWorkspace[] = rawLocalWs ? JSON.parse(rawLocalWs) : [];
-      const mergedWs = mergeArrayById(localWs, st.clientWorkspaces);
-      const mergedWsJson = JSON.stringify(mergedWs);
-      if (mergedWsJson !== rawLocalWs) {
-        localStorage.setItem(STORAGE_KEY_WORKSPACES, mergedWsJson);
+      const nextWsJson = JSON.stringify(st.clientWorkspaces);
+      if (nextWsJson !== rawLocalWs) {
+        localStorage.setItem(STORAGE_KEY_WORKSPACES, nextWsJson);
         portalChanged = true;
+      }
+    }
+
+    // 2b. Authoritative Studio Portfolios from PostgreSQL `portfolios` table
+    if (Array.isArray(st.portfolios) && st.portfolios.length > 0) {
+      const mappedPortfolios = st.portfolios.map((row: any, index: number) => {
+        if (row.extra_json) {
+          try {
+            const parsed = JSON.parse(row.extra_json);
+            if (parsed && parsed.title) {
+              return {
+                ...parsed,
+                id: parsed.id || `portfolio-db-${row.id}`,
+                title: row.title || parsed.title,
+                category: row.category || parsed.category || 'branding',
+                categoryLabel: row.category || parsed.categoryLabel || 'پروژه استودیو',
+                coverImage: row.image_url || parsed.coverImage,
+                highResImage: row.image_url || parsed.highResImage || parsed.coverImage,
+                description: row.description || parsed.description || parsed.challenge,
+                challenge: row.description || parsed.challenge || '',
+                ...(row.id ? { dbPortfolioId: row.id } : {}),
+                ...(row.project_link ? { projectLink: row.project_link } : {}),
+              };
+            }
+          } catch {
+            // fallback below
+          }
+        }
+        return {
+          id: `portfolio-db-${row.id}`,
+          title: row.title || 'نمونه‌کار استودیو',
+          titleEn: row.title_en || row.project_link || `PORTFOLIO // 0${index + 1}`,
+          subtitle: row.category || 'پروژه منتخب استودیو',
+          category: row.category || 'branding',
+          categoryLabel: row.category || 'هویت بصری و پروداکشن',
+          client: row.client || row.title || 'کارفرمای استودیو',
+          year: row.year || '۱۴۰۴',
+          trackCode: `PORTFOLIO // 0${index + 1}`,
+          deptTrack: 'TRACK 01 // BRAND IDENTITY',
+          role: 'کارگردانی هنری و اجرای کامل پروژه',
+          description: row.description || '',
+          coverImage: row.image_url,
+          highResImage: row.image_url,
+          galleryImages: [row.image_url],
+          badge: row.category || 'منتخب استودیو',
+          challenge: row.description || '',
+          solution: row.project_link || '',
+          metrics: row.project_link || '',
+          deliverables: [row.category || 'برندینگ'],
+          tags: [row.category || 'برندینگ'],
+          colorAccent: '#D9FF00',
+          featured: true,
+          isPublished: true,
+          assignedTeamIds: [],
+          projectCredits: [],
+          desktopPos: {
+            top: 18 + ((index * 14) % 58),
+            left: 16 + ((index * 19) % 62),
+            mobileTop: 22 + ((index * 12) % 50),
+            mobileLeft: 20 + ((index * 18) % 55),
+          },
+          createdAt: '۱۴۰۴/۰۱/۰۱',
+          updatedAt: '۱۴۰۴/۰۱/۰۱',
+          dbPortfolioId: row.id,
+          projectLink: row.project_link,
+        };
+      });
+      const rawLocalProj = localStorage.getItem(STORAGE_KEY_PROJECTS);
+      const nextProjJson = JSON.stringify(mappedPortfolios);
+      if (nextProjJson !== rawLocalProj) {
+        localStorage.setItem(STORAGE_KEY_PROJECTS, nextProjJson);
+        localStorage.setItem('creativity_juice_projects_v2', nextProjJson);
+        studioChanged = true;
+        window.dispatchEvent(new CustomEvent('projects-updated', { detail: mappedPortfolios }));
       }
     }
 
@@ -497,30 +569,14 @@ export function initServerSync() {
   isSyncInitialized = true;
 
   startBriefRealtimeSyncService();
-
-  pullStateFromServer(true).then(() => {
-    try {
-      const rawBriefs = localStorage.getItem(STORAGE_KEY_ARCHIVED_BRIEFS);
-      const rawWs = localStorage.getItem(STORAGE_KEY_WORKSPACES);
-      const rawProj = localStorage.getItem(STORAGE_KEY_PROJECTS);
-      const rawTeam = localStorage.getItem(STORAGE_KEY_TEAM);
-      pushServerSyncPayload({
-        archivedBriefs: rawBriefs ? JSON.parse(rawBriefs) : undefined,
-        clientWorkspaces: rawWs ? JSON.parse(rawWs) : undefined,
-        projects: rawProj ? JSON.parse(rawProj) : undefined,
-        team: rawTeam ? JSON.parse(rawTeam) : undefined,
-      });
-    } catch {
-      // ignore
-    }
-  });
+  void pullStateFromServer(true);
 
   window.setInterval(() => {
-    pullStateFromServer(false);
-  }, 4000);
+    void pullStateFromServer(false);
+  }, 3000);
 
   window.addEventListener('focus', () => {
-    pullStateFromServer(false);
+    void pullStateFromServer(true);
   });
 }
 
