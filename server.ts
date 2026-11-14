@@ -454,6 +454,81 @@ async function startServer() {
     });
   });
 
+  app.post('/api/supabase-sync', async (_req, res) => {
+    try {
+      const pgProjects = await listDbProjects();
+      const pgPortfolios = await getAuthoritativePortfoliosFromPostgres();
+      let supabaseProjectsSynced = 0;
+      let supabasePortfoliosSynced = 0;
+      let supabaseError: string | null = null;
+
+      if (serverSupabase) {
+        // 1. Sync portfolios to Supabase
+        const { data: existingSbPortfolios, error: portErr } = await serverSupabase
+          .from('portfolios')
+          .select('id, title');
+        if (portErr) {
+          supabaseError = portErr.message;
+        } else {
+          const existingTitles = new Set((existingSbPortfolios || []).map((p: any) => p.title));
+          const toInsertPortfolios = pgPortfolios
+            .filter((p: any) => p.title && !existingTitles.has(p.title))
+            .map((p: any) => ({
+              title: p.title,
+              category: p.category || 'branding',
+              image_url: p.image_url,
+              project_link: p.project_link || '#',
+              description: p.description || '',
+            }));
+          if (toInsertPortfolios.length > 0) {
+            const { error: insErr } = await serverSupabase.from('portfolios').insert(toInsertPortfolios);
+            if (!insErr) supabasePortfoliosSynced = toInsertPortfolios.length;
+            else supabaseError = insErr.message;
+          }
+        }
+
+        // 2. Sync projects/briefs to Supabase
+        const { data: existingSbProjects, error: projErr } = await serverSupabase
+          .from('projects')
+          .select('id, client_name, project_title');
+        if (projErr && !supabaseError) {
+          supabaseError = projErr.message;
+        } else if (!projErr) {
+          const existingKeys = new Set(
+            (existingSbProjects || []).map((p: any) => `${p.client_name}::${p.project_title}`)
+          );
+          const toInsertProjects = pgProjects
+            .filter((p: any) => !existingKeys.has(`${p.client_name}::${p.project_title}`))
+            .map((p: any) => ({
+              client_name: p.client_name,
+              contact_info: p.contact_info,
+              project_title: p.project_title,
+              description: p.description,
+              budget: p.budget,
+            }));
+          if (toInsertProjects.length > 0) {
+            const { error: insProjErr } = await serverSupabase.from('projects').insert(toInsertProjects);
+            if (!insProjErr) supabaseProjectsSynced = toInsertProjects.length;
+            else if (!supabaseError) supabaseError = insProjErr.message;
+          }
+        }
+      }
+
+      res.json({
+        ok: true,
+        isSupabaseConfigured: isServerSupabaseConfigured,
+        isPostgresConnected: true,
+        pgProjectsCount: pgProjects.length,
+        pgPortfoliosCount: pgPortfolios.length,
+        supabaseProjectsSynced,
+        supabasePortfoliosSynced,
+        supabaseError,
+      });
+    } catch (err: any) {
+      res.status(500).json({ ok: false, error: err?.message || 'Sync error' });
+    }
+  });
+
   async function getAuthoritativeBriefsFromPostgres() {
     try {
       let rows = await listDbProjects();
@@ -486,6 +561,7 @@ async function startServer() {
   }
 
   let isPortfoliosSeeded = false;
+  let isSupabasePortfoliosSeeded = false;
   async function getAuthoritativePortfoliosFromPostgres() {
     let rows = await listDbPortfolios();
     if (rows.length === 0 && !isPortfoliosSeeded) {
@@ -520,16 +596,28 @@ async function startServer() {
     }
     if (serverSupabase) {
       try {
-        const { data } = await serverSupabase
+        const { data, error } = await serverSupabase
           .from('portfolios')
           .select('*')
           .order('id', { ascending: false });
-        if (Array.isArray(data) && data.length > 0) {
-          const existingTitles = new Set(rows.map((r: any) => r.title));
-          for (const sbRow of data) {
-            if (sbRow.title && !existingTitles.has(sbRow.title)) {
-              rows.unshift(sbRow as any);
-              existingTitles.add(sbRow.title);
+        if (!error && Array.isArray(data)) {
+          if (data.length === 0 && rows.length > 0 && !isSupabasePortfoliosSeeded) {
+            isSupabasePortfoliosSeeded = true;
+            const seedForSupabase = rows.map((r: any) => ({
+              title: r.title,
+              category: r.category || 'branding',
+              image_url: r.image_url,
+              project_link: r.project_link || '#',
+              description: r.description || '',
+            }));
+            await serverSupabase.from('portfolios').insert(seedForSupabase);
+          } else if (data.length > 0) {
+            const existingTitles = new Set(rows.map((r: any) => r.title));
+            for (const sbRow of data) {
+              if (sbRow.title && !existingTitles.has(sbRow.title)) {
+                rows.unshift(sbRow as any);
+                existingTitles.add(sbRow.title);
+              }
             }
           }
         }
