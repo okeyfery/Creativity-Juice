@@ -12,6 +12,7 @@ import {
   NEW_BRIEF_NOTIFICATION_EVENT,
   SERVER_SYNC_STATUS_EVENT,
 } from './serverSync';
+import { handleCloudRelayApiRequest } from './cloudRelayBridge';
 
 const STORAGE_KEY_WORKSPACES = 'cj_client_workspaces_v1';
 const STORAGE_KEY_ARCHIVED_BRIEFS = 'cj_studio_archived_briefs_v1';
@@ -19,7 +20,7 @@ const STORAGE_KEY_NOTIF_LOGS = 'cj_studio_notif_logs_v1';
 const STORAGE_KEY_PENDING_OUTBOX = 'cj_pending_brief_outbox_v1';
 const STORAGE_KEY_SYNCED_BRIEF_IDS = 'cj_synced_brief_ids_v1';
 
-// Shared Cloud Run backend URL so Vercel static deployments (*.vercel.app) and all versions share the same 'briefs' collection
+// Shared Cloud Run backend URL
 export const CENTRAL_CLOUD_BACKEND_ORIGIN =
   'https://ais-pre-rca5qk5qqfew2kqzbjykqn-828392234327.europe-west2.run.app';
 
@@ -51,6 +52,17 @@ let reconnectTimer: number | null = null;
 let isServiceStarted = false;
 let detectedRemoteOriginRequired = false;
 
+function isExternalStaticDeployment(): boolean {
+  if (typeof window === 'undefined') return false;
+  const host = (window.location.hostname || '').toLowerCase();
+  return (
+    host.endsWith('.vercel.app') ||
+    host.endsWith('.netlify.app') ||
+    host.endsWith('.pages.dev') ||
+    host.endsWith('.github.io')
+  );
+}
+
 const snapshotSubscribers = new Set<(docs: ProjectBriefSubmission[]) => void>();
 
 const telemetryState: BriefSyncTelemetry = {
@@ -76,60 +88,53 @@ function formatNowTimeFa(): string {
 
 /**
  * Smart Cross-Deployment Fetch:
- * Tries the local `/api/...` route first. If the current deployment is a static host (e.g., Vercel static rewrite
- * returning `text/html` instead of `application/json`), automatically falls back to CENTRAL_CLOUD_BACKEND_ORIGIN
- * so all deployed versions (Vercel + AI Studio) read/write the exact same 'briefs' database collection.
+ * 1. On AI Studio (Preview & Published) or localhost, calls local `/api/...` backed by Cloud SQL PostgreSQL.
+ * 2. On Vercel (*.vercel.app), Netlify (*.netlify.app), or any static deployment where `/api/...`
+ *    is blocked by AI Studio's auth-bridge redirect or returns HTML/404, automatically routes
+ *    through the shared Cloud Relay Bridge (`handleCloudRelayApiRequest`) which is bidirectionally
+ *    synced with the AI Studio PostgreSQL backend.
  */
 export async function smartCollectionFetch(
   apiPath: string,
   init?: RequestInit
 ): Promise<{ ok: boolean; data?: any; usedOrigin: string }> {
-  const originsToTry: string[] = [];
-
-  if (typeof window !== 'undefined') {
-    const currentOrigin = window.location.origin;
-    if (!detectedRemoteOriginRequired) {
-      originsToTry.push('');
+  if (isExternalStaticDeployment() || detectedRemoteOriginRequired) {
+    const relayRes = await handleCloudRelayApiRequest(apiPath, init);
+    if (relayRes.ok) {
+      detectedRemoteOriginRequired = true;
+      telemetryState.activeEndpointOrigin = 'cloud-shared (Vercel / Netlify ⇄ Cloud)';
+      telemetryState.streamConnected = true;
+      return relayRes;
     }
-    if (currentOrigin !== CENTRAL_CLOUD_BACKEND_ORIGIN) {
-      originsToTry.push(CENTRAL_CLOUD_BACKEND_ORIGIN);
-    } else if (originsToTry.length === 0) {
-      originsToTry.push('');
-    }
-  } else {
-    originsToTry.push('');
   }
 
-  for (const baseOrigin of originsToTry) {
-    const url = `${baseOrigin}${apiPath}`;
-    try {
-      const res = await fetch(url, {
-        ...init,
-        headers: {
-          Accept: 'application/json',
-          ...(init?.headers || {}),
-        },
-      });
+  try {
+    const res = await fetch(apiPath, {
+      ...init,
+      headers: {
+        Accept: 'application/json',
+        ...(init?.headers || {}),
+      },
+    });
 
-      const contentType = res.headers.get('content-type') || '';
-      if (res.ok && contentType.includes('application/json')) {
-        const data = await res.json();
-        if (baseOrigin === CENTRAL_CLOUD_BACKEND_ORIGIN) {
-          detectedRemoteOriginRequired = true;
-          telemetryState.activeEndpointOrigin = 'cloud-shared (Vercel ⇄ Cloud)';
-        } else {
-          telemetryState.activeEndpointOrigin = 'direct-cloud';
-        }
-        return { ok: true, data, usedOrigin: baseOrigin || 'local' };
-      }
-
-      // If local origin returned HTML (Vercel SPA fallback), mark remote origin required
-      if (baseOrigin === '' && contentType.includes('text/html')) {
-        detectedRemoteOriginRequired = true;
-      }
-    } catch {
-      // try next origin
+    const contentType = res.headers.get('content-type') || '';
+    if (res.ok && contentType.includes('application/json') && !res.redirected) {
+      const data = await res.json();
+      telemetryState.activeEndpointOrigin = 'direct-cloud';
+      return { ok: true, data, usedOrigin: 'local' };
     }
+
+    // Local origin returned HTML, 404, or redirected to __cookie_check.html -> switch to Cloud Relay Bridge
+    detectedRemoteOriginRequired = true;
+  } catch {
+    detectedRemoteOriginRequired = true;
+  }
+
+  const fallbackRes = await handleCloudRelayApiRequest(apiPath, init);
+  if (fallbackRes.ok) {
+    telemetryState.activeEndpointOrigin = 'cloud-shared (Vercel / Netlify ⇄ Cloud)';
+    telemetryState.streamConnected = true;
+    return fallbackRes;
   }
 
   return { ok: false, usedOrigin: 'offline' };
@@ -464,18 +469,19 @@ export async function reconcileClientBriefsWithServer(): Promise<{
     const localWorkspaces: ClientWorkspace[] = rawWs ? JSON.parse(rawWs) : [];
 
     const outbox = getPendingOutbox();
+    const syncedIds = getSyncedBriefIds();
 
+    // Only push genuinely unsynced client briefs (outbox items or newly created local briefs not yet synced)
     const combinedBriefsMap = new Map<string, ProjectBriefSubmission>();
     localBriefs.forEach((b) => {
-      if (b && b.id) combinedBriefsMap.set(b.id, b);
-    });
-    localWorkspaces.forEach((w) => {
-      if (w && Array.isArray(w.archivedBriefs)) {
-        w.archivedBriefs.forEach((b) => {
-          if (b && b.id && !combinedBriefsMap.has(b.id)) {
-            combinedBriefsMap.set(b.id, b);
-          }
-        });
+      if (
+        b &&
+        b.id &&
+        !String(b.id).startsWith('db-proj-') &&
+        !String(b.id).startsWith('brief-init-') &&
+        !syncedIds.has(b.id)
+      ) {
+        combinedBriefsMap.set(b.id, b);
       }
     });
     outbox.forEach((item) => {
@@ -491,13 +497,14 @@ export async function reconcileClientBriefsWithServer(): Promise<{
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         clientBriefs,
-        clientWorkspaces: localWorkspaces,
+        clientWorkspaces: outbox.length > 0 ? localWorkspaces : [],
       }),
     });
 
     if (res.ok && res.data?.ok) {
       const data = res.data;
       savePendingOutbox([]);
+      markBriefIdsAsSynced(clientBriefs.map((b) => b.id));
       applyIncomingServerPayload({
         type: 'brief:reconciled',
         revision: data.revision,
@@ -528,7 +535,7 @@ export async function reconcileClientBriefsWithServer(): Promise<{
 
 /**
  * Connects to the real-time 'briefs' collection stream (/api/briefs/stream)
- * with automatic fallback to CENTRAL_CLOUD_BACKEND_ORIGIN when running on Vercel.
+ * when on the direct Cloud Run backend, or uses the Cloud Relay polling loop on Vercel & Netlify.
  */
 function connectRealtimeStream() {
   if (typeof window === 'undefined' || typeof EventSource === 'undefined') return;
@@ -539,10 +546,21 @@ function connectRealtimeStream() {
     } catch {
       // ignore
     }
+    eventSourceInstance = null;
   }
 
-  const streamBase = detectedRemoteOriginRequired ? CENTRAL_CLOUD_BACKEND_ORIGIN : '';
-  const streamUrl = `${streamBase}/api/briefs/stream`;
+  // On Vercel (*.vercel.app), Netlify (*.netlify.app), or when Cloud Relay is active,
+  // SSE to ais-pre is blocked by auth-bridge cookies, so we use the Cloud Relay polling loop instead.
+  if (isExternalStaticDeployment() || detectedRemoteOriginRequired) {
+    telemetryState.streamConnected = true;
+    telemetryState.activeEndpointOrigin = 'cloud-shared (Vercel / Netlify ⇄ Cloud)';
+    telemetryState.lastSyncedAt = formatNowTimeFa();
+    emitSyncTelemetry();
+    void fetchBriefsCollection();
+    return;
+  }
+
+  const streamUrl = '/api/briefs/stream';
 
   try {
     const es = new EventSource(streamUrl);
@@ -575,15 +593,11 @@ function connectRealtimeStream() {
       } catch {
         // ignore
       }
-      // If local stream failed (e.g. on Vercel static deployment), switch to CENTRAL_CLOUD_BACKEND_ORIGIN
-      if (!detectedRemoteOriginRequired && window.location.origin !== CENTRAL_CLOUD_BACKEND_ORIGIN) {
-        detectedRemoteOriginRequired = true;
-        telemetryState.activeEndpointOrigin = 'cloud-shared (Vercel ⇄ Cloud)';
-      }
+      eventSourceInstance = null;
       if (reconnectTimer) window.clearTimeout(reconnectTimer);
       reconnectTimer = window.setTimeout(() => {
         connectRealtimeStream();
-      }, 3000);
+      }, 4000);
     };
   } catch {
     telemetryState.streamConnected = false;

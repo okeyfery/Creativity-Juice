@@ -1,0 +1,1540 @@
+{
+  "archivedBriefs": [],
+  "clientWorkspaces": [
+    {
+      "id": "client-yousefzadeh",
+      "slug": "yousefzadeh",
+      "pinCode": "1001",
+      "brandName": "گروه مشاوره سرمایه‌گذاری ملکی یوسف‌زاده",
+      "brandNameEn": "Yousefzadeh Real Estate Advisory",
+      "ownerName": "مهندس یوسف‌زاده",
+      "category": "هویت برند، تولید محتوا و کمپین فروش",
+      "coverImage": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+      "logoBadge": "🏢",
+      "colorAccent": "amber",
+      "progressPercent": 85,
+      "projectLead": "مهدی لقمانی",
+      "projectLeadRole": "مدیر پروژه و استراتژیست برند",
+      "contractDate": "۱۴۰۵/۰۱/۲۰",
+      "deliveryDate": "۱۴۰۵/۰۸/۳۰",
+      "scopeSummary": "طراحی جامع هویت برند، سیستم گرافیکی پرمیوم، تدوین استراتژی کمپین‌های فروش املاک لوکس و تولید محتوای مداوم.",
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "تحقیقات بازار و تعیین دی‌ان‌ای برند",
+          "description": "تحلیل مخاطبان هدف املاک لوکس و پیام‌های کلیدی",
+          "status": "completed",
+          "date": "۱۴۰۵/۰۱/۲۵"
+        },
+        {
+          "id": "m2",
+          "title": "طراحی هویت بصری و لوگوتایپ اختصاصی",
+          "description": "تایپوگرافی مهندسی‌شده، پالت رنگی و نشان تجاری",
+          "status": "completed",
+          "date": "۱۴۰۵/۰۲/۱۵"
+        },
+        {
+          "id": "m3",
+          "title": "فیلمبرداری و تصویربرداری پروژه نیاوران",
+          "description": "شوتینگ سینمایی با تجهیزات 4K و نورپردازی حرفه‌ای",
+          "status": "completed",
+          "date": "۱۴۰۵/۰۴/۱۰"
+        },
+        {
+          "id": "m4",
+          "title": "تدوین پکیج کمپین فروش و ریلزهای معرفی",
+          "description": "ادیت پریمیوم و موشن‌گرافیک پرزنتیشن واحدها",
+          "status": "in-progress",
+          "date": "۱۴۰۵/۰۷/۲۰"
+        },
+        {
+          "id": "m5",
+          "title": "لانچ نهایی کمپین فروش پاییزه",
+          "description": "شروع انتشار در سوشال مدیا و تبلیغات هدفمند",
+          "status": "pending",
+          "date": "۱۴۰۵/۰۸/۳۰"
+        }
+      ],
+      "deliverables": [
+        {
+          "id": "del-1",
+          "title": "کتابچه جامع هویت بصری (Brand Guidelines Book)",
+          "type": "branding",
+          "format": "PDF • Vector",
+          "fileSize": "42.5 MB",
+          "thumbnail": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
+          "version": "v2.1 Final",
+          "status": "approved",
+          "dateUploaded": "۱۴۰۵/۰۲/۱۸",
+          "clientFeedback": "هویت بصری و رنگ‌بندی فوق‌العاده شیک است و دقیقاً همان حس لوکس املاک پرمیوم را تداعی می‌کند.",
+          "feedbackDate": "۱۴۰۵/۰۲/۲۰"
+        },
+        {
+          "id": "del-2",
+          "title": "تیزر مستر معرفی پنت‌هاوس نیاوران (Master 4K Edit)",
+          "type": "video",
+          "format": "MP4 • ProRes 422 HQ",
+          "fileSize": "1.4 GB",
+          "thumbnail": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+          "version": "v1.2 Cut",
+          "status": "pending-review",
+          "dateUploaded": "۱۴۰۵/۰۷/۲۵"
+        },
+        {
+          "id": "del-3",
+          "title": "پکیج ۱۰ اسلاید کاور اینستاگرام و قالب استوری‌ها",
+          "type": "branding",
+          "format": "Figma & PNG Package",
+          "fileSize": "88 MB",
+          "thumbnail": "https://images.unsplash.com/photo-1542744094-24638eff58bb?auto=format&fit=crop&w=800&q=80",
+          "version": "v1.0",
+          "status": "approved",
+          "dateUploaded": "۱۴۰۵/۰۷/۱۵"
+        }
+      ],
+      "calendar": [
+        {
+          "id": "cp-1",
+          "title": "ریلز بررسی معماری پنت‌هاوس لوکس با اجرای مهندس یوسف‌زاده",
+          "platform": "instagram",
+          "format": "reels",
+          "scheduledDate": "2026-11-04",
+          "persianDate": "۱۴ آبان ۱۴۰۵",
+          "status": "ready",
+          "captionDraft": "چرا کیفیت متریال در ساخت سازه‌های لوکس، بازده سرمایه‌گذاری را تضمین می‌کند؟ جزئیات مهندسی در پنت‌هاوس نیاوران."
+        },
+        {
+          "id": "cp-2",
+          "title": "کاروسل آموزشی: ۵ اشتباه مهلک در خرید املاک تجاری",
+          "platform": "instagram",
+          "format": "carousel",
+          "scheduledDate": "2026-11-09",
+          "persianDate": "۱۹ آبان ۱۴۰۵",
+          "status": "in-progress",
+          "captionDraft": "قبل از امضای مبایعه‌نامه این ۵ مورد حقوقی و فنی را حتماً بررسی کنید..."
+        }
+      ],
+      "feedbacks": [
+        {
+          "id": "fb-1",
+          "author": "مهدی لقمانی",
+          "role": "lead",
+          "message": "مهندس یوسف‌زاده عزیز، خروجی تدوین نسخه ۱.۲ تیزر نیاوران آماده بازبینی است. لطفاً بخش نریشن ثانیه ۴۵ را بررسی بفرمایید.",
+          "timestamp": "دیروز، ساعت ۱۶:۲۰"
+        },
+        {
+          "id": "fb-2",
+          "author": "مهندس یوسف‌زاده",
+          "role": "client",
+          "message": "سلام جناب لقمانی، کیفیت تصویربرداری عالی است. فقط لطفاً موسیقی زیرصدای بخش آخر کمی آرام‌تر و فاخرتر باشد.",
+          "timestamp": "امروز، ساعت ۱۰:۱۵"
+        }
+      ],
+      "trackingCode": "CJ-1001",
+      "username": "yousefzadeh",
+      "password": "cj1001",
+      "archivedBriefs": []
+    },
+    {
+      "id": "client-dr-peiravi",
+      "slug": "dr-peiravi",
+      "pinCode": "1002",
+      "brandName": "کلینیک زیبایی دکتر صادق پیروی",
+      "brandNameEn": "Dr. Sadegh Peiravi Aesthetic Clinic",
+      "ownerName": "دکتر صادق پیروی",
+      "category": "تولید محتوای اینستاگرام با دوربین سینمایی و ادیت پریمیوم",
+      "coverImage": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=80",
+      "logoBadge": "🩺",
+      "colorAccent": "rose",
+      "progressPercent": 78,
+      "projectLead": "فریدون یوسف‌زاده",
+      "projectLeadRole": "مدیر هنری، ادیتور و ایده‌پرداز",
+      "contractDate": "۱۴۰۵/۰۲/۰۱",
+      "deliveryDate": "۱۴۰۵/۰۹/۱۵",
+      "scopeSummary": "سناریونویسی علمی-جذاب، تصویربرداری داخل مطب با لنز پرتره حرفه‌ای، ادیت پریمیوم بدون اعوجاج رنگی و مدیریت جلوه‌های بصری پوست.",
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "تنظیم تقویم سناریوها و موضوعات تخصصی زیبایی",
+          "description": "برنامه‌ریزی ۱۲ ریلز تخصصی در مورد مراقبت‌های پوستی",
+          "status": "completed",
+          "date": "۱۴۰۵/۰۲/۱۰"
+        },
+        {
+          "id": "m2",
+          "title": "روز فیلمبرداری فاز یک در کلینیک",
+          "description": "ضبط ۸ ساعت با ستاپ دو دوربینه و میکروفون یقه‌ای",
+          "status": "completed",
+          "date": "۱۴۰۵/۰۳/۰۴"
+        },
+        {
+          "id": "m3",
+          "title": "کالرگریدینگ و ادیت پریمیوم ریلزهای پزشکی",
+          "description": "حفظ رنگ پوست طبیعی و نورپردازی های-اند",
+          "status": "in-progress",
+          "date": "۱۴۰۵/۰۷/۲۵"
+        },
+        {
+          "id": "m4",
+          "title": "تحویل نهایی فصل دوم ویدیوها",
+          "description": "پکیج آماده انتشار با کاورهای مینیمال",
+          "status": "pending",
+          "date": "۱۴۰۵/۰۹/۱۵"
+        }
+      ],
+      "deliverables": [
+        {
+          "id": "del-peiravi-1",
+          "title": "ریلز ۱: باورهای غلط درباره بوتاکس و افتادگی پلک (Final Master)",
+          "type": "reels",
+          "format": "MP4 9:16 • 4K",
+          "fileSize": "240 MB",
+          "thumbnail": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
+          "version": "v2.0 Clean",
+          "status": "approved",
+          "dateUploaded": "۱۴۰۵/۰۷/۲۰",
+          "clientFeedback": "ادیت و زیرنویس‌های متحرک بسیار خوانا و هماهنگ با کلاس کاری مطب است.",
+          "feedbackDate": "۱۴۰۵/۰۷/۲۲"
+        },
+        {
+          "id": "del-peiravi-2",
+          "title": "ریلز ۲: کالبدشکافی مراقبت بعد از لیزر جوانسازی",
+          "type": "reels",
+          "format": "MP4 9:16 • 4K",
+          "fileSize": "310 MB",
+          "thumbnail": "https://images.unsplash.com/photo-1512290900672-1f553f191b48?auto=format&fit=crop&w=800&q=80",
+          "version": "v1.1 Cut",
+          "status": "pending-review",
+          "dateUploaded": "۱۴۰۵/۰۷/۲۸"
+        }
+      ],
+      "calendar": [
+        {
+          "id": "cp-p1",
+          "title": "ریلز پاسخ به ۵ سوال پر تکرار مراجعین مزوتراپی",
+          "platform": "instagram",
+          "format": "reels",
+          "scheduledDate": "2026-11-03",
+          "persianDate": "۱۳ آبان ۱۴۰۵",
+          "status": "ready",
+          "captionDraft": "آیا مزوتراپی درد دارد؟ نتایج آن تا چند وقت ماندگار است؟ توضیحات دکتر صادق پیروی..."
+        }
+      ],
+      "feedbacks": [
+        {
+          "id": "fb-p1",
+          "author": "فریدون یوسف‌زاده",
+          "role": "lead",
+          "message": "سلام آقای دکتر، ریلز دوم بارگذاری شد. لطفاً موشن‌گرافیک‌های معرفی ترکیبات سرم در ثانیه ۲۲ را چک کنید.",
+          "timestamp": "امروز، ۱۲:۳۰"
+        }
+      ],
+      "trackingCode": "CJ-1002",
+      "username": "dr-peiravi",
+      "password": "cj1002",
+      "archivedBriefs": []
+    },
+    {
+      "id": "client-ghollak",
+      "slug": "ghollak",
+      "pinCode": "1003",
+      "brandName": "آموزش اقتصادی قلک طلا",
+      "brandNameEn": "Ghollak Tala Financial Academy",
+      "ownerName": "آقای خسروی‌فر",
+      "category": "تولید محتوا و آموزش اقتصادی با ادیت پریمیوم",
+      "coverImage": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=80",
+      "logoBadge": "💰",
+      "colorAccent": "amber",
+      "progressPercent": 90,
+      "projectLead": "فریدون یوسف‌زاده",
+      "projectLeadRole": "مدیر هنری و ادیتور",
+      "contractDate": "۱۴۰۵/۰۱/۱۵",
+      "deliveryDate": "۱۴۰۵/۰۸/۱۵",
+      "scopeSummary": "تولید محتوای تخصصی مالی، نمودارهای متحرک، ادیت پریمیوم ویدیوهای تحلیلی طلا و ارز با ریتم تند و اینگیجمنت بالا.",
+      "milestones": [
+        {
+          "id": "gm1",
+          "title": "برندینگ صوتی و تصویری آغاز ویدیوها",
+          "description": "طراحی موشن‌اینترو و سیستم گرافیک متحرک چارت‌ها",
+          "status": "completed",
+          "date": "۱۴۰۵/۰۲/۰۱"
+        },
+        {
+          "id": "gm2",
+          "title": "پکیج ۱۰ قسمتی تحلیل تکنیکال برای مبتدیان",
+          "description": "ادیت با جلوه‌های صوتی دقیق و اینفوگرافیک",
+          "status": "completed",
+          "date": "۱۴۰۵/۰۵/۱۰"
+        },
+        {
+          "id": "gm3",
+          "title": "سلسله ریلزهای روانشناسی بازار سرمایه",
+          "description": "تولید و بهینه‌سازی برای الگوریتم اینستاگرام",
+          "status": "in-progress",
+          "date": "۱۴۰۵/۰۷/۲۹"
+        }
+      ],
+      "deliverables": [
+        {
+          "id": "del-g1",
+          "title": "ریلز بررسی حباب سکه و زمان ورود هوشمند به طلا",
+          "type": "reels",
+          "format": "MP4 9:16",
+          "fileSize": "190 MB",
+          "thumbnail": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=80",
+          "version": "v1.0 Final",
+          "status": "approved",
+          "dateUploaded": "۱۴۰۵/۰۷/۲۶"
+        }
+      ],
+      "calendar": [
+        {
+          "id": "cp-g1",
+          "title": "ریلز هفتگی: تحلیل نوسانات انس جهانی طلا در ماه جدید",
+          "platform": "instagram",
+          "format": "reels",
+          "scheduledDate": "2026-11-02",
+          "persianDate": "۱۲ آبان ۱۴۰۵",
+          "status": "ready",
+          "captionDraft": "چرا تغییر نرخ بهره فدرال رزرو مستقیماً قیمت طلا در تهران را تکان می‌دهد؟ تحلیل اختصاصی قلک طلا."
+        }
+      ],
+      "feedbacks": [],
+      "trackingCode": "CJ-1003",
+      "username": "ghollak",
+      "password": "cj1003",
+      "archivedBriefs": []
+    },
+    {
+      "id": "client-kaviani",
+      "slug": "kaviani",
+      "pinCode": "1004",
+      "brandName": "مشاوره املاک کیان کاویانی",
+      "brandNameEn": "Kian Kaviani Real Estate Consultation",
+      "ownerName": "کیان کاویانی",
+      "category": "تولید محتوای اینستاگرام، تصویربرداری حرفه‌ای و ادیت",
+      "coverImage": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80",
+      "logoBadge": "🗝️",
+      "colorAccent": "blue",
+      "progressPercent": 70,
+      "projectLead": "اسماعیل سامانی پور",
+      "projectLeadRole": "تصویربردار، کارگردان و ایده‌پرداز",
+      "contractDate": "۱۴۰۵/۰۳/۰۱",
+      "deliveryDate": "۱۴۰۵/۰۹/۳۰",
+      "scopeSummary": "تور ویدیویی سینمایی از ویلاها و آپارتمان‌های خاص، پرسونال برندینگ کیان کاویانی و مشاوره خرید ملک.",
+      "milestones": [
+        {
+          "id": "km1",
+          "title": "توسعه استایل بصری و پرسونال برندینگ",
+          "description": "تعیین پالت لباس، قاب‌بندی و زوایای معرفی سوژه",
+          "status": "completed",
+          "date": "۱۴۰۵/۰۳/۱۵"
+        },
+        {
+          "id": "km2",
+          "title": "تصویربرداری هوایی هلی‌شات و رونین ویلاهای لواسان",
+          "description": "ضبط با دوربین سونی سینمایی و لنز واید پرمیوم",
+          "status": "completed",
+          "date": "۱۴۰۵/۰۶/۲۰"
+        },
+        {
+          "id": "km3",
+          "title": "مجموعه ویدیوهای آموزشی قوانین پیش‌خرید",
+          "description": "تدوین با زیرنویس‌های ترند و هایلایت صوتی",
+          "status": "in-progress",
+          "date": "۱۴۰۵/۰۷/۲۵"
+        }
+      ],
+      "deliverables": [
+        {
+          "id": "del-k1",
+          "title": "ویدیو پرزنت عمارت مدرن لواسان (Cinematic Walkthrough)",
+          "type": "video",
+          "format": "MP4 4K • 16:9 & 9:16",
+          "fileSize": "820 MB",
+          "thumbnail": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80",
+          "version": "v1.0 Cut",
+          "status": "pending-review",
+          "dateUploaded": "۱۴۰۵/۰۷/۲۷"
+        }
+      ],
+      "calendar": [],
+      "feedbacks": [],
+      "trackingCode": "CJ-1004",
+      "username": "kaviani",
+      "password": "cj1004",
+      "archivedBriefs": []
+    },
+    {
+      "id": "client-gogona",
+      "slug": "gogona",
+      "pinCode": "1005",
+      "brandName": "شرکت صنعتی گوگونا",
+      "brandNameEn": "Gogona Industrial Group",
+      "ownerName": "مدیریت بازرگانی گوگونا",
+      "category": "تیزر تبلیغاتی و برندینگ صنعتی",
+      "coverImage": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80",
+      "logoBadge": "⚙️",
+      "colorAccent": "amber",
+      "progressPercent": 95,
+      "projectLead": "محمد مهدی پور",
+      "projectLeadRole": "تصویربردار، کارگردان و ایده‌پرداز",
+      "contractDate": "۱۴۰۵/۰۲/۱۵",
+      "deliveryDate": "۱۴۰۵/۰۸/۱۰",
+      "scopeSummary": "تیزر بین‌المللی خطوط تولید مکانیزه، مستندسازی استانداردهای صنعتی و خلق تصاویر پرشکوه کارخانه‌ای.",
+      "milestones": [
+        {
+          "id": "gm1",
+          "title": "سناریو و استوری‌بورد صنعتی",
+          "description": "تصویب کانسپت قدرت تولید ملی و زنجیره تامین",
+          "status": "completed",
+          "date": "۱۴۰۵/۰۳/۰۱"
+        },
+        {
+          "id": "gm2",
+          "title": "تصویربرداری خطوط تولید رباتیک با کرین و رونین",
+          "description": "فیلمبرداری با نورپردازی متالیک و افکت‌های صنعتی",
+          "status": "completed",
+          "date": "۱۴۰۵/۰۴/۱۵"
+        },
+        {
+          "id": "gm3",
+          "title": "صداگذاری اختصاصی، افکت‌های فوولی و کالرگرید",
+          "description": "تولید ساند دیزاین حجیم صنعتی و رنگ‌آمیزی نقره‌ای-نارنجی",
+          "status": "completed",
+          "date": "۱۴۰۵/۰۷/۱۵"
+        }
+      ],
+      "deliverables": [
+        {
+          "id": "del-gog-1",
+          "title": "تیزر اصلی مستر کارخانه گوگونا (International 4K Cut)",
+          "type": "video",
+          "format": "ProRes 422 HQ & MP4",
+          "fileSize": "3.1 GB",
+          "thumbnail": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
+          "version": "v2.0 Approved",
+          "status": "approved",
+          "dateUploaded": "۱۴۰۵/۰۷/۱۸",
+          "clientFeedback": "کیفیت تصویر و ابهت کارخانه در این تیزر بی‌نظیر به تصویر کشیده شده است. سپاس از تیم تولید.",
+          "feedbackDate": "۱۴۰۵/۰۷/۲۱"
+        }
+      ],
+      "calendar": [],
+      "feedbacks": [],
+      "trackingCode": "CJ-1005",
+      "username": "gogona",
+      "password": "cj1005",
+      "archivedBriefs": []
+    },
+    {
+      "id": "client-sepanja",
+      "slug": "sepanja",
+      "pinCode": "1010",
+      "brandName": "سپنجا (سامانه رزرو اقامتگاه و گردشگری)",
+      "brandNameEn": "Sepanja Tourism & Booking Platform",
+      "ownerName": "تیم مارکتینگ سپنجا",
+      "category": "ادیت ویدیو اینستاگرام و موشن دیزاین گردشگری",
+      "coverImage": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+      "logoBadge": "🏖️",
+      "colorAccent": "emerald",
+      "progressPercent": 82,
+      "projectLead": "علیرضا شیعه زاده",
+      "projectLeadRole": "طراح UI/UX، گرافیست و مشاور هنری برند",
+      "contractDate": "۱۴۰۵/۰۳/۱۰",
+      "deliveryDate": "۱۴۰۵/۰۹/۱۰",
+      "scopeSummary": "موشن‌دیزاین پویا و ترند از لوکیشن‌های رویایی اقامتی در شمال، جنوب و کویر ایران به همراه طراحی کمپین‌های تخفیفی سفر.",
+      "milestones": [
+        {
+          "id": "sm1",
+          "title": "طراحی دیزاین سیستم موشن و المان‌های رابط کاربری سپنجا",
+          "description": "موشن گرافیک کاربری آسان رزرو اقامتگاه در موبایل",
+          "status": "completed",
+          "date": "۱۴۰۵/۰۴/۰۱"
+        },
+        {
+          "id": "sm2",
+          "title": "پکیج ۸ عددی ریلزهای معرفی اقامتگاه‌های بومگردی",
+          "description": "ادیت با ضرب‌آهنگ موزیک‌های دلنشین سفر",
+          "status": "completed",
+          "date": "۱۴۰۵/۰۶/۱۵"
+        },
+        {
+          "id": "sm3",
+          "title": "کمپین تخفیف ویژه پاییزه سفر",
+          "description": "استوری‌ها و ریلزهای تعاملی با نرخ کلیک بالا",
+          "status": "in-progress",
+          "date": "۱۴۰۵/۰۷/۲۲"
+        }
+      ],
+      "deliverables": [
+        {
+          "id": "del-sep-1",
+          "title": "موشن استوری کمپین سفر پاییزی به کلبه‌های چوبی ماسال",
+          "type": "reels",
+          "format": "MP4 9:16 60FPS",
+          "fileSize": "115 MB",
+          "thumbnail": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+          "version": "v1.1 Master",
+          "status": "approved",
+          "dateUploaded": "۱۴۰۵/۰۷/۲۴"
+        },
+        {
+          "id": "del-sep-2",
+          "title": "ریلز کانسپت «از کار خسته شدی؟» رزرو اقامتگاه در ۳ دقیقه",
+          "type": "reels",
+          "format": "MP4 9:16",
+          "fileSize": "160 MB",
+          "thumbnail": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80",
+          "version": "v1.0 Cut",
+          "status": "pending-review",
+          "dateUploaded": "۱۴۰۵/۰۷/۲۸"
+        }
+      ],
+      "calendar": [
+        {
+          "id": "cp-s1",
+          "title": "ریلز مقایسه اقامتگاه‌های کویری یزد و کاشان برای تعطیلات آخر هفته",
+          "platform": "instagram",
+          "format": "reels",
+          "scheduledDate": "2026-11-05",
+          "persianDate": "۱۵ آبان ۱۴۰۵",
+          "status": "ready",
+          "captionDraft": "کدوم اقامتگاه رو برای ریلکس کردن در سکوت کویر انتخاب می‌کنی؟ لینک رزرو مستقیم در بایو سپنجا."
+        }
+      ],
+      "feedbacks": [],
+      "trackingCode": "CJ-1010",
+      "username": "sepanja",
+      "password": "cj1010",
+      "archivedBriefs": []
+    }
+  ],
+  "projects": [
+    {
+      "id": "sepanja-tourism",
+      "title": "برند سپنجا • موشن دیزاین و ادیت ویدیو گردشگری",
+      "titleEn": "Sepanja Tourism // Motion Design & Social Video",
+      "subtitle": "تدوین ریلزهای اقامتگاه‌ها، موشن‌گرافیک داینامیک سفر و جلوه‌های بصری اینستاگرام",
+      "category": "موشن دیزاین و ویدیو گردشگری",
+      "categoryLabel": "موشن دیزاین و ویدیو گردشگری",
+      "client": "سامانه رزرواسیون اقامتگاه و ویلای سپنجا",
+      "year": "۱۴۰۳",
+      "trackCode": "TRACK 02 // MOTION & TOURISM",
+      "deptTrack": "TRACK 02 // CINEMA & VISUALS",
+      "role": "موشن‌دیزاینر ارشد، تدوینگر ریلز و کارگردان هنری سوشال",
+      "coverImage": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=85",
+      "highResImage": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=85",
+      "galleryImages": [
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "cinemaRatio": true,
+      "videoDuration": "ویدیوهای جذاب سفر و موشن‌های معرفی اقامتگاه",
+      "badge": "موشن گرافیک خلاقانه گردشگری",
+      "challenge": "پروژه موشن دیزاین و ادیت ویدیوهای اینستاگرامی سامانه گردشگری سپنجا؛ خلق سفری بصری و چشم‌نواز در هر ویدیوی ریلز که انگیزه رزرو سریع اقامتگاه را در مخاطب بیدار می‌کند.",
+      "solution": "ترکیب راش‌های هیجان‌انگیز طبیعت با موشن گرافیک‌های دو بعدی و سه بعدی روی ویدیوها، تایپوگرافی کینتیک قیمت‌ها و موقعیت مکانی، و سناریونویسی پرانرژی تعطیلات.",
+      "description": "پروژه موشن دیزاین و ادیت ویدیوهای اینستاگرامی سامانه گردشگری سپنجا؛ خلق سفری بصری و چشم‌نواز در هر ویدیوی ریلز که انگیزه رزرو سریع اقامتگاه را در مخاطب بیدار می‌کند.",
+      "metrics": "+۳۵۰٪ شیر (اشتراک‌گذاری) ریلزها • رشد مستقیم رزرواسیون آنلاین",
+      "deliverables": [
+        "پکیج موشن‌گرافیک داینامیک اختصاصی برای ویدیوهای سفر",
+        "تدوین بیش از ۵۰ ریلز گردشگری با موسیقی‌های ترند و انرژی‌بخش",
+        "طراحی استیکرها، گیف‌ها و المان‌های تعاملی استوری",
+        "موشن لوگوی پایانی و کال‌تواکشن‌های رزرواسیون"
+      ],
+      "tags": [
+        "سپنجا",
+        "گردشگری",
+        "موشن دیزاین",
+        "ادیت ویدیو",
+        "سفر"
+      ],
+      "colorAccent": "#EC4899",
+      "featured": true,
+      "isPublished": true,
+      "assignedTeamIds": [
+        "alireza-shiehzadeh"
+      ],
+      "projectCredits": [
+        {
+          "id": "credit-sepanja-tourism-alireza-shiehzadeh",
+          "memberId": "alireza-shiehzadeh",
+          "name": "علیرضا شیعه زاده",
+          "roleInProject": "مشاور هنری برند و طراح گرافیک‌های موشن",
+          "department": "دیزاین رابط کاربری و هویت بصری",
+          "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop",
+          "isGuest": false
+        }
+      ],
+      "desktopPos": {
+        "top": 70,
+        "left": 84,
+        "mobileTop": 72,
+        "mobileLeft": 30
+      },
+      "createdAt": "۱۴۰۳/۰۵/۱۸",
+      "updatedAt": "۱۴۰۳/۱۱/۰۴",
+      "dbPortfolioId": 10,
+      "projectLink": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=90"
+    },
+    {
+      "id": "go-sport-music",
+      "title": "فروشگاه Go Sport • تولید موزیک تبلیغاتی",
+      "titleEn": "Go Sport // Commercial Music Production",
+      "subtitle": "آهنگسازی اختصاصی، سونیک برندینگ و طراحی هویت صوتی برای فروشگاه و سایت",
+      "category": "موزیک تبلیغاتی و سونیک برندینگ",
+      "categoryLabel": "موزیک تبلیغاتی و سونیک برندینگ",
+      "client": "فروشگاه و سامانه آنلاین Go Sport",
+      "year": "۱۴۰۳",
+      "trackCode": "TRACK 01 // SONIC BRANDING",
+      "deptTrack": "TRACK 01 // BRAND IDENTITY",
+      "role": "آهنگساز تجاری، مهندس صدا و طراح موتیف صوتی (Audio Logo)",
+      "coverImage": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1600&q=85",
+      "highResImage": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1600&q=85",
+      "galleryImages": [
+        "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "cinemaRatio": false,
+      "videoDuration": "موزیک ۶۰ ثانیه‌ای تیزر + لوگوی صوتی ۳ ثانیه‌ای",
+      "badge": "سونیک لوگو و موزیک پرانرژی",
+      "challenge": "طراحی هویت شنیداری (Sonic Branding) و ساخت قطعه موسیقی اختصاصی تبلیغاتی برای Go Sport؛ خلق فضایی پرجنب‌وجوش که حس قهرمانی و تحرک را در ذهن مخاطب حک می‌کند.",
+      "solution": "تلفیق بیت‌های الکترونیک مدرن هاوس با گیتار الکتریک و ضرب‌آهنگ قلب؛ ساخت لوگوی صوتی اختصاصی برای انتهای تمام تیزرها و موشن‌های سایت.",
+      "description": "طراحی هویت شنیداری (Sonic Branding) و ساخت قطعه موسیقی اختصاصی تبلیغاتی برای Go Sport؛ خلق فضایی پرجنب‌وجوش که حس قهرمانی و تحرک را در ذهن مخاطب حک می‌کند.",
+      "metrics": "پخش در بیش از ۲۵ شعبه فروشگاهی و تیزرهای اسپانسرینگ ورزشی",
+      "deliverables": [
+        "آهنگسازی قطعه اختصاصی با سازبندی تلفیقی ورزشی",
+        "طراحی لوگوی صوتی ۳ ثانیه‌ای (Audio Logo Sonic Tag)",
+        "میکس و مسترینگ استاندارد برای پخش فروشگاهی و سوشال",
+        "ارائه نسخه‌های بی‌کلام، لوپ‌های ۳۰ و ۱۵ ثانیه‌ای"
+      ],
+      "tags": [
+        "موزیک تبلیغاتی",
+        "گو اسپورت",
+        "سونیک برندینگ",
+        "آهنگسازی"
+      ],
+      "colorAccent": "#8B5CF6",
+      "featured": false,
+      "isPublished": true,
+      "assignedTeamIds": [
+        "mehdi-loghmani",
+        "harry"
+      ],
+      "projectCredits": [
+        {
+          "id": "credit-go-sport-music-mehdi-loghmani",
+          "memberId": "mehdi-loghmani",
+          "name": "مهدی لقمانی",
+          "roleInProject": "آهنگساز قطعه اختصاصی و طراح هویت شنیداری",
+          "department": "مدیریت پروژه، استراتژی و موسیقی",
+          "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&auto=format&fit=crop",
+          "isGuest": false
+        },
+        {
+          "id": "credit-go-sport-music-harry",
+          "memberId": "harry",
+          "name": "هری",
+          "roleInProject": "مشاور تجربه کاربری و پرتال آنلاین ورزشی",
+          "department": "توسعه وب و پرتال‌های دیجیتال",
+          "avatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop",
+          "isGuest": false
+        }
+      ],
+      "desktopPos": {
+        "top": 46,
+        "left": 82,
+        "mobileTop": 44,
+        "mobileLeft": 22
+      },
+      "createdAt": "۱۴۰۳/۰۸/۰۵",
+      "updatedAt": "۱۴۰۳/۱۰/۱۵",
+      "dbPortfolioId": 9,
+      "projectLink": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=2000&q=90"
+    },
+    {
+      "id": "dentino-clinic",
+      "title": "کلینیک دنتینو • تولید محتوا و ادیت ویدیوها",
+      "titleEn": "Dentino Dental // Video Editing & Content",
+      "subtitle": "تولید محتوای اینستاگرام، سناریونویسی کیس‌های درمانی، موشن و ادیت ویدیوها",
+      "category": "تولید محتوا و ادیت ویدئو",
+      "categoryLabel": "تولید محتوا و ادیت ویدئو",
+      "client": "مجموعه دندانپزشکی و لبخند دنتینو",
+      "year": "۱۴۰۳",
+      "trackCode": "TRACK 02 // CINEMA & VISUALS",
+      "deptTrack": "TRACK 02 // CINEMA & VISUALS",
+      "role": "تدوینگر تخصصی ویدیو، موشن‌دیزاینر و نویسنده سناریو",
+      "coverImage": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=1600&q=85",
+      "highResImage": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=1600&q=85",
+      "galleryImages": [
+        "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "cinemaRatio": false,
+      "videoDuration": "ریلزهای هفتگی درمانی • ادیت پویا",
+      "badge": "افزایش تعامل و جذب بیمار",
+      "challenge": "پروژه مداوم تولید محتوا و تدوین ویدیوهای پیج دندانپزشکی دنتینو؛ شامل قبل و بعدهای جذاب ایمپلنت و زیبایی، پاسخ به سوالات دندانپزشکی و نمایش تجهیزات دیجیتال کلینیک.",
+      "solution": "طراحی قالب بصری روشن با رنگ‌های پاستلی آرامش‌بخش، ساخت موشن‌گرافیک‌های کوتاه برای رفع ترس درمان، تدوین روان و استفاده از موسیقی‌های ملایم لو-فای.",
+      "description": "پروژه مداوم تولید محتوا و تدوین ویدیوهای پیج دندانپزشکی دنتینو؛ شامل قبل و بعدهای جذاب ایمپلنت و زیبایی، پاسخ به سوالات دندانپزشکی و نمایش تجهیزات دیجیتال کلینیک.",
+      "metrics": "+۱۶۰٪ رشد دایرکت‌های نوبت‌دهی • میانگین ۴۵ هزار ویو برای هر ریلز",
+      "deliverables": [
+        "تدوین و ادیت حرفه‌ای بیش از ۴۰ قسمت ویدیو ریلز",
+        "طراحی کاورها و تامبنیل‌های هماهنگ با دیزاین سیستم پیج",
+        "طراحی موشن گرافیک‌های توضیح فرآیند درمان",
+        "اصلاح رنگ پوست و دندان‌ها برای نمایش واقع‌گرایانه و تمیز"
+      ],
+      "tags": [
+        "دنتینو",
+        "دندانپزشکی",
+        "ادیت ویدیو",
+        "تولید محتوا"
+      ],
+      "colorAccent": "#10B981",
+      "featured": false,
+      "isPublished": true,
+      "assignedTeamIds": [
+        "alireza-shiehzadeh"
+      ],
+      "projectCredits": [
+        {
+          "id": "credit-dentino-clinic-alireza-shiehzadeh",
+          "memberId": "alireza-shiehzadeh",
+          "name": "علیرضا شیعه زاده",
+          "roleInProject": "طراح قالب‌های گرافیکی و موشن‌های آموزشی پیج",
+          "department": "دیزاین رابط کاربری و هویت بصری",
+          "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop",
+          "isGuest": false
+        }
+      ],
+      "desktopPos": {
+        "top": 20,
+        "left": 78,
+        "mobileTop": 18,
+        "mobileLeft": 22
+      },
+      "createdAt": "۱۴۰۳/۰۶/۱۰",
+      "updatedAt": "۱۴۰۳/۱۱/۰۲",
+      "dbPortfolioId": 8,
+      "projectLink": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=2000&q=90"
+    },
+    {
+      "id": "ermia-teb-medical",
+      "title": "ارمیا طب • تیزر معرفی محصول تجهیزات پزشکی",
+      "titleEn": "Ermia Teb // Medical Device Product Teaser",
+      "subtitle": "کارگردانی تیزر معرفی دستگاه‌های دانش‌بنیان پزشکی، نورپردازی تمیز و موشن ۳D",
+      "category": "معرفی محصول و تجهیزات پزشکی",
+      "categoryLabel": "معرفی محصول و تجهیزات پزشکی",
+      "client": "شرکت پزشکی و تجهیزات درمان ارمیا طب",
+      "year": "۱۴۰۳",
+      "trackCode": "TRACK 03 // PRODUCT LAUNCH",
+      "deptTrack": "TRACK 03 // CAMPAIGNS & ACTIVATIONS",
+      "role": "کارگردان تیزر محصول، طراح نور و رندرهای سه‌بعدی",
+      "coverImage": "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1600&q=85",
+      "highResImage": "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1600&q=85",
+      "galleryImages": [
+        "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "cinemaRatio": true,
+      "videoDuration": "۱:۴۵ دقیقه • فیلم رونمایی و معرفی قطعات",
+      "badge": "معرفی محصول دانش‌بنیان",
+      "challenge": "فیلم رونمایی از سری جدید محصولات پزشکی ارمیا طب؛ اثری تراز اول در سطح استانداردهای جهانی مدیکال تک، که اعتماد پزشکان متخصص را از ثانیه اول جلب می‌کند.",
+      "solution": "استفاده از استودیوی سفید خالص (White Cyc)، لنزهای ماکرو برای ثبت دقیق قطعات، انیمیشن‌های سه‌بعدی انفجاری از قطعات داخلی دستگاه و ساند دیزاین مدرن تکنولوژیک.",
+      "description": "فیلم رونمایی از سری جدید محصولات پزشکی ارمیا طب؛ اثری تراز اول در سطح استانداردهای جهانی مدیکال تک، که اعتماد پزشکان متخصص را از ثانیه اول جلب می‌کند.",
+      "metrics": "ثبت سفارش ۳۵ دستگاه در هفته اول رونمایی به مراکز درمانی",
+      "deliverables": [
+        "رندرهای ۳ بعدی انفجاری (Exploded View) از قطعات محصول",
+        "فیلم‌برداری استودیویی در محیط کلین‌روم",
+        "گرافیک‌های متحرک اینفوگرافیک توضیح کارایی دستگاه",
+        "تولید تیزر تیزینگ قبل از نمایشگاه تجهیزات پزشکی"
+      ],
+      "tags": [
+        "ارمیا طب",
+        "تجهیزات پزشکی",
+        "معرفی محصول",
+        "موشن سه‌بعدی"
+      ],
+      "colorAccent": "#06B6D4",
+      "featured": false,
+      "isPublished": true,
+      "assignedTeamIds": [
+        "mohammad-mehdipour"
+      ],
+      "projectCredits": [
+        {
+          "id": "credit-ermia-teb-medical-mohammad-mehdipour",
+          "memberId": "mohammad-mehdipour",
+          "name": "محمد مهدی پور",
+          "roleInProject": "کارگردان و طراح صحنه تیزر معرفی دستگاه",
+          "department": "سینما و تولید تصویر",
+          "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=800&auto=format&fit=crop",
+          "isGuest": false
+        }
+      ],
+      "desktopPos": {
+        "top": 65,
+        "left": 66,
+        "mobileTop": 68,
+        "mobileLeft": 78
+      },
+      "createdAt": "۱۴۰۳/۰۴/۲۵",
+      "updatedAt": "۱۴۰۳/۰۹/۳۰",
+      "dbPortfolioId": 7,
+      "projectLink": "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=2000&q=90"
+    },
+    {
+      "id": "zarrin-hamzeh-industrial",
+      "title": "تیزر تبلیغاتی شرکت صنعتی زرین حمزه",
+      "titleEn": "Zarrin Hamzeh Industrial Co. Teaser",
+      "subtitle": "تولید تیزر تجاری، روایت اقتدار مهندسی و توانمندی‌های کارخانه‌ای",
+      "category": "تیزر تبلیغاتی و برندینگ سازمانی",
+      "categoryLabel": "تیزر تبلیغاتی و برندینگ سازمانی",
+      "client": "شرکت صنعتی زرین حمزه",
+      "year": "۱۴۰۳",
+      "trackCode": "TRACK 02 // CINEMA & VISUALS",
+      "deptTrack": "TRACK 02 // CINEMA & VISUALS",
+      "role": "کارگردان، مدیر هنری و ناظر جلوه‌های ویژه",
+      "coverImage": "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=1600&q=85",
+      "highResImage": "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=1600&q=85",
+      "galleryImages": [
+        "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "cinemaRatio": true,
+      "videoDuration": "۱:۵۵ دقیقه • تیزر تلویزیونی و پروموشن سازمانی",
+      "badge": "برندینگ سازمانی معاصر",
+      "challenge": "تیزر تبلیغاتی شرکت صنعتی زرین حمزه؛ پروژه‌ای با پروداکشن غنی که تعهد به کیفیت، ماشین‌آلات تراز اول و پایداری این غول صنعتی را در قابی جذاب به نمایش می‌گذارد.",
+      "solution": "ترکیب نماهای کلان هوایی کارخانجات با کلوزآپ‌های ریتمیک قطعات تولیدی، به همراه گفتار متن حماسی با صدای گوینده برجسته کشوری.",
+      "description": "تیزر تبلیغاتی شرکت صنعتی زرین حمزه؛ پروژه‌ای با پروداکشن غنی که تعهد به کیفیت، ماشین‌آلات تراز اول و پایداری این غول صنعتی را در قابی جذاب به نمایش می‌گذارد.",
+      "metrics": "+۱۸۰٪ رشد ایمپرشن سازمانی و بازخورد فوق‌العاده مشتریان B2B",
+      "deliverables": [
+        "نگارش گفتار متن (Voiceover) و استوری‌بورد نماها",
+        "تصویربرداری هوایی هلی‌شات و اسلایدرهای سنگین کارگاهی",
+        "اصلاح رنگ سینمایی متناسب با هویت سازمانی زرین حمزه",
+        "بسته‌بندی و مسترینگ در کیفیت‌های گوناگون اکران"
+      ],
+      "tags": [
+        "تیزر صنعتی",
+        "زرین حمزه",
+        "برندینگ B2B",
+        "کارگردانی تیزر"
+      ],
+      "colorAccent": "#F97316",
+      "featured": false,
+      "isPublished": true,
+      "assignedTeamIds": [
+        "mohammad-mehdipour"
+      ],
+      "projectCredits": [
+        {
+          "id": "credit-zarrin-hamzeh-industrial-mohammad-mehdipour",
+          "memberId": "mohammad-mehdipour",
+          "name": "محمد مهدی پور",
+          "roleInProject": "کارگردان تیزر تبلیغاتی و تصویربردار",
+          "department": "سینما و تولید تصویر",
+          "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=800&auto=format&fit=crop",
+          "isGuest": false
+        }
+      ],
+      "desktopPos": {
+        "top": 42,
+        "left": 62,
+        "mobileTop": 40,
+        "mobileLeft": 76
+      },
+      "createdAt": "۱۴۰۳/۰۳/۱۴",
+      "updatedAt": "۱۴۰۳/۱۰/۲۲",
+      "dbPortfolioId": 6,
+      "projectLink": "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=2000&q=90"
+    },
+    {
+      "id": "gogona-industrial",
+      "title": "تیزر تبلیغاتی شرکت صنعتی گوگونا",
+      "titleEn": "Gogona Industrial Group // Brand Teaser",
+      "subtitle": "کارگردانی فیلم صنعتی، تصویربرداری ماشین‌آلات سنگین و مونتاژ سینمایی",
+      "category": "تیزر تبلیغاتی و فیلم صنعتی",
+      "categoryLabel": "تیزر تبلیغاتی و فیلم صنعتی",
+      "client": "شرکت صنعتی گوگونا",
+      "year": "۱۴۰۲",
+      "trackCode": "TRACK 02 // INDUSTRIAL CINEMA",
+      "deptTrack": "TRACK 02 // CINEMA & VISUALS",
+      "role": "کارگردان تیزر، تصویربردار صنعتی و طراح افکت‌های صوتی",
+      "coverImage": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1600&q=85",
+      "highResImage": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1600&q=85",
+      "galleryImages": [
+        "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "cinemaRatio": true,
+      "videoDuration": "۲:۴۰ دقیقه • تیزر صنعتی سینمایی 4K",
+      "badge": "فیلم تبلیغاتی برگزیده نمایشگاه",
+      "challenge": "تیزر پرچمدار شرکت صنعتی گوگونا با هدف اکران در نمایشگاه‌های بین‌المللی و پرزنتیشن به شرکای تجاری خارجی؛ نمایانگر اوج دقت مهندسی، دانش فنی و شکوه کارگاهی ساخت ایران.",
+      "solution": "استفاده از نورپردازی موضعی تاریک و متالیک، اسلوموشن‌های با فریم‌ریت بالا از تراشکاری و رباتیک، همراه با طراحی صدای مکانیکی هایبریدی سه‌بعدی.",
+      "description": "تیزر پرچمدار شرکت صنعتی گوگونا با هدف اکران در نمایشگاه‌های بین‌المللی و پرزنتیشن به شرکای تجاری خارجی؛ نمایانگر اوج دقت مهندسی، دانش فنی و شکوه کارگاهی ساخت ایران.",
+      "metrics": "پخش در سالن اجلاس سران و انعقاد ۳ قرارداد صادراتی کلان",
+      "deliverables": [
+        "سناریونویسی و کارگردانی کامل مستند و تیزر صنعتی",
+        "تصویربرداری با فریم‌ریت ۱۲۰fps و نورپردازی نئوکلاسیک کارخانه",
+        "طراحی صدا و ترکیب افکت‌های صوتی هوی متال با ارکسترال",
+        "نسخه‌های برش‌خورده مخصوص وب‌سایت و لینکدین صنعتی"
+      ],
+      "tags": [
+        "فیلم صنعتی",
+        "شرکت گوگونا",
+        "تیزر سینمایی",
+        "خط تولید"
+      ],
+      "colorAccent": "#EF4444",
+      "featured": true,
+      "isPublished": true,
+      "assignedTeamIds": [
+        "esmaeil-samanipour"
+      ],
+      "projectCredits": [
+        {
+          "id": "credit-gogona-industrial-esmaeil-samanipour",
+          "memberId": "esmaeil-samanipour",
+          "name": "اسماعیل سامانی پور",
+          "roleInProject": "کارگردان و مدیر تصویربرداری",
+          "department": "سینما و تولید تصویر",
+          "avatar": "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=800&auto=format&fit=crop",
+          "isGuest": false
+        }
+      ],
+      "desktopPos": {
+        "top": 18,
+        "left": 58,
+        "mobileTop": 16,
+        "mobileLeft": 76
+      },
+      "createdAt": "۱۴۰۲/۱۱/۲۰",
+      "updatedAt": "۱۴۰۳/۰۹/۰۴",
+      "dbPortfolioId": 5,
+      "projectLink": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=2000&q=90"
+    },
+    {
+      "id": "kian-kavyani-real-estate",
+      "title": "مشاوره املاک کیان کاویانی",
+      "titleEn": "Kian Kavyani Real Estate",
+      "subtitle": "تولید محتوای اینستاگرام، تصویربرداری حرفه‌ای پنت‌هاوس‌ها و ویلاها با ادیت لوکس",
+      "category": "تصویربرداری و تولید محتوای املاک",
+      "categoryLabel": "تصویربرداری و تولید محتوای املاک",
+      "client": "مشاوره املاک کیان کاویانی",
+      "year": "۱۴۰۳",
+      "trackCode": "TRACK 02 // REAL ESTATE CINEMA",
+      "deptTrack": "TRACK 02 // CINEMA & VISUALS",
+      "role": "تصویربردار معماری، تدوینگر ریلز و مجری تورهای ویدئویی",
+      "coverImage": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=85",
+      "highResImage": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=85",
+      "galleryImages": [
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "cinemaRatio": true,
+      "videoDuration": "ویدیو تورهای ۳ دقیقه‌ای + ریلزهای جذاب",
+      "badge": "تصویربرداری لوکس املاک",
+      "challenge": "تولید محتوا و ساخت ویدیوهای تور ملک برای پیج املاک کیان کاویانی؛ تبدیل هر فایل ملکی به یک شاهکار ویدیویی که حس زندگی لوکس و جزئیات متریال‌های ساختمانی را به بهترین شکل به تصویر می‌کشد.",
+      "solution": "تصویربرداری هلی‌شات و استابلایزر گیمبال در تایم‌های طلایی نور روز، اجرای تورهای اختصاصی جلوی دوربین توسط مشاور، و تدوین متناسب با سلیقه خریداران مرفه.",
+      "description": "تولید محتوا و ساخت ویدیوهای تور ملک برای پیج املاک کیان کاویانی؛ تبدیل هر فایل ملکی به یک شاهکار ویدیویی که حس زندگی لوکس و جزئیات متریال‌های ساختمانی را به بهترین شکل به تصویر می‌کشد.",
+      "metrics": "فروش ۳ واحد پنت‌هاوس مستقیماً از طریق ویدیوهای ریلز اینستاگرام",
+      "deliverables": [
+        "تصویربرداری حرفه‌ای هلی‌شات هوایی و گیمبال از سازه‌ها",
+        "تدوین و رنگ‌آمیزی چشم‌نواز با ریتم موسیقی منتخب",
+        "سناریونویسی ارائه فایل‌ها جلوی دوربین برای پرزنتور",
+        "تولید ریلزهای معرفی امکانات رفاهی و مستر روم‌ها"
+      ],
+      "tags": [
+        "املاک لوکس",
+        "تصویربرداری حرفه‌ای",
+        "ریلز اینستاگرام",
+        "تور ویدئویی"
+      ],
+      "colorAccent": "#F59E0B",
+      "featured": false,
+      "isPublished": true,
+      "assignedTeamIds": [
+        "esmaeil-samanipour"
+      ],
+      "projectCredits": [
+        {
+          "id": "credit-kian-kavyani-real-estate-esmaeil-samanipour",
+          "memberId": "esmaeil-samanipour",
+          "name": "اسماعیل سامانی پور",
+          "roleInProject": "تصویربردار هوایی (هلی‌شات) و گیمبال پنت‌هاوس‌ها",
+          "department": "سینما و تولید تصویر",
+          "avatar": "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=800&auto=format&fit=crop",
+          "isGuest": false
+        }
+      ],
+      "desktopPos": {
+        "top": 68,
+        "left": 44,
+        "mobileTop": 65,
+        "mobileLeft": 60
+      },
+      "createdAt": "۱۴۰۳/۰۴/۱۰",
+      "updatedAt": "۱۴۰۳/۱۰/۱۸",
+      "dbPortfolioId": 4,
+      "projectLink": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=90"
+    },
+    {
+      "id": "ghellak-tala",
+      "title": "قلک طلا • آموزش اقتصادی (خسروی‌فر)",
+      "titleEn": "Ghellak Tala // Financial Academy",
+      "subtitle": "تولید محتوای ویدئویی آموزش اقتصادی، سناریونویسی و ادیت پریمیوم",
+      "category": "تولید محتوا و آموزش مالی",
+      "categoryLabel": "تولید محتوا و آموزش مالی",
+      "client": "آکادمی قلک طلا (آقای خسروی‌فر)",
+      "year": "۱۴۰۳",
+      "trackCode": "TRACK 02 // CINEMA & VISUALS",
+      "deptTrack": "TRACK 02 // CINEMA & VISUALS",
+      "role": "کارگردانی استودیویی، تصویربرداری و تدوین ریلزهای پریمیوم",
+      "coverImage": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1600&q=85",
+      "highResImage": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1600&q=85",
+      "galleryImages": [
+        "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "cinemaRatio": true,
+      "videoDuration": "ویدیوهای استودیویی و ریلزهای داینامیک",
+      "badge": "محتوای مالی وایرال",
+      "challenge": "مدیریت چرخه کامل تولید و ادیت ویدیوهای آموزشی قلک طلا به همراه آقای خسروی‌فر؛ شامل سناریونویسی، ضبط استودیویی با صدای شفاف، گرافیک‌های اختصاصی بازار مالی و تدوین سریع و گیرا.",
+      "solution": "به‌کارگیری تکنیک‌های ریتمیک تدوین، انیمیشن‌های مینیمال روی تصویر، زیرنویس‌های پویا با تایپوگرافی ویژه و هوک‌های جذاب آغازین در کنار صداگذاری چندلایه.",
+      "description": "مدیریت چرخه کامل تولید و ادیت ویدیوهای آموزشی قلک طلا به همراه آقای خسروی‌فر؛ شامل سناریونویسی، ضبط استودیویی با صدای شفاف، گرافیک‌های اختصاصی بازار مالی و تدوین سریع و گیرا.",
+      "metrics": "بیش از ۵ میلیون ایمپرشن ماهانه • رشد ۲۰۰ هزار فالوور ارگانیک",
+      "deliverables": [
+        "تنظیم ستاپ ضبط و نورپردازی استودیو آموزش مالی",
+        "تدوین ویدیوهای ریلز با موشن‌گرافیک‌های سریع توضیحی",
+        "طراحی کاورهای کلیک‌خور و تامبنیل‌های اینستاگرام",
+        "طراحی زیرنویس‌های سینک داینامیک و افکت‌های صوتی SFX"
+      ],
+      "tags": [
+        "آموزش اقتصادی",
+        "قلک طلا",
+        "ادیت پریمیوم",
+        "سوشال مدیا"
+      ],
+      "colorAccent": "#EAB308",
+      "featured": true,
+      "isPublished": true,
+      "assignedTeamIds": [
+        "mehdi-loghmani"
+      ],
+      "projectCredits": [
+        {
+          "id": "credit-ghellak-tala-mehdi-loghmani",
+          "memberId": "mehdi-loghmani",
+          "name": "مهدی لقمانی",
+          "roleInProject": "مشاور استراتژی کسب‌وکار و طراحی فانل آموزشی",
+          "department": "مدیریت پروژه، استراتژی و موسیقی",
+          "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&auto=format&fit=crop",
+          "isGuest": false
+        }
+      ],
+      "desktopPos": {
+        "top": 48,
+        "left": 42,
+        "mobileTop": 45,
+        "mobileLeft": 42
+      },
+      "createdAt": "۱۴۰۳/۰۵/۲۰",
+      "updatedAt": "۱۴۰۳/۱۱/۰۸",
+      "dbPortfolioId": 3,
+      "projectLink": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=2000&q=90"
+    },
+    {
+      "id": "dr-sadegh-peiravi",
+      "title": "دکتر صادق پیروی • متخصص زیبایی",
+      "titleEn": "Dr. Sadegh Peiravi // Aesthetic Medicine",
+      "subtitle": "تولید محتوای اینستاگرامی با دوربین حرفه‌ای، نورپردازی کلینیکال و ادیت پریمیوم",
+      "category": "تولید محتوای ویدئویی پرمیوم",
+      "categoryLabel": "تولید محتوای ویدئویی پرمیوم",
+      "client": "کلینیک زیبایی دکتر صادق پیروی",
+      "year": "۱۴۰۳",
+      "trackCode": "TRACK 02 // CINEMA & VISUALS",
+      "deptTrack": "TRACK 02 // CINEMA & VISUALS",
+      "role": "تصویربردار اختصاصی، کارگردان محتوا و تدوینگر ارشد",
+      "coverImage": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1600&q=85",
+      "highResImage": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1600&q=85",
+      "galleryImages": [
+        "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "cinemaRatio": true,
+      "videoDuration": "ریلزهای هفتگی • کیفیت ۴K با دوربین سینمایی",
+      "badge": "ادیت پریمیوم و تعامل ارگانیک",
+      "challenge": "تولید جامع محتوای اینستاگرامی برای پیج دکتر صادق پیروی. تمرکز بر نمایش مهارت ظریف در جراحی‌ها و اقدامات زیبایی، پاسخ به دغدغه‌های مراجعین با تصویربرداری ماکرو و تدوین ادیتوریال تمیز.",
+      "solution": "استقرار تجهیزات سینمایی در مطب، نورپردازی استاندارد پزشکی، سناریونویسی علمی و روان با تمرکز بر پرستیژ پزشکی و تدوین مینیمال و لوکس بدون اغراق‌های مبتذل.",
+      "description": "تولید جامع محتوای اینستاگرامی برای پیج دکتر صادق پیروی. تمرکز بر نمایش مهارت ظریف در جراحی‌ها و اقدامات زیبایی، پاسخ به دغدغه‌های مراجعین با تصویربرداری ماکرو و تدوین ادیتوریال تمیز.",
+      "metrics": "+۲۴۰٪ افزایش درخواست وقت مشاوره • بازدید میلیونی ریلزها",
+      "deliverables": [
+        "تصویربرداری حرفه‌ای با دوربین‌های سینمایی و لنزهای پرایم",
+        "نورپردازی تخصصی کلینیکال و استودیویی مطب",
+        "تدوین ویدیوهای ریلز با اصلاح رنگ حرفه‌ای (Color Grading)",
+        "سناریونویسی و هوک‌های جذاب متناسب با الگوریتم اینستاگرام"
+      ],
+      "tags": [
+        "پزشکی زیبایی",
+        "تولید محتوا",
+        "دوربین حرفه‌ای",
+        "ادیت پریمیوم"
+      ],
+      "colorAccent": "#0284C7",
+      "featured": true,
+      "isPublished": true,
+      "assignedTeamIds": [
+        "fereydoun-yousefzadeh"
+      ],
+      "projectCredits": [
+        {
+          "id": "credit-dr-sadegh-peiravi-fereydoun-yousefzadeh",
+          "memberId": "fereydoun-yousefzadeh",
+          "name": "فریدون یوسف زاده",
+          "roleInProject": "مدیر هنری و تدوینگر ارشد ریلزهای پریمیوم",
+          "department": "کارگردانی هنری و ادیت",
+          "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop",
+          "isGuest": false
+        }
+      ],
+      "desktopPos": {
+        "top": 22,
+        "left": 38,
+        "mobileTop": 18,
+        "mobileLeft": 40
+      },
+      "createdAt": "۱۴۰۳/۰۷/۱۵",
+      "updatedAt": "۱۴۰۳/۱۱/۱۲",
+      "dbPortfolioId": 2,
+      "projectLink": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=2000&q=90"
+    },
+    {
+      "id": "yousefzadeh-real-estate",
+      "title": "گروه مشاوره سرمایه‌گذاری ملکی یوسف‌زاده",
+      "titleEn": "Yousefzadeh Real Estate Investment Group",
+      "subtitle": "طراحی هویت برند و هویت بصری، تولید محتوا و کمپین‌های جامع فروش ملکی",
+      "category": "هویت برند و کمپین فروش",
+      "categoryLabel": "هویت برند و کمپین فروش",
+      "client": "گروه مشاوره سرمایه‌گذاری ملکی یوسف‌زاده",
+      "year": "۱۴۰۳",
+      "trackCode": "TRACK 01 // BRAND DNA & SALES",
+      "deptTrack": "TRACK 01 // BRAND IDENTITY",
+      "role": "طراح هویت برند، کارگردان محتوا و استراتژیست کمپین فروش",
+      "coverImage": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85",
+      "highResImage": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85",
+      "galleryImages": [
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "cinemaRatio": true,
+      "videoDuration": "۳:۲۰ دقیقه • مستند مانیفست و تیزر فروش",
+      "badge": "کمپین فروش پرچمدار",
+      "challenge": "پروژه جامع بازآفرینی برند و رشد فروش برای گروه مشاوره سرمایه‌گذاری ملکی یوسف‌زاده؛ شامل معماری هویت بصری، گایدلاین رنگی با شکوه، فیلم‌برداری سینمایی از پروژه‌های فاخر، تولید مستمر محتوای تحلیلی و مهندسی کمپین‌های جذب سرمایه‌گذار.",
+      "solution": "طراحی کامل هویت بصری و لوگوتایپ لوکس، تدوین مانیفست سرمایه‌گذاری مطمئن، برنامه‌ریزی تقویم تولید محتوای اینستاگرام با کیفیت سینمایی و راه‌اندازی کمپین‌های چندمرحله‌ای فروش واحدهای پرمیوم.",
+      "description": "پروژه جامع بازآفرینی برند و رشد فروش برای گروه مشاوره سرمایه‌گذاری ملکی یوسف‌زاده؛ شامل معماری هویت بصری، گایدلاین رنگی با شکوه، فیلم‌برداری سینمایی از پروژه‌های فاخر، تولید مستمر محتوای تحلیلی و مهندسی کمپین‌های جذب سرمایه‌گذار.",
+      "metrics": "+۳۱۰٪ جذب سرمایه‌گذاران رده‌بالا • رکورد فروش فاز اول کمپین",
+      "deliverables": [
+        "طراحی هویت بصری، لوگوتایپ و هویت رنگی و متریال",
+        "طراحی کتابچه برند بوک جامع (Brand Guideline)",
+        "تولید محتوای ویدئویی سینمایی و ریلزهای تحلیلی املاک",
+        "طراحی و اجرای فانل کمپین‌های تبلیغاتی فروش ملکی"
+      ],
+      "tags": [
+        "هویت برند",
+        "سرمایه‌گذاری ملکی",
+        "تولید محتوا",
+        "کمپین فروش"
+      ],
+      "colorAccent": "#D97706",
+      "featured": true,
+      "isPublished": true,
+      "assignedTeamIds": [
+        "fereydoun-yousefzadeh",
+        "harry"
+      ],
+      "projectCredits": [
+        {
+          "id": "credit-yousefzadeh-real-estate-fereydoun-yousefzadeh",
+          "memberId": "fereydoun-yousefzadeh",
+          "name": "فریدون یوسف زاده",
+          "roleInProject": "مدیر هنری، سناریست و استراتژیست ایده کمپین",
+          "department": "کارگردانی هنری و ادیت",
+          "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop",
+          "isGuest": false
+        },
+        {
+          "id": "credit-yousefzadeh-real-estate-harry",
+          "memberId": "harry",
+          "name": "هری",
+          "roleInProject": "طراح و توسعه‌دهنده پرتال وب سرمایه‌گذاری",
+          "department": "توسعه وب و پرتال‌های دیجیتال",
+          "avatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop",
+          "isGuest": false
+        }
+      ],
+      "desktopPos": {
+        "top": 62,
+        "left": 24,
+        "mobileTop": 36,
+        "mobileLeft": 56
+      },
+      "createdAt": "۱۴۰۳/۰۶/۰۱",
+      "updatedAt": "۱۴۰۳/۱۱/۱۰",
+      "dbPortfolioId": 1,
+      "projectLink": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=90"
+    }
+  ],
+  "team": [
+    {
+      "id": "fereydoun-yousefzadeh",
+      "name": "فریدون یوسف زاده",
+      "nameEn": "Fereydoun Yousefzadeh",
+      "role": "مدیر هنری، ادیتور، ایده پرداز",
+      "roleEn": "Art Director, Senior Editor & Creative Ideator",
+      "department": "کارگردانی هنری و ادیت",
+      "trackCode": "TRACK 02 // CINEMA & VISUALS",
+      "initials": "FY",
+      "bio": "هدایت بصری و آرت‌دایرکشن پروژه‌های استودیو؛ طراحی ایده‌های کمپین و تدوین ویدیوها با ساختار استاندارد و خلاقانه.",
+      "experience": "",
+      "philosophy": "«وصل کردن ایده‌های خوب به همدیگه»",
+      "specialties": [
+        "آرت‌دایرکشن و هدایت بصری برند",
+        "ایده‌پردازی کمپین و استراتژی محتوا",
+        "تدوین ادیتوریال و پریمیوم ویدیو",
+        "اصلاح رنگ سینمایی و استایلینگ بصری"
+      ],
+      "photo": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop",
+      "projectRoles": [
+        {
+          "projectId": "yousefzadeh-real-estate",
+          "projectTitle": "گروه مشاوره سرمایه‌گذاری ملکی یوسف‌زاده",
+          "client": "گروه سرمایه‌گذاری یوسف‌زاده",
+          "roleInProject": "مدیر هنری، سناریست و استراتژیست ایده کمپین",
+          "year": "۱۴۰۳",
+          "keyDeliverables": [
+            "طراحی کانسپت بصری کمپین",
+            "هدایت هنری ویدیوهای سینمایی"
+          ],
+          "impact": "+۳۱۰٪ جذب سرمایه‌گذاران رده‌بالا",
+          "coverImage": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85"
+        },
+        {
+          "projectId": "dr-sadegh-peiravi",
+          "projectTitle": "دکتر صادق پیروی • متخصص زیبایی",
+          "client": "کلینیک زیبایی دکتر پیروی",
+          "roleInProject": "مدیر هنری و تدوینگر ارشد ریلزهای پریمیوم",
+          "year": "۱۴۰۳",
+          "keyDeliverables": [
+            "استایلینگ بصری پیج",
+            "ادیت تخصصی و اصلاح رنگ کلینیکال"
+          ],
+          "impact": "+۲۴۰٪ افزایش وقت‌های مشاوره",
+          "coverImage": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=85"
+        }
+      ]
+    },
+    {
+      "id": "mehdi-loghmani",
+      "name": "مهدی لقمانی",
+      "nameEn": "Mehdi Loghmani",
+      "role": "مدیر پروژه، مشاور کسب و کار، استراتژیست برند و کسب و کار، (آهنگ ساز)",
+      "roleEn": "Project Manager, Business Advisor, Brand Strategist & Composer",
+      "department": "مدیریت پروژه، استراتژی و موسیقی",
+      "trackCode": "TRACK 04 // STRATEGIC COUNSEL",
+      "initials": "ML",
+      "bio": "طراحی استراتژی‌های رشد کسب‌وکار و مدیریت یکپارچه پروژه‌ها؛ تحلیل مدل‌های درآمدی برند، تدوین ساختار کمپین‌ها و ساخت قطعات اختصاصی تبلیغاتی و سونیک برندینگ.",
+      "experience": "",
+      "philosophy": "«هماهنگی استراتژی تجاری و هنر، مسیر واقعی یک برند را می‌سازد.»",
+      "specialties": [
+        "مدیریت جامع پروژه‌ها و مهندسی فرایندها",
+        "مشاوره استراتژی برند و مدل کسب‌وکار",
+        "آهنگسازی تجاری و سونیک برندینگ (Sonic Logo)",
+        "تحلیل داده‌ها و بهینه‌سازی فروش"
+      ],
+      "photo": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&auto=format&fit=crop",
+      "projectRoles": [
+        {
+          "projectId": "go-sport-music",
+          "projectTitle": "فروشگاه Go Sport • موزیک تبلیغاتی",
+          "client": "فروشگاه و سایت Go Sport",
+          "roleInProject": "آهنگساز قطعه اختصاصی و طراح هویت شنیداری",
+          "year": "۱۴۰۳",
+          "keyDeliverables": [
+            "ساخت قطعه موسیقی ورزشی پرانرژی",
+            "طراحی لوگوی صوتی ۳ ثانیه‌ای"
+          ],
+          "impact": "پخش در ۲۵ شعبه فروشگاهی و تیزرهای اسپانسرینگ",
+          "coverImage": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=85"
+        },
+        {
+          "projectId": "ghellak-tala",
+          "projectTitle": "قلک طلا • آموزش اقتصادی (خسروی‌فر)",
+          "client": "آکادمی قلک طلا",
+          "roleInProject": "مشاور استراتژی کسب‌وکار و طراحی فانل آموزشی",
+          "year": "۱۴۰۳",
+          "keyDeliverables": [
+            "استراتژی تبدیل مخاطب به دانشجو",
+            "معماری تقویم محتوایی"
+          ],
+          "impact": "بیش از ۵ میلیون ایمپرشن ماهانه",
+          "coverImage": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=85"
+        }
+      ]
+    },
+    {
+      "id": "esmaeil-samanipour",
+      "name": "اسماعیل سامانی پور",
+      "nameEn": "Esmaeil Samanipour",
+      "role": "تصویربردار، کارگردان، ایده پرداز",
+      "roleEn": "Cinematographer, Director & Creative Ideator",
+      "department": "سینما و تولید تصویر",
+      "trackCode": "TRACK 02 // CINEMA & VISUALS",
+      "initials": "ES",
+      "bio": "کارگردانی و تصویربرداری با تمرکز بر دکوپاژ سینمایی؛ اجرای پروژه‌های صنعتی و تجاری با نورپردازی و کادربندی دقیق.",
+      "experience": "",
+      "philosophy": "«هر کادر باید روایتگر اصالت و هویت واقعی سوژه باشد.»",
+      "specialties": [
+        "کارگردانی فیلم‌های صنعتی و کارخانه‌ای",
+        "تصویربرداری حرفه‌ای سینمایی و فریم‌ریت بالا",
+        "نورپردازی لوکیشن‌های سخت و ماشین‌آلات سنگین",
+        "ایده‌پردازی حرکات دوربین و دکوپاژ مفهومی"
+      ],
+      "photo": "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=800&auto=format&fit=crop",
+      "projectRoles": [
+        {
+          "projectId": "gogona-industrial",
+          "projectTitle": "تیزر صنعتی شرکت گوگونا",
+          "client": "شرکت صنعتی گوگونا",
+          "roleInProject": "کارگردان و مدیر تصویربرداری",
+          "year": "۱۴۰۲",
+          "keyDeliverables": [
+            "کارگردانی فیلم صنعتی خطوط تولید",
+            "تصویربرداری ۱۲۰fps با لنزهای سینمایی"
+          ],
+          "impact": "پخش در اجلاس‌های بین‌المللی و عقد قراردادهای بزرگ",
+          "coverImage": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=85"
+        },
+        {
+          "projectId": "kian-kavyani-real-estate",
+          "projectTitle": "مشاوره املاک کیان کاویانی",
+          "client": "مشاوره املاک کیان کاویانی",
+          "roleInProject": "تصویربردار هوایی (هلی‌شات) و گیمبال پنت‌هاوس‌ها",
+          "year": "۱۴۰۳",
+          "keyDeliverables": [
+            "تصویربرداری ساعت طلایی معماری",
+            "هدایت نماهای حرکتی فضای داخلی"
+          ],
+          "impact": "فروش ۳ واحد لوکس با ریلزهای اینستاگرام",
+          "coverImage": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=85"
+        }
+      ]
+    },
+    {
+      "id": "mohammad-mehdipour",
+      "name": "محمد مهدی پور",
+      "nameEn": "Mohammad Mehdipour",
+      "role": "تصویربردار، کارگردان، ایده پرداز",
+      "roleEn": "Cinematographer, Director & Creative Ideator",
+      "department": "سینما و تولید تصویر",
+      "trackCode": "TRACK 02 // CINEMA & VISUALS",
+      "initials": "MM",
+      "bio": "تصویربرداری و کارگردانی تیزرهای تجاری و معرفی محصول؛ خلق قاب‌های مدرن با ریتم دقیق و هوک‌های تصویری هدفمند.",
+      "experience": "",
+      "philosophy": "«تصویر خوب در همان ثانیه اول ارتباط خودش را با مخاطب می‌سازد.»",
+      "specialties": [
+        "تصویربرداری تیزرهای تجاری و محصولات",
+        "ایده‌پردازی سناریوهای خلاقانه با هوک قوی",
+        "کارگردانی صحنه و کنترل ریتم بصری",
+        "تسلط بر تجهیزات حرکتی و گیمبال‌های سنگین"
+      ],
+      "photo": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=800&auto=format&fit=crop",
+      "projectRoles": [
+        {
+          "projectId": "zarrin-hamzeh-industrial",
+          "projectTitle": "تیزر تبلیغاتی شرکت صنعتی زرین حمزه",
+          "client": "شرکت صنعتی زرین حمزه",
+          "roleInProject": "کارگردان تیزر تبلیغاتی و تصویربردار",
+          "year": "۱۴۰۳",
+          "keyDeliverables": [
+            "سناریونویسی و کارگردانی نماهای حماسی",
+            "تصویربرداری دقیق قطعات و خط تولید"
+          ],
+          "impact": "+۱۸۰٪ رشد ایمپرشن سازمانی B2B",
+          "coverImage": "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=1200&q=85"
+        },
+        {
+          "projectId": "ermia-teb-medical",
+          "projectTitle": "ارمیا طب • تیزر معرفی محصول تجهیزات پزشکی",
+          "client": "شرکت پزشکی ارمیا طب",
+          "roleInProject": "کارگردان و طراح صحنه تیزر معرفی دستگاه",
+          "year": "۱۴۰۳",
+          "keyDeliverables": [
+            "تصویربرداری ماکرو در کلین‌روم",
+            "هدایت نورپردازی مینیمال سفید"
+          ],
+          "impact": "سفارش ۳۵ دستگاه در هفته اول رونمایی",
+          "coverImage": "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=85"
+        }
+      ]
+    },
+    {
+      "id": "harry",
+      "name": "هری",
+      "nameEn": "Harry",
+      "role": "طراح سایت",
+      "roleEn": "Lead Web Designer & Frontend Developer",
+      "department": "توسعه وب و پرتال‌های دیجیتال",
+      "trackCode": "TRACK 01 // DIGITAL & WEB",
+      "initials": "HA",
+      "bio": "طراحی و توسعه وب‌سایت‌های مدرن، پرسرعت و واکنش‌گرا؛ پیاده‌سازی رابط‌های کاربری تعاملی و لندینگ‌پیج‌های اختصاصی برند.",
+      "experience": "",
+      "philosophy": "«ساختار تمیز و تجربه کاربری روان، پایه حضور دیجیتال هر برند است.»",
+      "specialties": [
+        "طراحی و برنامه‌نویسی وب‌سایت‌های مدرن",
+        "پیاده‌سازی لندینگ‌پیج‌های تبلیغاتی با نرخ تبدیل بالا",
+        "بهینه‌سازی سرعت و استانداردهای Core Web Vitals",
+        "طراحی ریسپانسیو و تعاملات انیمیشنی وب"
+      ],
+      "photo": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop",
+      "projectRoles": [
+        {
+          "projectId": "yousefzadeh-real-estate",
+          "projectTitle": "گروه مشاوره سرمایه‌گذاری ملکی یوسف‌زاده",
+          "client": "گروه سرمایه‌گذاری یوسف‌زاده",
+          "roleInProject": "طراح و توسعه‌دهنده پرتال وب سرمایه‌گذاری",
+          "year": "۱۴۰۳",
+          "keyDeliverables": [
+            "توسعه پرتال تعاملی املاک",
+            "بهینه‌سازی لود سریع و ریسپانسیو کامل"
+          ],
+          "impact": "دریافت صدها لید ملکی مستقیم از سایت",
+          "coverImage": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85"
+        },
+        {
+          "projectId": "go-sport-music",
+          "projectTitle": "فروشگاه و سایت Go Sport",
+          "client": "فروشگاه Go Sport",
+          "roleInProject": "مشاور تجربه کاربری و پرتال آنلاین ورزشی",
+          "year": "۱۴۰۳",
+          "keyDeliverables": [
+            "طراحی ساختار لندینگ و استریمینگ صوتی",
+            "یکپارچه‌سازی پلیرها"
+          ],
+          "impact": "بهبود تجربه تعامل کاربران آنلاین",
+          "coverImage": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=85"
+        }
+      ]
+    },
+    {
+      "id": "alireza-shiehzadeh",
+      "name": "علیرضا شیعه زاده",
+      "nameEn": "Alireza Shiehzadeh",
+      "role": "طراح UI/UX، گرافیست، مشاور هنری برند، ایده پرداز",
+      "roleEn": "UI/UX Designer, Graphic Designer & Brand Art Advisor",
+      "department": "دیزاین رابط کاربری و هویت بصری",
+      "trackCode": "TRACK 01 // BRAND & INTERFACE",
+      "initials": "AS",
+      "bio": "طراحی رابط و تجربه کاربری، گرافیک و مشاوره هنری برند؛ خلق دیزاین‌سیستم‌های هماهنگ، تایپوگرافی و هویت بصری شبکه‌های اجتماعی.",
+      "experience": "",
+      "philosophy": "«دیزاین خوب تعادل میان کارایی دقیق و زیبایی بصری است.»",
+      "specialties": [
+        "طراحی جامع رابط و تجربه کاربری (UI/UX)",
+        "طراحی گرافیک، پوستر و تایپوگرافی اختصاصی",
+        "مشاوره هنری برند و تدوین کتابچه دیزاین سیستم",
+        "ایده‌پردازی المان‌های بصری و موشن‌گرافیک"
+      ],
+      "photo": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop",
+      "projectRoles": [
+        {
+          "projectId": "sepanja-tourism",
+          "projectTitle": "برند سپنجا • موشن دیزاین و گرافیک",
+          "client": "سامانه رزرواسیون سپنجا",
+          "roleInProject": "مشاور هنری برند و طراح گرافیک‌های موشن",
+          "year": "۱۴۰۳",
+          "keyDeliverables": [
+            "طراحی المان‌های گرافیکی تعاملی سفر",
+            "دیزاین سیستم تایپوگرافی سوشال"
+          ],
+          "impact": "+۳۵۰٪ شیر و اشتراک‌گذاری ریلزها",
+          "coverImage": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85"
+        },
+        {
+          "projectId": "dentino-clinic",
+          "projectTitle": "کلینیک دنتینو • تولید محتوا و گرافیک",
+          "client": "مجموعه دندانپزشکی دنتینو",
+          "roleInProject": "طراح قالب‌های گرافیکی و موشن‌های آموزشی پیج",
+          "year": "۱۴۰۳",
+          "keyDeliverables": [
+            "طراحی کاورها و قالب‌های بصری اینستاگرام",
+            "گرافیک‌های توضیحی فرآیند درمان"
+          ],
+          "impact": "+۱۶۰٪ رشد نوبت‌دهی آنلاین",
+          "coverImage": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=1200&q=85"
+        }
+      ]
+    }
+  ],
+  "services": null,
+  "manifesto": null,
+  "media": null,
+  "settings": null,
+  "notificationConfig": {
+    "enabled": true,
+    "adminEmail": "youthefzadeh@gmail.com",
+    "adminWhatsapp": "",
+    "autoEmailEnabled": true,
+    "autoWhatsappEnabled": true,
+    "whatsappWebhookUrl": "",
+    "emailWebhookUrl": "",
+    "soundAlertEnabled": true
+  },
+  "notificationLogs": [
+    {
+      "id": "notif-1794661021966-ickc",
+      "briefId": "db-proj-3",
+      "trackingCode": "CJ-SYNC-CHECK",
+      "brandName": "بررسی نهایی سینک",
+      "ownerName": "کارفرمای تست",
+      "contactInfo": "09120000000",
+      "selectedTrack": "ثبت‌شده در دیتابیس (جدول projects)",
+      "marketTier": "پرمیوم • پرمیوم",
+      "problemSummary": "تست ثبت از ورسل و حذف از سرور",
+      "createdAt": "۲۳ آبان ۱۴۰۵، ۱۲:۵۷:۰۱",
+      "emailTarget": "youthefzadeh@gmail.com",
+      "whatsappTarget": "ثبت‌نشده (ارسال با انتخاب مخاطب)",
+      "emailStatus": "sent",
+      "whatsappStatus": "ready-to-send",
+      "readByAdmin": false,
+      "whatsappUrl": "https://wa.me/?text=%F0%9F%94%94%20*%D8%A7%D8%B9%D9%84%D8%A7%D9%86%20%D9%81%D9%88%D8%B1%DB%8C%20%D8%AB%D8%A8%D8%AA%20%D8%A8%D8%B1%DB%8C%D9%81%20%D8%AC%D8%AF%DB%8C%D8%AF%20%E2%80%94%20%D8%A7%D8%B3%D8%AA%D9%88%D8%AF%DB%8C%D9%88%20Creativity%20Juice*%0A%E2%80%A2%20%D9%86%D8%A7%D9%85%20%D8%A8%D8%B1%D9%86%D8%AF%20%2F%20%D9%BE%D8%B1%D9%88%DA%98%D9%87%3A%20%D8%A8%D8%B1%D8%B1%D8%B3%DB%8C%20%D9%86%D9%87%D8%A7%DB%8C%DB%8C%20%D8%B3%DB%8C%D9%86%DA%A9%0A%E2%80%A2%20%D9%86%D8%A7%D9%85%20%DA%A9%D8%A7%D8%B1%D9%81%D8%B1%D9%85%D8%A7%3A%20%DA%A9%D8%A7%D8%B1%D9%81%D8%B1%D9%85%D8%A7%DB%8C%20%D8%AA%D8%B3%D8%AA%0A%E2%80%A2%20%D8%A7%D8%B7%D9%84%D8%A7%D8%B9%D8%A7%D8%AA%20%D8%AA%D9%85%D8%A7%D8%B3%3A%2009120000000%0A%E2%80%A2%20%DA%A9%D8%AF%20%D8%B1%D9%87%DA%AF%DB%8C%D8%B1%DB%8C%20%DB%8C%DA%A9%D8%AA%D8%A7%3A%20CJ-SYNC-CHECK%0A%E2%80%A2%20%D9%86%D8%A7%D9%85%20%DA%A9%D8%A7%D8%B1%D8%A8%D8%B1%DB%8C%20%D9%BE%D9%88%D8%B1%D8%AA%D8%A7%D9%84%3A%20CJ-SYNC-CHECK%0A%E2%80%A2%20%D8%AF%D9%BE%D8%A7%D8%B1%D8%AA%D9%85%D8%A7%D9%86%20%D8%A7%D9%86%D8%AA%D8%AE%D8%A7%D8%A8%DB%8C%3A%20%D8%AB%D8%A8%D8%AA%E2%80%8C%D8%B4%D8%AF%D9%87%20%D8%AF%D8%B1%20%D8%AF%DB%8C%D8%AA%D8%A7%D8%A8%DB%8C%D8%B3%20(%D8%AC%D8%AF%D9%88%D9%84%20projects)%0A%E2%80%A2%20%D8%B1%D8%AF%D9%87%20%D8%A8%D8%A7%D8%B2%D8%A7%D8%B1%3A%20%D9%BE%D8%B1%D9%85%DB%8C%D9%88%D9%85%20%E2%80%A2%20%D9%BE%D8%B1%D9%85%DB%8C%D9%88%D9%85%0A%E2%80%A2%20%D8%AE%D9%84%D8%A7%D8%B5%D9%87%20%D8%B5%D9%88%D8%B1%D8%AA%E2%80%8C%D9%85%D8%B3%D8%A6%D9%84%D9%87%3A%20%D8%AA%D8%B3%D8%AA%20%D8%AB%D8%A8%D8%AA%20%D8%A7%D8%B2%20%D9%88%D8%B1%D8%B3%D9%84%20%D9%88%20%D8%AD%D8%B0%D9%81%20%D8%A7%D8%B2%20%D8%B3%D8%B1%D9%88%D8%B1%0A---%20%D9%85%D8%AA%D9%86%20%DA%A9%D8%A7%D9%85%D9%84%20%D8%A8%D8%B1%DB%8C%D9%81%20%D8%A2%D8%B1%D8%B4%DB%8C%D9%88%D8%B4%D8%AF%D9%87%20---%0A%D8%AA%D8%B3%D8%AA%20%D8%AB%D8%A8%D8%AA%20%D8%A7%D8%B2%20%D9%88%D8%B1%D8%B3%D9%84%20%D9%88%20%D8%AD%D8%B0%D9%81%20%D8%A7%D8%B2%20%D8%B3%D8%B1%D9%88%D8%B1",
+      "mailtoUrl": "mailto:youthefzadeh@gmail.com?subject=%F0%9F%94%94%20%D8%A7%D8%B9%D9%84%D8%A7%D9%86%20%D8%A8%D8%B1%DB%8C%D9%81%20%D8%AC%D8%AF%DB%8C%D8%AF%20%D9%BE%D8%B1%D9%88%DA%98%D9%87%3A%20%D8%A8%D8%B1%D8%B1%D8%B3%DB%8C%20%D9%86%D9%87%D8%A7%DB%8C%DB%8C%20%D8%B3%DB%8C%D9%86%DA%A9%20(%DA%A9%D8%AF%20%D8%B1%D9%87%DA%AF%DB%8C%D8%B1%DB%8C%3A%20CJ-SYNC-CHECK)&body=%F0%9F%94%94%20*%D8%A7%D8%B9%D9%84%D8%A7%D9%86%20%D9%81%D9%88%D8%B1%DB%8C%20%D8%AB%D8%A8%D8%AA%20%D8%A8%D8%B1%DB%8C%D9%81%20%D8%AC%D8%AF%DB%8C%D8%AF%20%E2%80%94%20%D8%A7%D8%B3%D8%AA%D9%88%D8%AF%DB%8C%D9%88%20Creativity%20Juice*%0A%E2%80%A2%20%D9%86%D8%A7%D9%85%20%D8%A8%D8%B1%D9%86%D8%AF%20%2F%20%D9%BE%D8%B1%D9%88%DA%98%D9%87%3A%20%D8%A8%D8%B1%D8%B1%D8%B3%DB%8C%20%D9%86%D9%87%D8%A7%DB%8C%DB%8C%20%D8%B3%DB%8C%D9%86%DA%A9%0A%E2%80%A2%20%D9%86%D8%A7%D9%85%20%DA%A9%D8%A7%D8%B1%D9%81%D8%B1%D9%85%D8%A7%3A%20%DA%A9%D8%A7%D8%B1%D9%81%D8%B1%D9%85%D8%A7%DB%8C%20%D8%AA%D8%B3%D8%AA%0A%E2%80%A2%20%D8%A7%D8%B7%D9%84%D8%A7%D8%B9%D8%A7%D8%AA%20%D8%AA%D9%85%D8%A7%D8%B3%3A%2009120000000%0A%E2%80%A2%20%DA%A9%D8%AF%20%D8%B1%D9%87%DA%AF%DB%8C%D8%B1%DB%8C%20%DB%8C%DA%A9%D8%AA%D8%A7%3A%20CJ-SYNC-CHECK%0A%E2%80%A2%20%D9%86%D8%A7%D9%85%20%DA%A9%D8%A7%D8%B1%D8%A8%D8%B1%DB%8C%20%D9%BE%D9%88%D8%B1%D8%AA%D8%A7%D9%84%3A%20CJ-SYNC-CHECK%0A%E2%80%A2%20%D8%AF%D9%BE%D8%A7%D8%B1%D8%AA%D9%85%D8%A7%D9%86%20%D8%A7%D9%86%D8%AA%D8%AE%D8%A7%D8%A8%DB%8C%3A%20%D8%AB%D8%A8%D8%AA%E2%80%8C%D8%B4%D8%AF%D9%87%20%D8%AF%D8%B1%20%D8%AF%DB%8C%D8%AA%D8%A7%D8%A8%DB%8C%D8%B3%20(%D8%AC%D8%AF%D9%88%D9%84%20projects)%0A%E2%80%A2%20%D8%B1%D8%AF%D9%87%20%D8%A8%D8%A7%D8%B2%D8%A7%D8%B1%3A%20%D9%BE%D8%B1%D9%85%DB%8C%D9%88%D9%85%20%E2%80%A2%20%D9%BE%D8%B1%D9%85%DB%8C%D9%88%D9%85%0A%E2%80%A2%20%D8%AE%D9%84%D8%A7%D8%B5%D9%87%20%D8%B5%D9%88%D8%B1%D8%AA%E2%80%8C%D9%85%D8%B3%D8%A6%D9%84%D9%87%3A%20%D8%AA%D8%B3%D8%AA%20%D8%AB%D8%A8%D8%AA%20%D8%A7%D8%B2%20%D9%88%D8%B1%D8%B3%D9%84%20%D9%88%20%D8%AD%D8%B0%D9%81%20%D8%A7%D8%B2%20%D8%B3%D8%B1%D9%88%D8%B1%0A---%20%D9%85%D8%AA%D9%86%20%DA%A9%D8%A7%D9%85%D9%84%20%D8%A8%D8%B1%DB%8C%D9%81%20%D8%A2%D8%B1%D8%B4%DB%8C%D9%88%D8%B4%D8%AF%D9%87%20---%0A%D8%AA%D8%B3%D8%AA%20%D8%AB%D8%A8%D8%AA%20%D8%A7%D8%B2%20%D9%88%D8%B1%D8%B3%D9%84%20%D9%88%20%D8%AD%D8%B0%D9%81%20%D8%A7%D8%B2%20%D8%B3%D8%B1%D9%88%D8%B1",
+      "isTest": false
+    },
+    {
+      "id": "notif-1794660918606-pxen",
+      "briefId": "db-proj-2",
+      "trackingCode": "CJ-VERCEL-TEST",
+      "brandName": "تست همگام‌سازی ورسل و نتلیفای",
+      "ownerName": "کارفرمای آزمایشی",
+      "contactInfo": "09120000000",
+      "selectedTrack": "ثبت‌شده در دیتابیس (جدول projects)",
+      "marketTier": "لوکس • لوکس",
+      "problemSummary": "بررسی سینک شدن بریف بین Vercel و Netlify و دیتابیس PostgreSQL",
+      "createdAt": "۲۳ آبان ۱۴۰۵، ۱۲:۵۵:۱۸",
+      "emailTarget": "youthefzadeh@gmail.com",
+      "whatsappTarget": "ثبت‌نشده (ارسال با انتخاب مخاطب)",
+      "emailStatus": "sent",
+      "whatsappStatus": "ready-to-send",
+      "readByAdmin": false,
+      "whatsappUrl": "https://wa.me/?text=%F0%9F%94%94%20*%D8%A7%D8%B9%D9%84%D8%A7%D9%86%20%D9%81%D9%88%D8%B1%DB%8C%20%D8%AB%D8%A8%D8%AA%20%D8%A8%D8%B1%DB%8C%D9%81%20%D8%AC%D8%AF%DB%8C%D8%AF%20%E2%80%94%20%D8%A7%D8%B3%D8%AA%D9%88%D8%AF%DB%8C%D9%88%20Creativity%20Juice*%0A%E2%80%A2%20%D9%86%D8%A7%D9%85%20%D8%A8%D8%B1%D9%86%D8%AF%20%2F%20%D9%BE%D8%B1%D9%88%DA%98%D9%87%3A%20%D8%AA%D8%B3%D8%AA%20%D9%87%D9%85%DA%AF%D8%A7%D9%85%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C%20%D9%88%D8%B1%D8%B3%D9%84%20%D9%88%20%D9%86%D8%AA%D9%84%DB%8C%D9%81%D8%A7%DB%8C%0A%E2%80%A2%20%D9%86%D8%A7%D9%85%20%DA%A9%D8%A7%D8%B1%D9%81%D8%B1%D9%85%D8%A7%3A%20%DA%A9%D8%A7%D8%B1%D9%81%D8%B1%D9%85%D8%A7%DB%8C%20%D8%A2%D8%B2%D9%85%D8%A7%DB%8C%D8%B4%DB%8C%0A%E2%80%A2%20%D8%A7%D8%B7%D9%84%D8%A7%D8%B9%D8%A7%D8%AA%20%D8%AA%D9%85%D8%A7%D8%B3%3A%2009120000000%0A%E2%80%A2%20%DA%A9%D8%AF%20%D8%B1%D9%87%DA%AF%DB%8C%D8%B1%DB%8C%20%DB%8C%DA%A9%D8%AA%D8%A7%3A%20CJ-VERCEL-TEST%0A%E2%80%A2%20%D9%86%D8%A7%D9%85%20%DA%A9%D8%A7%D8%B1%D8%A8%D8%B1%DB%8C%20%D9%BE%D9%88%D8%B1%D8%AA%D8%A7%D9%84%3A%20CJ-VERCEL-TEST%0A%E2%80%A2%20%D8%AF%D9%BE%D8%A7%D8%B1%D8%AA%D9%85%D8%A7%D9%86%20%D8%A7%D9%86%D8%AA%D8%AE%D8%A7%D8%A8%DB%8C%3A%20%D8%AB%D8%A8%D8%AA%E2%80%8C%D8%B4%D8%AF%D9%87%20%D8%AF%D8%B1%20%D8%AF%DB%8C%D8%AA%D8%A7%D8%A8%DB%8C%D8%B3%20(%D8%AC%D8%AF%D9%88%D9%84%20projects)%0A%E2%80%A2%20%D8%B1%D8%AF%D9%87%20%D8%A8%D8%A7%D8%B2%D8%A7%D8%B1%3A%20%D9%84%D9%88%DA%A9%D8%B3%20%E2%80%A2%20%D9%84%D9%88%DA%A9%D8%B3%0A%E2%80%A2%20%D8%AE%D9%84%D8%A7%D8%B5%D9%87%20%D8%B5%D9%88%D8%B1%D8%AA%E2%80%8C%D9%85%D8%B3%D8%A6%D9%84%D9%87%3A%20%D8%A8%D8%B1%D8%B1%D8%B3%DB%8C%20%D8%B3%DB%8C%D9%86%DA%A9%20%D8%B4%D8%AF%D9%86%20%D8%A8%D8%B1%DB%8C%D9%81%20%D8%A8%DB%8C%D9%86%20Vercel%20%D9%88%20Netlify%20%D9%88%20%D8%AF%DB%8C%D8%AA%D8%A7%D8%A8%DB%8C%D8%B3%20PostgreSQL%0A---%20%D9%85%D8%AA%D9%86%20%DA%A9%D8%A7%D9%85%D9%84%20%D8%A8%D8%B1%DB%8C%D9%81%20%D8%A2%D8%B1%D8%B4%DB%8C%D9%88%D8%B4%D8%AF%D9%87%20---%0A%D8%A8%D8%B1%D8%B1%D8%B3%DB%8C%20%D8%B3%DB%8C%D9%86%DA%A9%20%D8%B4%D8%AF%D9%86%20%D8%A8%D8%B1%DB%8C%D9%81%20%D8%A8%DB%8C%D9%86%20Vercel%20%D9%88%20Netlify%20%D9%88%20%D8%AF%DB%8C%D8%AA%D8%A7%D8%A8%DB%8C%D8%B3%20PostgreSQL",
+      "mailtoUrl": "mailto:youthefzadeh@gmail.com?subject=%F0%9F%94%94%20%D8%A7%D8%B9%D9%84%D8%A7%D9%86%20%D8%A8%D8%B1%DB%8C%D9%81%20%D8%AC%D8%AF%DB%8C%D8%AF%20%D9%BE%D8%B1%D9%88%DA%98%D9%87%3A%20%D8%AA%D8%B3%D8%AA%20%D9%87%D9%85%DA%AF%D8%A7%D9%85%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C%20%D9%88%D8%B1%D8%B3%D9%84%20%D9%88%20%D9%86%D8%AA%D9%84%DB%8C%D9%81%D8%A7%DB%8C%20(%DA%A9%D8%AF%20%D8%B1%D9%87%DA%AF%DB%8C%D8%B1%DB%8C%3A%20CJ-VERCEL-TEST)&body=%F0%9F%94%94%20*%D8%A7%D8%B9%D9%84%D8%A7%D9%86%20%D9%81%D9%88%D8%B1%DB%8C%20%D8%AB%D8%A8%D8%AA%20%D8%A8%D8%B1%DB%8C%D9%81%20%D8%AC%D8%AF%DB%8C%D8%AF%20%E2%80%94%20%D8%A7%D8%B3%D8%AA%D9%88%D8%AF%DB%8C%D9%88%20Creativity%20Juice*%0A%E2%80%A2%20%D9%86%D8%A7%D9%85%20%D8%A8%D8%B1%D9%86%D8%AF%20%2F%20%D9%BE%D8%B1%D9%88%DA%98%D9%87%3A%20%D8%AA%D8%B3%D8%AA%20%D9%87%D9%85%DA%AF%D8%A7%D9%85%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C%20%D9%88%D8%B1%D8%B3%D9%84%20%D9%88%20%D9%86%D8%AA%D9%84%DB%8C%D9%81%D8%A7%DB%8C%0A%E2%80%A2%20%D9%86%D8%A7%D9%85%20%DA%A9%D8%A7%D8%B1%D9%81%D8%B1%D9%85%D8%A7%3A%20%DA%A9%D8%A7%D8%B1%D9%81%D8%B1%D9%85%D8%A7%DB%8C%20%D8%A2%D8%B2%D9%85%D8%A7%DB%8C%D8%B4%DB%8C%0A%E2%80%A2%20%D8%A7%D8%B7%D9%84%D8%A7%D8%B9%D8%A7%D8%AA%20%D8%AA%D9%85%D8%A7%D8%B3%3A%2009120000000%0A%E2%80%A2%20%DA%A9%D8%AF%20%D8%B1%D9%87%DA%AF%DB%8C%D8%B1%DB%8C%20%DB%8C%DA%A9%D8%AA%D8%A7%3A%20CJ-VERCEL-TEST%0A%E2%80%A2%20%D9%86%D8%A7%D9%85%20%DA%A9%D8%A7%D8%B1%D8%A8%D8%B1%DB%8C%20%D9%BE%D9%88%D8%B1%D8%AA%D8%A7%D9%84%3A%20CJ-VERCEL-TEST%0A%E2%80%A2%20%D8%AF%D9%BE%D8%A7%D8%B1%D8%AA%D9%85%D8%A7%D9%86%20%D8%A7%D9%86%D8%AA%D8%AE%D8%A7%D8%A8%DB%8C%3A%20%D8%AB%D8%A8%D8%AA%E2%80%8C%D8%B4%D8%AF%D9%87%20%D8%AF%D8%B1%20%D8%AF%DB%8C%D8%AA%D8%A7%D8%A8%DB%8C%D8%B3%20(%D8%AC%D8%AF%D9%88%D9%84%20projects)%0A%E2%80%A2%20%D8%B1%D8%AF%D9%87%20%D8%A8%D8%A7%D8%B2%D8%A7%D8%B1%3A%20%D9%84%D9%88%DA%A9%D8%B3%20%E2%80%A2%20%D9%84%D9%88%DA%A9%D8%B3%0A%E2%80%A2%20%D8%AE%D9%84%D8%A7%D8%B5%D9%87%20%D8%B5%D9%88%D8%B1%D8%AA%E2%80%8C%D9%85%D8%B3%D8%A6%D9%84%D9%87%3A%20%D8%A8%D8%B1%D8%B1%D8%B3%DB%8C%20%D8%B3%DB%8C%D9%86%DA%A9%20%D8%B4%D8%AF%D9%86%20%D8%A8%D8%B1%DB%8C%D9%81%20%D8%A8%DB%8C%D9%86%20Vercel%20%D9%88%20Netlify%20%D9%88%20%D8%AF%DB%8C%D8%AA%D8%A7%D8%A8%DB%8C%D8%B3%20PostgreSQL%0A---%20%D9%85%D8%AA%D9%86%20%DA%A9%D8%A7%D9%85%D9%84%20%D8%A8%D8%B1%DB%8C%D9%81%20%D8%A2%D8%B1%D8%B4%DB%8C%D9%88%D8%B4%D8%AF%D9%87%20---%0A%D8%A8%D8%B1%D8%B1%D8%B3%DB%8C%20%D8%B3%DB%8C%D9%86%DA%A9%20%D8%B4%D8%AF%D9%86%20%D8%A8%D8%B1%DB%8C%D9%81%20%D8%A8%DB%8C%D9%86%20Vercel%20%D9%88%20Netlify%20%D9%88%20%D8%AF%DB%8C%D8%AA%D8%A7%D8%A8%DB%8C%D8%B3%20PostgreSQL",
+      "isTest": false
+    }
+  ],
+  "deletedBriefCodes": [
+    "db-proj-3",
+    "3",
+    "CJ-SYNC-CHECK"
+  ],
+  "deletedPortfolioIds": [],
+  "updatedAt": "2026-11-14T12:57:03.829Z"
+}

@@ -17,6 +17,12 @@ import {
   saveDbStudioState,
 } from './src/db/queries.ts';
 import { requireAuth, type AuthRequest } from './src/middleware/auth.ts';
+import {
+  fetchCloudRelaySnapshot,
+  saveCloudRelaySnapshot,
+  createEmptyRelaySnapshot,
+  isBriefDeleted,
+} from './src/cloudRelayBridge.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -117,6 +123,8 @@ function readServerDb(): Record<string, any> {
           settings: parsed.settings && typeof parsed.settings === 'object' ? parsed.settings : null,
           notificationConfig: notifConfig,
           notificationLogs: Array.isArray(parsed.notificationLogs) ? parsed.notificationLogs : [],
+          deletedBriefCodes: Array.isArray(parsed.deletedBriefCodes) ? parsed.deletedBriefCodes : [],
+          deletedPortfolioIds: Array.isArray(parsed.deletedPortfolioIds) ? parsed.deletedPortfolioIds : [],
           updatedAt: parsed.updatedAt || new Date().toISOString(),
         };
       }
@@ -135,35 +143,51 @@ function readServerDb(): Record<string, any> {
     settings: null,
     notificationConfig: { ...DEFAULT_NOTIFICATION_CONFIG },
     notificationLogs: [],
+    deletedBriefCodes: [],
+    deletedPortfolioIds: [],
     updatedAt: new Date().toISOString(),
   };
 }
 
+let latestStudioStateCache: Record<string, any> | null = null;
+
 function writeServerDb(data: Record<string, any>): Record<string, any> {
+  const nextData: Record<string, any> = {
+    ...data,
+    updatedAt: new Date().toISOString(),
+  };
+  latestStudioStateCache = nextData;
   try {
-    const nextData: Record<string, any> = {
-      ...data,
-      updatedAt: new Date().toISOString(),
-    };
     fs.writeFileSync(DB_FILE_PATH, JSON.stringify(nextData, null, 2), 'utf-8');
-    void saveDbStudioState(nextData);
-    return nextData;
   } catch (err) {
     console.error('Error writing studio-server-db.json:', err);
-    void saveDbStudioState(data);
-    return data;
   }
+  void saveDbStudioState(nextData);
+  return nextData;
 }
 
 async function readServerDbAsync(): Promise<Record<string, any>> {
-  const localFallback = readServerDb();
+  const localFallback = latestStudioStateCache || readServerDb();
   try {
     const pgState = await getDbStudioState();
     if (pgState && typeof pgState === 'object') {
       const merged = {
         ...localFallback,
         ...pgState,
+        deletedBriefCodes: Array.from(
+          new Set([
+            ...(Array.isArray(localFallback.deletedBriefCodes) ? localFallback.deletedBriefCodes : []),
+            ...(Array.isArray(pgState.deletedBriefCodes) ? pgState.deletedBriefCodes : []),
+          ])
+        ),
+        deletedPortfolioIds: Array.from(
+          new Set([
+            ...(Array.isArray(localFallback.deletedPortfolioIds) ? localFallback.deletedPortfolioIds : []),
+            ...(Array.isArray(pgState.deletedPortfolioIds) ? pgState.deletedPortfolioIds : []),
+          ])
+        ),
       };
+      latestStudioStateCache = merged;
       return merged;
     }
     // Seed initial file state into PostgreSQL studio_state_store
@@ -651,6 +675,259 @@ async function startServer() {
     return rows;
   }
 
+  let isRelaySyncRunning = false;
+  let pendingRelayForcePush = false;
+  let lastRelaySyncMs = 0;
+
+  async function syncPostgresWithCloudRelay(forcePushOnly = false): Promise<void> {
+    if (isRelaySyncRunning) {
+      if (forcePushOnly) pendingRelayForcePush = true;
+      return;
+    }
+    if (!forcePushOnly && Date.now() - lastRelaySyncMs < 2000) return;
+    isRelaySyncRunning = true;
+    try {
+      const [relaySnap, db] = await Promise.all([
+        fetchCloudRelaySnapshot(),
+        readServerDbAsync(),
+      ]);
+
+      const deletedBriefSet = new Set<string>([
+        ...(Array.isArray(db.deletedBriefCodes) ? db.deletedBriefCodes.map(String) : []),
+        ...(Array.isArray(relaySnap?.deletedBriefCodes)
+          ? relaySnap!.deletedBriefCodes.map(String)
+          : []),
+      ]);
+      const deletedPortfolioSet = new Set<string>([
+        ...(Array.isArray(db.deletedPortfolioIds) ? db.deletedPortfolioIds.map(String) : []),
+        ...(Array.isArray(relaySnap?.deletedPortfolioIds)
+          ? relaySnap!.deletedPortfolioIds.map(String)
+          : []),
+      ]);
+
+      let stateChangedFromRelay = false;
+
+      if (!forcePushOnly && relaySnap) {
+        // 1. Apply deletions from Cloud Relay (Vercel/Netlify) to PostgreSQL
+        const currentPgProjects = await listDbProjects();
+        for (const pgRow of currentPgProjects) {
+          const rowIdStr = String(pgRow.id);
+          const rowCode = String(pgRow.tracking_code || '');
+          if (
+            deletedBriefSet.has(rowIdStr) ||
+            deletedBriefSet.has(`db-proj-${rowIdStr}`) ||
+            (rowCode && deletedBriefSet.has(rowCode))
+          ) {
+            await deleteDbProject(pgRow.id);
+            stateChangedFromRelay = true;
+          }
+        }
+
+        const currentPgPortfolios = await listDbPortfolios();
+        for (const pgPort of currentPgPortfolios) {
+          const portIdStr = String(pgPort.id);
+          const portTitle = String(pgPort.title || '');
+          if (
+            deletedPortfolioSet.has(portIdStr) ||
+            deletedPortfolioSet.has(`portfolio-db-${portIdStr}`) ||
+            (portTitle && deletedPortfolioSet.has(portTitle))
+          ) {
+            await deleteDbPortfolio(pgPort.id);
+            stateChangedFromRelay = true;
+          }
+        }
+
+        // 2. Ingest new or updated briefs submitted on Vercel/Netlify into PostgreSQL
+        const afterDeletePgProjects = await listDbProjects();
+        const pgByCode = new Map<string, any>();
+        afterDeletePgProjects.forEach((r: any) => {
+          if (r.tracking_code) pgByCode.set(String(r.tracking_code), r);
+        });
+
+        const pendingNotifSet = new Set<string>(relaySnap.pendingNotifBriefCodes || []);
+        const incomingRelayBriefs = [
+          ...(Array.isArray(relaySnap.archivedBriefs) ? relaySnap.archivedBriefs : []),
+          ...(Array.isArray(relaySnap.projectsRows) ? relaySnap.projectsRows : []),
+        ];
+
+        const seenIncomingCodes = new Set<string>();
+        for (const rb of incomingRelayBriefs) {
+          if (!rb || isBriefDeleted(rb, deletedBriefSet)) continue;
+          const code = String(rb.trackingCode || rb.tracking_code || '');
+          if (!code || seenIncomingCodes.has(code)) continue;
+          if (String(rb.id || '').startsWith('brief-init-')) continue;
+          seenIncomingCodes.add(code);
+
+          const existingPg = pgByCode.get(code);
+          if (!existingPg) {
+            const clientName = rb.ownerName || rb.client_name || rb.brandName || 'کارفرما';
+            const contactInfo = rb.contactInfo || rb.contact_info || '-';
+            const projectTitle = rb.brandName || rb.project_title || 'پروژه جدید';
+            const description = rb.problem || rb.description || '-';
+            const budget = rb.productionScale
+              ? `${rb.marketTier || ''} • ${rb.productionScale}`.trim()
+              : rb.marketTier || rb.budget || 'استاندارد استودیو';
+
+            const inserted = await insertDbProject({
+              client_name: clientName,
+              contact_info: contactInfo,
+              project_title: projectTitle,
+              description,
+              budget,
+              tracking_code: code,
+              status: rb.status || 'new',
+              is_read: Boolean(rb.isRead ?? rb.is_read ?? false),
+              full_summary_text:
+                rb.fullSummaryText || rb.full_summary_text || description,
+            });
+            pgByCode.set(code, inserted);
+            stateChangedFromRelay = true;
+
+            if (pendingNotifSet.has(code)) {
+              const mappedBrief = pgRowToBriefSubmission(inserted);
+              const notif = await dispatchInstantBriefNotifications(
+                mappedBrief,
+                undefined,
+                db.notificationConfig || DEFAULT_NOTIFICATION_CONFIG,
+                false
+              );
+              db.notificationLogs = [notif, ...(db.notificationLogs || [])].slice(0, 100);
+            }
+          } else {
+            const incomingRead = Boolean(rb.isRead ?? rb.is_read ?? false);
+            const incomingStatus = rb.status || existingPg.status || 'new';
+            if (
+              (incomingRead && !existingPg.is_read) ||
+              (incomingStatus !== 'new' && incomingStatus !== existingPg.status)
+            ) {
+              await updateDbProject(existingPg.id, {
+                status: incomingStatus,
+                is_read: incomingRead || Boolean(existingPg.is_read),
+              });
+              stateChangedFromRelay = true;
+            }
+          }
+        }
+
+        // 3. Ingest new portfolios added on Vercel/Netlify into PostgreSQL
+        if (Array.isArray(relaySnap.portfoliosRows) && relaySnap.portfoliosRows.length > 0) {
+          const freshPgPortfolios = await getAuthoritativePortfoliosFromPostgres();
+          const existingTitles = new Set(freshPgPortfolios.map((p: any) => String(p.title || '')));
+          for (const rp of relaySnap.portfoliosRows) {
+            if (
+              rp &&
+              rp.title &&
+              !existingTitles.has(String(rp.title)) &&
+              !deletedPortfolioSet.has(String(rp.id)) &&
+              !deletedPortfolioSet.has(String(rp.title))
+            ) {
+              await insertDbPortfolio({
+                title: rp.title,
+                category: rp.category || 'branding',
+                image_url: rp.image_url,
+                project_link: rp.project_link || '#',
+                description: rp.description || '',
+                title_en: rp.title_en || rp.title,
+                client: rp.client || rp.title,
+                year: rp.year || '۱۴۰۵',
+                extra_json: rp.extra_json || undefined,
+              });
+              existingTitles.add(String(rp.title));
+              stateChangedFromRelay = true;
+            }
+          }
+        }
+
+        // 4. Merge Client Workspaces from Cloud Relay
+        if (Array.isArray(relaySnap.clientWorkspaces) && relaySnap.clientWorkspaces.length > 0) {
+          db.clientWorkspaces = mergeById(
+            db.clientWorkspaces || [],
+            relaySnap.clientWorkspaces,
+            true
+          );
+        }
+      }
+
+      // 5. Build authoritative snapshot from PostgreSQL and publish back to Cloud Relay
+      const [finalPgProjects, finalPgPortfolios] = await Promise.all([
+        listDbProjects(),
+        getAuthoritativePortfoliosFromPostgres(),
+      ]);
+
+      const cleanPgProjects = finalPgProjects.filter(
+        (r: any) =>
+          !deletedBriefSet.has(String(r.id)) &&
+          !deletedBriefSet.has(`db-proj-${r.id}`) &&
+          (!r.tracking_code || !deletedBriefSet.has(String(r.tracking_code)))
+      );
+      const finalBriefs = cleanPgProjects.map(pgRowToBriefSubmission);
+
+      const cleanPgPortfolios = finalPgPortfolios.filter(
+        (p: any) =>
+          !deletedPortfolioSet.has(String(p.id)) &&
+          !deletedPortfolioSet.has(`portfolio-db-${p.id}`) &&
+          (!p.title || !deletedPortfolioSet.has(String(p.title)))
+      );
+
+      db.archivedBriefs = finalBriefs;
+      db.deletedBriefCodes = Array.from(deletedBriefSet);
+      db.deletedPortfolioIds = Array.from(deletedPortfolioSet);
+      db.clientWorkspaces = (db.clientWorkspaces || []).map((w: any) => ({
+        ...w,
+        archivedBriefs: Array.isArray(w.archivedBriefs)
+          ? w.archivedBriefs.filter((b: any) => !isBriefDeleted(b, deletedBriefSet))
+          : [],
+      }));
+
+      const savedDb = writeServerDb(db);
+
+      const outSnapshot = createEmptyRelaySnapshot();
+      outSnapshot.archivedBriefs = finalBriefs;
+      outSnapshot.projectsRows = cleanPgProjects;
+      outSnapshot.portfoliosRows = cleanPgPortfolios;
+      outSnapshot.clientWorkspaces = savedDb.clientWorkspaces || [];
+      outSnapshot.projects = savedDb.projects || null;
+      outSnapshot.team = savedDb.team || null;
+      outSnapshot.services = savedDb.services || null;
+      outSnapshot.manifesto = savedDb.manifesto || null;
+      outSnapshot.media = savedDb.media || null;
+      outSnapshot.settings = savedDb.settings || null;
+      outSnapshot.notificationConfig = savedDb.notificationConfig || DEFAULT_NOTIFICATION_CONFIG;
+      outSnapshot.notificationLogs = savedDb.notificationLogs || [];
+      outSnapshot.deletedBriefCodes = savedDb.deletedBriefCodes || [];
+      outSnapshot.deletedPortfolioIds = savedDb.deletedPortfolioIds || [];
+      outSnapshot.pendingNotifBriefCodes = [];
+
+      await saveCloudRelaySnapshot(outSnapshot);
+      lastRelaySyncMs = Date.now();
+
+      if (stateChangedFromRelay) {
+        broadcastRealtimeEvent('brief:reconciled', {
+          docs: finalBriefs,
+          archivedBriefs: finalBriefs,
+          clientWorkspaces: savedDb.clientWorkspaces,
+          notificationLogs: savedDb.notificationLogs,
+        });
+      }
+    } catch (err) {
+      console.warn('Cloud Relay sync warning:', err);
+    } finally {
+      isRelaySyncRunning = false;
+      if (pendingRelayForcePush) {
+        pendingRelayForcePush = false;
+        void syncPostgresWithCloudRelay(true);
+      }
+    }
+  }
+
+  // Trigger initial Cloud Relay sync on server startup and every 4 seconds
+  setTimeout(() => {
+    void syncPostgresWithCloudRelay(false);
+  }, 500);
+  setInterval(() => {
+    void syncPostgresWithCloudRelay(false);
+  }, 4000);
+
   // 0. GET Real-Time Stream (SSE) for instant Admin Panel brief synchronization (/api/studio-state/stream & /api/briefs/stream)
   const handleRealtimeStream = async (req: express.Request, res: express.Response) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -696,6 +973,7 @@ async function startServer() {
 
   // Dedicated 'briefs' Collection Endpoints backed by PostgreSQL & Supabase `projects` table
   app.get('/api/briefs', async (_req, res) => {
+    await syncPostgresWithCloudRelay(false);
     const docs = await getAuthoritativeBriefsFromPostgres();
     res.json({
       ok: true,
@@ -780,6 +1058,7 @@ async function startServer() {
       db.notificationLogs = [notificationLog, ...(db.notificationLogs || [])].slice(0, 100);
 
       const saved = writeServerDb(db);
+      void syncPostgresWithCloudRelay(true);
       broadcastRealtimeEvent('brief:created', {
         doc: enrichedBrief,
         brief: enrichedBrief,
@@ -823,6 +1102,7 @@ async function startServer() {
       const db = await readServerDbAsync();
       db.archivedBriefs = pgBriefs;
       const saved = writeServerDb(db);
+      void syncPostgresWithCloudRelay(true);
 
       broadcastRealtimeEvent('brief:updated', {
         doc: updatedDoc,
@@ -857,6 +1137,7 @@ async function startServer() {
 
   app.get('/api/db/projects', async (_req, res) => {
     try {
+      await syncPostgresWithCloudRelay(false);
       let rows = await listDbProjects();
       if (serverSupabase) {
         try {
@@ -923,6 +1204,7 @@ async function startServer() {
       });
 
       const pgBriefs = await getAuthoritativeBriefsFromPostgres();
+      void syncPostgresWithCloudRelay(true);
       broadcastRealtimeEvent('db:project:created', {
         project: inserted,
         docs: pgBriefs,
@@ -953,6 +1235,8 @@ async function startServer() {
 
   app.delete('/api/db/projects/:id', async (req, res) => {
     try {
+      const targetId = String(req.params.id || '');
+      const cleanId = targetId.replace(/^db-proj-/, '');
       if (serverSupabase) {
         try {
           await serverSupabase.from('projects').delete().eq('id', req.params.id);
@@ -960,11 +1244,22 @@ async function startServer() {
           // ignore
         }
       }
-      await deleteDbProject(req.params.id);
+      const deletedRow = await deleteDbProject(req.params.id);
       const pgBriefs = await getAuthoritativeBriefsFromPostgres();
       const db = await readServerDbAsync();
+      const deletedSet = new Set<string>(Array.isArray(db.deletedBriefCodes) ? db.deletedBriefCodes : []);
+      deletedSet.add(targetId);
+      deletedSet.add(cleanId);
+      deletedSet.add(`db-proj-${cleanId}`);
+      if (deletedRow?.tracking_code) deletedSet.add(String(deletedRow.tracking_code));
+      if (deletedRow?.id !== undefined) {
+        deletedSet.add(String(deletedRow.id));
+        deletedSet.add(`db-proj-${deletedRow.id}`);
+      }
+      db.deletedBriefCodes = Array.from(deletedSet);
       db.archivedBriefs = pgBriefs;
       writeServerDb(db);
+      void syncPostgresWithCloudRelay(true);
       broadcastRealtimeEvent('db:project:deleted', {
         id: req.params.id,
         docs: pgBriefs,
@@ -1027,6 +1322,7 @@ async function startServer() {
         extra_json: body.extra_json || null,
       });
 
+      void syncPostgresWithCloudRelay(true);
       broadcastRealtimeEvent('db:portfolio:created', { portfolio: inserted });
       res.json({ ok: true, portfolio: inserted });
     } catch (error: any) {
@@ -1037,6 +1333,8 @@ async function startServer() {
 
   app.delete('/api/db/portfolios/:id', async (req, res) => {
     try {
+      const targetId = String(req.params.id || '');
+      const cleanId = targetId.replace(/^portfolio-db-/, '');
       if (serverSupabase) {
         try {
           await serverSupabase.from('portfolios').delete().eq('id', req.params.id);
@@ -1044,7 +1342,16 @@ async function startServer() {
           // ignore
         }
       }
-      await deleteDbPortfolio(req.params.id);
+      const deletedPort = await deleteDbPortfolio(req.params.id);
+      const db = await readServerDbAsync();
+      const delPortSet = new Set<string>(Array.isArray(db.deletedPortfolioIds) ? db.deletedPortfolioIds : []);
+      delPortSet.add(targetId);
+      delPortSet.add(cleanId);
+      if (deletedPort?.id !== undefined) delPortSet.add(String(deletedPort.id));
+      if (deletedPort?.title) delPortSet.add(String(deletedPort.title));
+      db.deletedPortfolioIds = Array.from(delPortSet);
+      writeServerDb(db);
+      void syncPostgresWithCloudRelay(true);
       broadcastRealtimeEvent('db:portfolio:deleted', { id: req.params.id });
       res.json({ ok: true, deletedId: req.params.id });
     } catch (error: any) {
@@ -1055,6 +1362,7 @@ async function startServer() {
 
   // 1. GET full shared studio & client portal state + notification logs (backed by PostgreSQL)
   app.get('/api/studio-state', async (_req, res) => {
+    await syncPostgresWithCloudRelay(false);
     const [db, pgBriefs, pgPortfolios] = await Promise.all([
       readServerDbAsync(),
       getAuthoritativeBriefsFromPostgres(),
@@ -1131,6 +1439,7 @@ async function startServer() {
       }
 
       const saved = writeServerDb(db);
+      void syncPostgresWithCloudRelay(true);
 
       broadcastRealtimeEvent('brief:created', {
         brief: enrichedBrief,
@@ -1153,7 +1462,11 @@ async function startServer() {
   app.post('/api/studio-state/briefs/reconcile', async (req, res) => {
     try {
       const { clientBriefs = [], clientWorkspaces = [] } = req.body || {};
+      await syncPostgresWithCloudRelay(false);
       const db = await readServerDbAsync();
+      const deletedBriefSet = new Set<string>(
+        Array.isArray(db.deletedBriefCodes) ? db.deletedBriefCodes.map(String) : []
+      );
       const currentPgBriefs = await getAuthoritativeBriefsFromPostgres();
       const existingCodes = new Set(currentPgBriefs.map((b: any) => b?.trackingCode).filter(Boolean));
 
@@ -1163,6 +1476,7 @@ async function startServer() {
           if (
             cb &&
             cb.trackingCode &&
+            !isBriefDeleted(cb, deletedBriefSet) &&
             !existingCodes.has(cb.trackingCode) &&
             !String(cb.id || '').startsWith('brief-init-') &&
             !String(cb.id || '').startsWith('db-proj-')
@@ -1206,6 +1520,9 @@ async function startServer() {
       }
 
       const saved = writeServerDb(db);
+      if (newlyDiscoveredBriefs.length > 0 || clientWorkspaces.length > 0) {
+        void syncPostgresWithCloudRelay(true);
+      }
 
       res.json({
         ok: true,
@@ -1364,6 +1681,7 @@ async function startServer() {
       }
 
       const saved = writeServerDb(db);
+      void syncPostgresWithCloudRelay(true);
       broadcastRealtimeEvent('state:synced', {
         archivedBriefs: saved.archivedBriefs,
         clientWorkspaces: saved.clientWorkspaces,

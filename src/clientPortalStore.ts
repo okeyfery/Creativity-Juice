@@ -12,7 +12,7 @@ import {
   INITIAL_CLIENT_WORKSPACES,
 } from './data/clientPortalData';
 import { pushBriefToServer, pushServerSyncPayload } from './serverSync';
-import { syncSubmittedBriefRealtime, updateBriefInCollection } from './briefSyncService';
+import { syncSubmittedBriefRealtime, updateBriefInCollection, getPendingOutbox } from './briefSyncService';
 import {
   insertProjectToDatabase,
   deleteProjectFromDatabase,
@@ -932,7 +932,12 @@ export async function syncProjectsTableIntoBriefs(): Promise<SupabaseProjectRow[
       };
     });
 
-    saveGlobalArchivedBriefs(mappedBriefs, false, true);
+    const dbCodes = new Set(mappedBriefs.map((b) => b.trackingCode));
+    const pendingBriefs = getPendingOutbox()
+      .map((item) => item.brief)
+      .filter((b) => b && b.trackingCode && !dbCodes.has(b.trackingCode));
+
+    saveGlobalArchivedBriefs([...pendingBriefs, ...mappedBriefs], false, true);
     return rows;
   } catch (err) {
     console.warn('Error syncing projects table into briefs:', err);
